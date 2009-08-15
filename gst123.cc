@@ -20,6 +20,7 @@
 #include <signal.h>
 #include <sys/time.h>
 #include <time.h>
+#include <string.h>
 #include "glib-extra.h"
 #include <vector>
 #include <string>
