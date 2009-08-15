@@ -1,0 +1,37 @@
+@doxer_dnl      # emacs: -*- mode: texinfo; texinfo-open-quote: "\""; texinfo-close-quote: "\""; -*-
+@doxer_set{rvstamp,parse_date} $Date: 2006/04/19 00:50:37 $
+@include "gst123defs.doxi"
+@doxer_set{title}	gst123 - A GStreamer based command line media player
+@doxer_set{man-title}	GST123
+@doxer_set{man-date}	@doxer_get{rvstamp}
+@doxer_set{man-source}	beast-@doxer_get{BST_VERSION}
+@doxer_set{man-manual}	GST123 Manual Page
+
+@heading NAME
+gst123 - A GStreamer based command line media player
+
+@heading SYNOPSIS
+	@manb{gst123} [@mani{OPTIONS}] [@mani{URIS...}]
+
+@heading DESCRIPTION
+	@manb{gst123} is a command line based media player released as free
+	software under the GNU LGPL.
+
+@heading OPTIONS
+	@manb{gst123} follows the usual GNU command line syntax, with long options starting with two dashes ('-').
+
+@itemize{none}
+@item @manb{-h}, @manb{--help} @*
+	Shows a brief help message.
+@item @manb{-v}, @manb{--version} @*
+	Prints out @manb{beast} and component versions and file paths.
+@item @manb{-z}, @manb{--shuffle} @*
+        Play files in pseudo random order.
+@item @manb{-@@} @mani{<playlist>}, @manb{--list} @mani{<playlist>} @*
+        Load files to play from the playlist file.
+@item @manb{--verbose} @*
+        Print GStreamer pipeline used to play files
+@done
+
+@heading SEE ALSO
+@longuri{http://beast.gtk.org, BEAST/BSE Website}
