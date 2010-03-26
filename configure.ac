@@ -1,0 +1,22 @@
+AC_INIT([gst123], [0.0.1])
+AM_INIT_AUTOMAKE
+AC_CONFIG_SRCDIR([src/gst123.cc])
+AC_PROG_CXX
+AC_PROG_CC
+
+dnl
+dnl Define package requirements.
+dnl
+AC_DEFUN([AC_GSTREAMER_REQUIREMENTS],
+[
+    dnl We need GLib with friends
+    PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10)
+    AC_SUBST(GSTREAMER_CFLAGS)
+    AC_SUBST(GSTREAMER_LIBS)
+])
+
+# Check requirement sets
+AC_GSTREAMER_REQUIREMENTS
+
+AC_CONFIG_FILES([Makefile src/Makefile])
+AC_OUTPUT
