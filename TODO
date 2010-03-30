@@ -1,2 +1,3 @@
 - implement directory crawling AKA gst123 /public/music
 - wav output with --wav foo.wav
+- add seeking / pause keys
