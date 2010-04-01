@@ -1,5 +1,5 @@
 .\" generator: doxer.py 0.6
-.\" generation: 2010-03-24T17:25:48
+.\" generation: 2010-04-01T10:37:28
 .TH "GST123" "1" "Wed Apr 19 00:50:37 2006" "beast-" "GST123 Manual Page"
 
 .SH
@@ -60,7 +60,15 @@ Print GStreamer pipeline used to play files
 
 .PP
 
+.SH
+INTERRUPT
 
+
+.PP
+You can abort gst123 at any time by pressing Ctrl-C. If you are
+playing multiple files, this will stop the current file and begin playing the
+next one. If you want to abort playing immediately instead of skipping to the
+next file, press Ctrl-C within the first second of the playback of a new file.
 .SH
 SEE ALSO
 
