@@ -1,7 +1,7 @@
 Source: gst123
 Section: video
 Priority: extra
-Maintainer: أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@users.sourceforge.net>
+Maintainer: أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
 Build-Depends: debhelper (>= 7), libgstreamer0.10-dev
 Standards-Version: 3.8.4
 Homepage: http://space.twc.de/~stefan/gst123.php
