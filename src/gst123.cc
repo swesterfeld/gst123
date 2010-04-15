@@ -387,9 +387,12 @@ cb_print_position (gpointer *data)
       GTimeVal tv_pos, tv_len;
       GST_TIME_TO_TIMEVAL (pos, tv_pos);
       GST_TIME_TO_TIMEVAL (len, tv_len);
-      g_print ("\rTime: %02lu:%02lu.%02lu", tv_pos.tv_sec / 60, tv_pos.tv_sec % 60, tv_pos.tv_usec / 10000);
+
+      glong pos_min = tv_pos.tv_sec / 60;
+      glong len_min = tv_len.tv_sec / 60;
+      g_print ("\rTime: %01lu:%02lu:%02lu.%02lu", pos_min / 60, pos_min % 60, tv_pos.tv_sec % 60, tv_pos.tv_usec / 10000);
       if (len > 0)   /* streams (i.e. http) have len == -1 */
-	g_print (" of %02lu:%02lu.%02lu", tv_len.tv_sec / 60, tv_len.tv_sec % 60, tv_len.tv_usec / 10000);
+	g_print (" of %01lu:%02lu:%02lu.%02lu", len_min / 60, len_min % 60, tv_len.tv_sec % 60, tv_len.tv_usec / 10000);
       g_print ("\r");
     }
 
