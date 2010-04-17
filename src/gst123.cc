@@ -22,11 +22,10 @@
 #include <time.h>
 #include <string.h>
 #include "glib-extra.h"
+#include "config.h"
 #include <vector>
 #include <string>
 #include <list>
-
-#define GST123_VERSION "0.0.1"
 
 using std::string;
 using std::vector;
@@ -476,7 +475,7 @@ Options::parse (int   *argc_p,
 	}
       else if (strcmp (argv[i], "--version") == 0 || strcmp (argv[i], "-v") == 0)
 	{
-	  printf ("%s %s\n", program_name.c_str(), GST123_VERSION);
+	  printf ("%s %s\n", program_name.c_str(), VERSION);
 	  exit (0);
 	}
       else if (check_arg (argc, argv, &i, "--verbose"))
