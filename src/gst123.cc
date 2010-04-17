@@ -184,13 +184,29 @@ struct Player
   }
 
   void
+  remove_current_uri()
+  {
+    play_position--;
+    uris.erase (uris.begin() + play_position);
+  }
+
+  void
   play_next()
   {
     reset_tags (RESET_ALL_TAGS);
 
     if (options.shuffle)
-      play_position = g_random_int_range (0, uris.size());
-
+      {
+        if (uris.empty())
+          {
+            printf ("No files remaining in playlist.\n");
+            quit();
+          }
+        else
+          {
+            play_position = g_random_int_range (0, uris.size());
+          }
+      }
     if (play_position < uris.size())
       {
 	string uri = uris[play_position++];
@@ -307,7 +323,9 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
       g_error_free (err);
       g_free (debug);
 
-      player.quit();
+      g_print ("=> file cannot be played and will be removed from playlist\n\n");
+      player.remove_current_uri();
+      player.play_next();
       break;
     }
     case GST_MESSAGE_EOS:
