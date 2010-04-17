@@ -519,6 +519,40 @@ Options::print_usage ()
   g_printerr ("\n");
 }
 
+static inline bool
+is_directory (const string& path)
+{
+  return g_file_test (path.c_str(), G_FILE_TEST_IS_DIR);
+}
+
+static vector<string>
+crawl (const string& path)
+{
+  vector<string> results;
+
+  GDir *dir = g_dir_open (path.c_str(), 0, NULL);
+  if (dir)
+    {
+      const char *name;
+
+      while ((name = g_dir_read_name (dir)))
+        {
+          char *full_name = g_build_filename (path.c_str(), name, NULL);
+          if (is_directory (full_name))
+            {
+              vector<string> subdir_files = crawl (full_name);
+              results.insert (results.end(), subdir_files.begin(), subdir_files.end());
+            }
+          else
+            {
+              results.push_back (full_name);
+            }
+          g_free (full_name);
+        }
+      g_dir_close (dir);
+    }
+  return results;
+}
 
 gint
 main (gint   argc,
@@ -534,7 +568,16 @@ main (gint   argc,
 
   /* set up */
   for (int i = 1; i < argc; i++)
-    player.add_uri (argv[i]);
+    {
+      if (is_directory (argv[i]))          // directory specified on commandline => play all files in this dir
+        {
+          vector<string> uris = crawl (argv[i]);
+          for (vector<string>::const_iterator ui = uris.begin(); ui != uris.end(); ui++)
+            player.add_uri (*ui);
+        }
+      else
+        player.add_uri (argv[i]);
+    }
 
   for (list<string>::iterator pi = options.playlists.begin(); pi != options.playlists.end(); pi++)
     {
