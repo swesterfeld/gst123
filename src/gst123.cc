@@ -93,7 +93,7 @@ Options::Options ()
   verbose = false;
 }
 
-struct Player
+struct Player : public KeyHandler
 {
   vector<string> uris;
 
@@ -286,13 +286,13 @@ struct Player
       g_main_loop_quit (loop);
   }
 
+  void process_input (int key);
+
   Player() : playbin (0), loop(0), play_position (0)
   {
     cols = get_columns();
   }
 };
-
-static Player player;
 
 static void
 collect_tags (const GstTagList *tag_list,
@@ -624,58 +624,39 @@ crawl (const string& path)
   return results;
 }
 
-GPollFD stdin_poll_fd = { 0, G_IO_IN, 0 };
-
-gboolean stdin_prepare (GSource    *source,
-                        gint       *timeout)
+/*
+ * handle user input
+ */
+void
+Player::process_input (int key)
 {
-  *timeout = -1;
-  return FALSE;
-}
-
-gboolean
-stdin_check (GSource *source)
-{
-  if (stdin_poll_fd.revents & G_IO_IN)
-    return TRUE;
-  else
-    return FALSE;
-}
-
-gboolean
-stdin_dispatch (GSource    *source,
-                GSourceFunc callback,
-                gpointer    user_data)
-{
-  int key = terminal.getch();
   switch (key)
     {
       case Terminal::TERMINAL_KEY_RIGHT:
-        player.relative_seek (10);
+        relative_seek (10);
         break;
       case Terminal::TERMINAL_KEY_LEFT:
-        player.relative_seek (-10);
+        relative_seek (-10);
         break;
       case Terminal::TERMINAL_KEY_UP:
-        player.relative_seek (60);
+        relative_seek (60);
         break;
       case Terminal::TERMINAL_KEY_DOWN:
-        player.relative_seek (-60);
+        relative_seek (-60);
         break;
       case Terminal::TERMINAL_KEY_PAGE_UP:
-        player.relative_seek (600);
+        relative_seek (600);
         break;
       case Terminal::TERMINAL_KEY_PAGE_DOWN:
-        player.relative_seek (-600);
+        relative_seek (-600);
         break;
       case 'q':
-        player.quit();
+        quit();
         break;
       case ' ':
-        player.toggle_pause();
+        toggle_pause();
         break;
     }
-  return TRUE;
 }
 
 
@@ -683,6 +664,8 @@ gint
 main (gint   argc,
       gchar *argv[])
 {
+  Player player;
+
   /* init GStreamer */
   gst_init (&argc, &argv);
   player.loop = g_main_loop_new (NULL, FALSE);
@@ -740,14 +723,8 @@ main (gint   argc,
   g_usignal_add (SIGINT, sigint_usr_code, &player);
   player.play_next();
 
-  // add mainloop source for keys
-  GSourceFuncs source_funcs = { stdin_prepare, stdin_check, stdin_dispatch, };
-  GSource *source = g_source_new (&source_funcs, sizeof (GSource));
-  g_source_attach (source, g_main_loop_get_context (player.loop));
-  g_main_context_add_poll (g_main_loop_get_context (player.loop), &stdin_poll_fd, G_PRIORITY_DEFAULT);
-
   /* now run */
-  terminal.init();
+  terminal.init (player.loop, &player);
   g_main_loop_run (player.loop);
   terminal.end();
 

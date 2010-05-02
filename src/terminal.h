@@ -20,9 +20,16 @@
 #define GST123_TERMINAL_H
 
 #include <term.h>
+#include <glib.h>
 #include <vector>
 #include <string>
 #include <map>
+
+class KeyHandler
+{
+public:
+  virtual void process_input (int ch) = 0;
+};
 
 class Terminal
 {
@@ -31,6 +38,10 @@ class Terminal
   std::vector<int>           chars;
   std::map<std::string, int> keys;
 
+  KeyHandler                *key_handler;
+
+  static gboolean stdin_dispatch (GSource *source, GSourceFunc callback, gpointer user_data);
+  int getch();
 
 public:
   enum {
@@ -42,8 +53,7 @@ public:
     TERMINAL_KEY_PAGE_DOWN
   };
 
-  void init();
-  int getch();
+  void init (GMainLoop *loop, KeyHandler *key_handler);
   void end();
 };
 

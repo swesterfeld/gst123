@@ -39,10 +39,45 @@ using std::map;
 static char term_buffer[4096];
 static char term_buffer2[4096];
 static char *term_p = term_buffer2;
+static Terminal *terminal_instance;
+
+static GPollFD stdin_poll_fd = { 0, G_IO_IN, 0 };
+
+static gboolean
+stdin_prepare (GSource    *source,
+               gint       *timeout)
+{
+  *timeout = -1;
+  return FALSE;
+}
+
+static gboolean
+stdin_check (GSource *source)
+{
+  if (stdin_poll_fd.revents & G_IO_IN)
+    return TRUE;
+  else
+    return FALSE;
+}
+
+gboolean
+Terminal::stdin_dispatch (GSource    *source,
+                          GSourceFunc callback,
+                          gpointer    user_data)
+{
+  int key = terminal_instance->getch();
+  if (key > 0)
+    terminal_instance->key_handler->process_input (key);
+  return TRUE;
+}
+
 
 void
-Terminal::init()
+Terminal::init (GMainLoop *loop, KeyHandler *key_handler)
 {
+  terminal_instance = this;
+  this->key_handler = key_handler;
+
   const char *termtype = NULL;
   termtype = getenv ("TERM");
   if (termtype)
@@ -55,6 +90,7 @@ Terminal::init()
   // enable keypad xmit
   printf ("%s", tgetstr ("ks", &term_p));
 
+  // configure input params of the terminal
   tcgetattr (0, &tio_orig);
 
   struct termios tio_new = tio_orig;
@@ -70,6 +106,12 @@ Terminal::init()
   keys[tgetstr ("kr", &term_p)] = TERMINAL_KEY_RIGHT;
   keys[tgetstr ("kP", &term_p)] = TERMINAL_KEY_PAGE_UP;
   keys[tgetstr ("kN", &term_p)] = TERMINAL_KEY_PAGE_DOWN;
+
+  // add mainloop source for keys
+  static GSourceFuncs source_funcs = { stdin_prepare, stdin_check, stdin_dispatch, };
+  GSource *source = g_source_new (&source_funcs, sizeof (GSource));
+  g_source_attach (source, g_main_loop_get_context (loop));
+  g_main_context_add_poll (g_main_loop_get_context (loop), &stdin_poll_fd, G_PRIORITY_DEFAULT);
 }
 
 void
