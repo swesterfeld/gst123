@@ -32,6 +32,9 @@ gst123 - A GStreamer based command line media player
 @item @manb{--verbose} @*
         Print GStreamer pipeline used to play files
 @done
+       Besides filenames, playlist entries or command line args can be
+       directories. In this case, gst123 recursively searches the directory and
+       plays all files contained in it.
 @heading INTERRUPT
        You  can  abort  gst123  at any time by pressing Ctrl-C.  If you are
        playing multiple files, this will stop the current file and begin playing the
