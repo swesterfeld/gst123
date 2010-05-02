@@ -22,15 +22,17 @@
 #include <time.h>
 #include <string.h>
 #include "glib-extra.h"
+#include "config.h"
+#include "terminal.h"
 #include <vector>
 #include <string>
 #include <list>
 
-#define GST123_VERSION "0.0.1"
-
 using std::string;
 using std::vector;
 using std::list;
+
+static Terminal terminal;
 
 struct Tags
 {
@@ -91,7 +93,7 @@ Options::Options ()
   verbose = false;
 }
 
-struct Player
+struct Player : public KeyHandler
 {
   vector<string> uris;
 
@@ -185,13 +187,29 @@ struct Player
   }
 
   void
+  remove_current_uri()
+  {
+    play_position--;
+    uris.erase (uris.begin() + play_position);
+  }
+
+  void
   play_next()
   {
     reset_tags (RESET_ALL_TAGS);
 
     if (options.shuffle)
-      play_position = g_random_int_range (0, uris.size());
-
+      {
+        if (uris.empty())
+          {
+            printf ("No files remaining in playlist.\n");
+            quit();
+          }
+        else
+          {
+            play_position = g_random_int_range (0, uris.size());
+          }
+      }
     if (play_position < uris.size())
       {
 	string uri = uris[play_position++];
@@ -211,6 +229,54 @@ struct Player
   }
 
   void
+  seek (gint64 new_pos)
+  {
+//    overwrite_time_display ();
+
+    // * seekflag:
+    //   GST_SEEK_FLAG_NONE     no flag
+    //   GST_SEEK_FLAG_FLUSH    flush pipeline
+    //   GST_SEEK_FLAG_ACCURATE accurate position is requested, this might be considerably slower for some formats.
+    //   GST_SEEK_FLAG_KEY_UNIT seek to the nearest keyframe. This might be faster but less accurate.
+    //   GST_SEEK_FLAG_SEGMENT  perform a segment seek.
+    //   GST_SEEK_FLAG_SKIP     when doing fast foward or fast reverse
+    //   playback, allow elements to skip frames instead of generating all
+    //   frames. Since 0.10.22.
+    // * seek position: multiply with GST_SECOND to convert seconds to nanoseconds or with
+    //   GST_MSECOND to convert milliseconds to nanoseconds.
+
+    if(new_pos < 0)
+      new_pos = 0;
+
+    gst_element_seek (playbin, 1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH, GST_SEEK_TYPE_SET,
+                      new_pos, GST_SEEK_TYPE_NONE,  GST_CLOCK_TIME_NONE);
+  }
+
+  void
+  relative_seek (double displacement)
+  {
+    GstFormat fmt = GST_FORMAT_TIME;
+    gint64    cur_pos;
+    gst_element_query_position (playbin, &fmt, &cur_pos);
+
+    double new_pos_sec = cur_pos * (1.0 / GST_SECOND) + displacement;
+    seek (new_pos_sec * GST_SECOND);
+  }
+
+  void
+  toggle_pause()
+  {
+//    overwrite_time_display ();
+
+    if(last_state == GST_STATE_PAUSED) {
+      gst_element_set_state (playbin, GST_STATE_PLAYING);
+    }
+    else if(last_state == GST_STATE_PLAYING) {
+      gst_element_set_state (playbin, GST_STATE_PAUSED);
+    }
+  }
+
+  void
   quit()
   {
     overwrite_time_display ();
@@ -219,6 +285,10 @@ struct Player
     if (loop)
       g_main_loop_quit (loop);
   }
+
+  void process_input (int key);
+  void print_keyboard_help();
+  void add_uri_or_directory (const string& name);
 
   Player() : playbin (0), loop(0), play_position (0)
   {
@@ -308,7 +378,9 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
       g_error_free (err);
       g_free (debug);
 
-      player.quit();
+      g_print ("=> file cannot be played and will be removed from playlist\n\n");
+      player.remove_current_uri();
+      player.play_next();
       break;
     }
     case GST_MESSAGE_EOS:
@@ -387,9 +459,12 @@ cb_print_position (gpointer *data)
       GTimeVal tv_pos, tv_len;
       GST_TIME_TO_TIMEVAL (pos, tv_pos);
       GST_TIME_TO_TIMEVAL (len, tv_len);
-      g_print ("\rTime: %02lu:%02lu.%02lu", tv_pos.tv_sec / 60, tv_pos.tv_sec % 60, tv_pos.tv_usec / 10000);
+
+      glong pos_min = tv_pos.tv_sec / 60;
+      glong len_min = tv_len.tv_sec / 60;
+      g_print ("\rTime: %01lu:%02lu:%02lu.%02lu", pos_min / 60, pos_min % 60, tv_pos.tv_sec % 60, tv_pos.tv_usec / 10000);
       if (len > 0)   /* streams (i.e. http) have len == -1 */
-	g_print (" of %02lu:%02lu.%02lu", tv_len.tv_sec / 60, tv_len.tv_sec % 60, tv_len.tv_usec / 10000);
+	g_print (" of %01lu:%02lu:%02lu.%02lu", len_min / 60, len_min % 60, tv_len.tv_sec % 60, tv_len.tv_usec / 10000);
       g_print ("\r");
     }
 
@@ -473,7 +548,7 @@ Options::parse (int   *argc_p,
 	}
       else if (strcmp (argv[i], "--version") == 0 || strcmp (argv[i], "-v") == 0)
 	{
-	  printf ("%s %s\n", program_name.c_str(), GST123_VERSION);
+	  printf ("%s %s\n", program_name.c_str(), VERSION);
 	  exit (0);
 	}
       else if (check_arg (argc, argv, &i, "--verbose"))
@@ -516,6 +591,108 @@ Options::print_usage ()
   g_printerr ("\n");
 }
 
+static inline bool
+is_directory (const string& path)
+{
+  return g_file_test (path.c_str(), G_FILE_TEST_IS_DIR);
+}
+
+static vector<string>
+crawl (const string& path)
+{
+  vector<string> results;
+
+  GDir *dir = g_dir_open (path.c_str(), 0, NULL);
+  if (dir)
+    {
+      const char *name;
+
+      while ((name = g_dir_read_name (dir)))
+        {
+          char *full_name = g_build_filename (path.c_str(), name, NULL);
+          if (is_directory (full_name))
+            {
+              vector<string> subdir_files = crawl (full_name);
+              results.insert (results.end(), subdir_files.begin(), subdir_files.end());
+            }
+          else
+            {
+              results.push_back (full_name);
+            }
+          g_free (full_name);
+        }
+      g_dir_close (dir);
+    }
+  return results;
+}
+
+/*
+ * handle user input
+ */
+void
+Player::process_input (int key)
+{
+  switch (key)
+    {
+      case Terminal::TERMINAL_KEY_RIGHT:
+        relative_seek (10);
+        break;
+      case Terminal::TERMINAL_KEY_LEFT:
+        relative_seek (-10);
+        break;
+      case Terminal::TERMINAL_KEY_UP:
+        relative_seek (60);
+        break;
+      case Terminal::TERMINAL_KEY_DOWN:
+        relative_seek (-60);
+        break;
+      case Terminal::TERMINAL_KEY_PAGE_UP:
+        relative_seek (600);
+        break;
+      case Terminal::TERMINAL_KEY_PAGE_DOWN:
+        relative_seek (-600);
+        break;
+      case 'q':
+        quit();
+        break;
+      case ' ':
+        toggle_pause();
+        break;
+      case '?':
+        print_keyboard_help();
+        break;
+    }
+}
+
+void
+Player::print_keyboard_help()
+{
+  printf ("\n\n");
+  printf ("==================== gst123 keyboard commands =======================\n");
+  printf ("   cursor left/right    -     seek 10 seconds backwards/forwards\n");
+  printf ("   cursor down/up       -     seek 1  minute  backwards/forwards\n");
+  printf ("   page down/up         -     seek 10 minute  backwards/forwards\n");
+  printf ("   space                -     toggle pause\n");
+  printf ("   q                    -     quit gst123\n");
+  printf ("   ?                    -     this help\n");
+  printf ("=====================================================================\n");
+  printf ("\n\n");
+}
+
+void
+Player::add_uri_or_directory (const string& name)
+{
+  if (is_directory (name))          // => play all files in this dir
+    {
+      vector<string> uris = crawl (name);
+      for (vector<string>::const_iterator ui = uris.begin(); ui != uris.end(); ui++)
+        add_uri (*ui);
+    }
+  else
+    {
+      add_uri (name);
+    }
+}
 
 gint
 main (gint   argc,
@@ -531,7 +708,7 @@ main (gint   argc,
 
   /* set up */
   for (int i = 1; i < argc; i++)
-    player.add_uri (argv[i]);
+    player.add_uri_or_directory (argv[i]);
 
   for (list<string>::iterator pi = options.playlists.begin(); pi != options.playlists.end(); pi++)
     {
@@ -546,13 +723,17 @@ main (gint   argc,
 	    }
 	}
 
+      string playlist_dirname = g_path_get_dirname (pi->c_str());
       char uri[1024];
       while (fgets (uri, 1024, f))
 	{
 	  int l = strlen (uri);
 	  while (l && (uri[l-1] == '\n' || uri[l-1] == '\r'))
 	    uri[--l] = 0;
-	  player.add_uri (uri);
+          if (!g_path_is_absolute (uri))
+            player.add_uri_or_directory (g_build_filename (playlist_dirname.c_str(), uri, 0));
+	  else
+            player.add_uri_or_directory (uri);
 	}
 
       if (*pi != "-")
@@ -572,7 +753,9 @@ main (gint   argc,
   player.play_next();
 
   /* now run */
+  terminal.init (player.loop, &player);
   g_main_loop_run (player.loop);
+  terminal.end();
 
   /* also clean up */
   gst_element_set_state (player.playbin, GST_STATE_NULL);

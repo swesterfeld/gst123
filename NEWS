@@ -1,3 +1,9 @@
+Overview of Changes in gst123-0.0.2:
+
+* passing a directory as argument will play all files in that directory
+* cursor keys can be used to seek in the file that is being played
+* time display includes hours now
+
 Overview of Changes in gst123-0.0.1:
 
 * initial public release
