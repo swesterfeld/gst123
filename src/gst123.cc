@@ -23,6 +23,7 @@
 #include <string.h>
 #include "glib-extra.h"
 #include "config.h"
+#include "terminal.h"
 #include <vector>
 #include <string>
 #include <list>
@@ -30,6 +31,8 @@
 using std::string;
 using std::vector;
 using std::list;
+
+static Terminal terminal;
 
 struct Tags
 {
@@ -226,6 +229,54 @@ struct Player
   }
 
   void
+  seek (gint64 new_pos)
+  {
+//    overwrite_time_display ();
+
+    // * seekflag:
+    //   GST_SEEK_FLAG_NONE     no flag
+    //   GST_SEEK_FLAG_FLUSH    flush pipeline
+    //   GST_SEEK_FLAG_ACCURATE accurate position is requested, this might be considerably slower for some formats.
+    //   GST_SEEK_FLAG_KEY_UNIT seek to the nearest keyframe. This might be faster but less accurate.
+    //   GST_SEEK_FLAG_SEGMENT  perform a segment seek.
+    //   GST_SEEK_FLAG_SKIP     when doing fast foward or fast reverse
+    //   playback, allow elements to skip frames instead of generating all
+    //   frames. Since 0.10.22.
+    // * seek position: multiply with GST_SECOND to convert seconds to nanoseconds or with
+    //   GST_MSECOND to convert milliseconds to nanoseconds.
+
+    if(new_pos < 0)
+      new_pos = 0;
+
+    gst_element_seek (playbin, 1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH, GST_SEEK_TYPE_SET,
+                      new_pos, GST_SEEK_TYPE_NONE,  GST_CLOCK_TIME_NONE);
+  }
+
+  void
+  relative_seek (double displacement)
+  {
+    GstFormat fmt = GST_FORMAT_TIME;
+    gint64    cur_pos;
+    gst_element_query_position (playbin, &fmt, &cur_pos);
+
+    double new_pos_sec = cur_pos * (1.0 / GST_SECOND) + displacement;
+    seek (new_pos_sec * GST_SECOND);
+  }
+
+  void
+  toggle_pause()
+  {
+//    overwrite_time_display ();
+
+    if(last_state == GST_STATE_PAUSED) {
+      gst_element_set_state (playbin, GST_STATE_PLAYING);
+    }
+    else if(last_state == GST_STATE_PLAYING) {
+      gst_element_set_state (playbin, GST_STATE_PAUSED);
+    }
+  }
+
+  void
   quit()
   {
     overwrite_time_display ();
@@ -240,6 +291,8 @@ struct Player
     cols = get_columns();
   }
 };
+
+static Player player;
 
 static void
 collect_tags (const GstTagList *tag_list,
@@ -571,17 +624,72 @@ crawl (const string& path)
   return results;
 }
 
+GPollFD stdin_poll_fd = { 0, G_IO_IN, 0 };
+
+gboolean stdin_prepare (GSource    *source,
+                        gint       *timeout)
+{
+  *timeout = -1;
+  return FALSE;
+}
+
+gboolean
+stdin_check (GSource *source)
+{
+  if (stdin_poll_fd.revents & G_IO_IN)
+    return TRUE;
+  else
+    return FALSE;
+}
+
+gboolean
+stdin_dispatch (GSource    *source,
+                GSourceFunc callback,
+                gpointer    user_data)
+{
+  int key = terminal.getch();
+  switch (key)
+    {
+      case Terminal::TERMINAL_KEY_RIGHT:
+        player.relative_seek (10);
+        break;
+      case Terminal::TERMINAL_KEY_LEFT:
+        player.relative_seek (-10);
+        break;
+      case Terminal::TERMINAL_KEY_UP:
+        player.relative_seek (60);
+        break;
+      case Terminal::TERMINAL_KEY_DOWN:
+        player.relative_seek (-60);
+        break;
+      case Terminal::TERMINAL_KEY_PAGE_UP:
+        player.relative_seek (600);
+        break;
+      case Terminal::TERMINAL_KEY_PAGE_DOWN:
+        player.relative_seek (-600);
+        break;
+      case 'q':
+        player.quit();
+        break;
+      case ' ':
+        player.toggle_pause();
+        break;
+    }
+  return TRUE;
+}
+
+
 gint
 main (gint   argc,
       gchar *argv[])
 {
-  Player player;
-
   /* init GStreamer */
   gst_init (&argc, &argv);
   player.loop = g_main_loop_new (NULL, FALSE);
 
   options.parse (&argc, &argv);
+
+  terminal.init();
 
   /* set up */
   for (int i = 1; i < argc; i++)
@@ -634,6 +742,13 @@ main (gint   argc,
   g_usignal_add (SIGINT, sigint_usr_code, &player);
   player.play_next();
 
+  // add mainloop source for keys
+  GMainLoop *loop = g_main_loop_new (NULL, FALSE);
+  GSourceFuncs source_funcs = { stdin_prepare, stdin_check, stdin_dispatch, };
+  GSource *source = g_source_new (&source_funcs, sizeof (GSource));
+  g_source_attach (source, g_main_loop_get_context (loop));
+  g_main_context_add_poll (g_main_loop_get_context (loop), &stdin_poll_fd, G_PRIORITY_DEFAULT);
+
   /* now run */
   g_main_loop_run (player.loop);
 
@@ -641,5 +756,6 @@ main (gint   argc,
   gst_element_set_state (player.playbin, GST_STATE_NULL);
   gst_object_unref (GST_OBJECT (player.playbin));
 
+  terminal.end();
   return 0;
 }

@@ -16,8 +16,19 @@ AC_DEFUN([AC_GSTREAMER_REQUIREMENTS],
     AC_SUBST(GSTREAMER_LIBS)
 ])
 
+dnl
+dnl We need libncurses
+dnl
+AC_DEFUN([AC_NCURSES_REQUIREMENTS],
+[
+    AC_CHECK_LIB(ncurses, initscr)
+    NCURSES_LIBS='-lncurses'
+    AC_SUBST(NCURSES_LIBS)
+])
+
 # Check requirement sets
 AC_GSTREAMER_REQUIREMENTS
+AC_NCURSES_REQUIREMENTS
 
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT
