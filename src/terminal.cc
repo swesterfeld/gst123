@@ -84,7 +84,6 @@ Terminal::end()
 int
 Terminal::getch()
 {
-  int c;
   for (;;)
     {
       char buffer[1024];
@@ -93,7 +92,7 @@ Terminal::getch()
         {
           for (int bpos = 0; bpos < r; bpos++)
             {
-              c = (unsigned char) buffer[bpos];
+              int c = (unsigned char) buffer[bpos];
               chars.push_back (c);
             }
         }
@@ -102,26 +101,27 @@ Terminal::getch()
           if (chars.empty())
             return -1;
 
-          // compress and return
+          // interpret escape sequences at the start of the chars buffer
           for (map<string, int>::iterator ki = keys.begin(); ki != keys.end(); ki++)
             {
-              const char *p = ki->first.c_str();
+              const string& esc_seq = ki->first;
 
-              if (strlen (p) <= chars.size())
+              if (esc_seq.size() <= chars.size())
                 {
                   bool match = true;
-                  for (int i = 0; i < strlen(p); i++)
+                  for (size_t i = 0; i < esc_seq.size(); i++)
                     {
-                      if (p[i] != chars[i])
+                      if (esc_seq[i] != chars[i])
                         match = false;
                     }
                   if (match)
                     {
-                      chars.erase (chars.begin(), chars.begin() + strlen (p));
+                      chars.erase (chars.begin(), chars.begin() + esc_seq.size());
                       chars.insert (chars.begin(), ki->second);
                     }
                 }
             }
+          // return one interpreted char
           int rc = *chars.begin();
           chars.erase (chars.begin());
           return rc;
