@@ -41,15 +41,17 @@ am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
+CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_gst123_OBJECTS = gst123.$(OBJEXT) glib-extra.$(OBJEXT)
+am_gst123_OBJECTS = gst123.$(OBJEXT) glib-extra.$(OBJEXT) \
+	terminal.$(OBJEXT)
 gst123_OBJECTS = $(am_gst123_OBJECTS)
 am__DEPENDENCIES_1 =
 gst123_DEPENDENCIES = $(am__DEPENDENCIES_1)
-DEFAULT_INCLUDES = -I.@am__isrc@
+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
@@ -124,6 +126,7 @@ LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
+NCURSES_LIBS = @NCURSES_LIBS@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
@@ -183,7 +186,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CXXFLAGS = $(GSTREAMER_CFLAGS)
 AM_CFLAGS = $(GSTREAMER_CFLAGS)
-gst123_SOURCES = gst123.cc glib-extra.c glib-extra.h
+gst123_SOURCES = gst123.cc glib-extra.c glib-extra.h terminal.cc terminal.h
 gst123_LDADD = $(GSTREAMER_LIBS)
 dist_man_MANS = gst123.1
 all: all-am
@@ -269,6 +272,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/glib-extra.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gst123.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/terminal.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -550,6 +554,9 @@ uninstall-man: uninstall-man1
 	tags uninstall uninstall-am uninstall-binPROGRAMS \
 	uninstall-man uninstall-man1
 
+
+rebuild-manpage:
+	~/src/beast/doxer/doxer.py doxi2man gst123.1.doxi
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
