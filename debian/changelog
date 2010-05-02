@@ -1,5 +1,5 @@
-gst123 (0.0.1-1) unstable; urgency=low
+gst123 (0.0.2-1) unstable; urgency=low
 
   * Initial release (Closes: #576258)
 
- -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@users.sourceforge.net>  Fri, 02 Apr 2010 16:14:25 +0200
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Sun, 02 May 2010 16:02:13 +0300
