@@ -741,11 +741,10 @@ main (gint   argc,
   player.play_next();
 
   // add mainloop source for keys
-  GMainLoop *loop = g_main_loop_new (NULL, FALSE);
   GSourceFuncs source_funcs = { stdin_prepare, stdin_check, stdin_dispatch, };
   GSource *source = g_source_new (&source_funcs, sizeof (GSource));
-  g_source_attach (source, g_main_loop_get_context (loop));
-  g_main_context_add_poll (g_main_loop_get_context (loop), &stdin_poll_fd, G_PRIORITY_DEFAULT);
+  g_source_attach (source, g_main_loop_get_context (player.loop));
+  g_main_context_add_poll (g_main_loop_get_context (player.loop), &stdin_poll_fd, G_PRIORITY_DEFAULT);
 
   /* now run */
   terminal.init();
