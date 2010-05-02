@@ -38,5 +38,22 @@ gst123 - A GStreamer based command line media player
        next one.  If you want to abort playing immediately instead of skipping to the
        next file, press Ctrl-C within the first second of the playback of a new file.
 
+@heading KEYBOARD INPUT
+
+@itemize{none}
+@item @manb{cursor left/right} @*
+    Seek 10 seconds backwards/forwards.
+@item @manb{cursor down/up} @*
+    Seek 1  minute  backwards/forwards.
+@item @manb{page down/up} @*
+    Seek 10 minute  backwards/forwards.
+@item @manb{space} @*
+    Toggle pause.
+@item @manb{q} @*
+    Quit gst123.
+@item @manb{?} @*
+    Show keyboad help.
+@done
+
 @heading SEE ALSO
-@longuri{http://beast.gtk.org, BEAST/BSE Website}
+@longuri{http://space.twc.de/~stefan/gst123.php, gst123 Website}

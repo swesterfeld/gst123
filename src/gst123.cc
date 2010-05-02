@@ -287,6 +287,7 @@ struct Player : public KeyHandler
   }
 
   void process_input (int key);
+  void print_keyboard_help();
 
   Player() : playbin (0), loop(0), play_position (0)
   {
@@ -656,7 +657,25 @@ Player::process_input (int key)
       case ' ':
         toggle_pause();
         break;
+      case '?':
+        print_keyboard_help();
+        break;
     }
+}
+
+void
+Player::print_keyboard_help()
+{
+  printf ("\n\n");
+  printf ("==================== gst123 keyboard commands =======================\n");
+  printf ("   cursor left/right    -     seek 10 seconds backwards/forwards\n");
+  printf ("   cursor down/up       -     seek 1  minute  backwards/forwards\n");
+  printf ("   page down/up         -     seek 10 minute  backwards/forwards\n");
+  printf ("   space                -     toggle pause\n");
+  printf ("   q                    -     quit gst123\n");
+  printf ("   ?                    -     this help\n");
+  printf ("=====================================================================\n");
+  printf ("\n\n");
 }
 
 
