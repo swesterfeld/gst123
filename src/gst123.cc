@@ -689,8 +689,6 @@ main (gint   argc,
 
   options.parse (&argc, &argv);
 
-  terminal.init();
-
   /* set up */
   for (int i = 1; i < argc; i++)
     {
@@ -750,12 +748,13 @@ main (gint   argc,
   g_main_context_add_poll (g_main_loop_get_context (loop), &stdin_poll_fd, G_PRIORITY_DEFAULT);
 
   /* now run */
+  terminal.init();
   g_main_loop_run (player.loop);
+  terminal.end();
 
   /* also clean up */
   gst_element_set_state (player.playbin, GST_STATE_NULL);
   gst_object_unref (GST_OBJECT (player.playbin));
 
-  terminal.end();
   return 0;
 }
