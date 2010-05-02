@@ -288,6 +288,7 @@ struct Player : public KeyHandler
 
   void process_input (int key);
   void print_keyboard_help();
+  void add_uri_or_directory (const string& name);
 
   Player() : playbin (0), loop(0), play_position (0)
   {
@@ -678,6 +679,20 @@ Player::print_keyboard_help()
   printf ("\n\n");
 }
 
+void
+Player::add_uri_or_directory (const string& name)
+{
+  if (is_directory (name))          // => play all files in this dir
+    {
+      vector<string> uris = crawl (name);
+      for (vector<string>::const_iterator ui = uris.begin(); ui != uris.end(); ui++)
+        add_uri (*ui);
+    }
+  else
+    {
+      add_uri (name);
+    }
+}
 
 gint
 main (gint   argc,
@@ -693,16 +708,7 @@ main (gint   argc,
 
   /* set up */
   for (int i = 1; i < argc; i++)
-    {
-      if (is_directory (argv[i]))          // directory specified on commandline => play all files in this dir
-        {
-          vector<string> uris = crawl (argv[i]);
-          for (vector<string>::const_iterator ui = uris.begin(); ui != uris.end(); ui++)
-            player.add_uri (*ui);
-        }
-      else
-        player.add_uri (argv[i]);
-    }
+    player.add_uri_or_directory (argv[i]);
 
   for (list<string>::iterator pi = options.playlists.begin(); pi != options.playlists.end(); pi++)
     {
@@ -717,13 +723,17 @@ main (gint   argc,
 	    }
 	}
 
+      string playlist_dirname = g_path_get_dirname (pi->c_str());
       char uri[1024];
       while (fgets (uri, 1024, f))
 	{
 	  int l = strlen (uri);
 	  while (l && (uri[l-1] == '\n' || uri[l-1] == '\r'))
 	    uri[--l] = 0;
-	  player.add_uri (uri);
+          if (!g_path_is_absolute (uri))
+            player.add_uri_or_directory (g_build_filename (playlist_dirname.c_str(), uri, 0));
+	  else
+            player.add_uri_or_directory (uri);
 	}
 
       if (*pi != "-")
