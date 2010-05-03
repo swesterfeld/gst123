@@ -667,6 +667,8 @@ Player::process_input (int key)
 void
 Player::print_keyboard_help()
 {
+  overwrite_time_display();
+
   printf ("\n\n");
   printf ("==================== gst123 keyboard commands =======================\n");
   printf ("   cursor left/right    -     seek 10 seconds backwards/forwards\n");
