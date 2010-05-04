@@ -41,8 +41,11 @@ class Terminal
   KeyHandler                *key_handler;
 
   static gboolean stdin_dispatch (GSource *source, GSourceFunc callback, gpointer user_data);
+  static void signal_sig_cont (int);
+
   void read_stdin();
   int getch();
+  void init_terminal();
 
 public:
   enum {
