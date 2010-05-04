@@ -65,9 +65,18 @@ Terminal::stdin_dispatch (GSource    *source,
                           GSourceFunc callback,
                           gpointer    user_data)
 {
-  int key = terminal_instance->getch();
-  if (key > 0)
-    terminal_instance->key_handler->process_input (key);
+  terminal_instance->read_stdin();
+
+  int key;
+  do
+    {
+      key = terminal_instance->getch();
+
+      if (key > 0)
+        terminal_instance->key_handler->process_input (key);
+    }
+  while (key > 0);
+
   return TRUE;
 }
 
@@ -123,51 +132,49 @@ Terminal::end()
   printf ("%s", tgetstr ("ke", &term_p));
 }
 
+void
+Terminal::read_stdin()
+{
+  char buffer[1024];
+  int r = read (0, buffer, 1024);
+  for (int bpos = 0; bpos < r; bpos++)
+    {
+      int c = (unsigned char) buffer[bpos];
+      chars.push_back (c);
+    }
+}
+
 int
 Terminal::getch()
 {
   for (;;)
     {
-      char buffer[1024];
-      int r = read (0, buffer, 1024);
-      if (r >= 1)
-        {
-          for (int bpos = 0; bpos < r; bpos++)
-            {
-              int c = (unsigned char) buffer[bpos];
-              chars.push_back (c);
-            }
-        }
-      if (r == 0)
-        {
-          if (chars.empty())
-            return -1;
+      if (chars.empty())
+        return -1;
 
-          // interpret escape sequences at the start of the chars buffer
-          for (map<string, int>::iterator ki = keys.begin(); ki != keys.end(); ki++)
-            {
-              const string& esc_seq = ki->first;
+      // interpret escape sequences at the start of the chars buffer
+      for (map<string, int>::iterator ki = keys.begin(); ki != keys.end(); ki++)
+        {
+          const string& esc_seq = ki->first;
 
-              if (esc_seq.size() <= chars.size())
+          if (esc_seq.size() <= chars.size())
+            {
+              bool match = true;
+              for (size_t i = 0; i < esc_seq.size(); i++)
                 {
-                  bool match = true;
-                  for (size_t i = 0; i < esc_seq.size(); i++)
-                    {
-                      if (esc_seq[i] != chars[i])
-                        match = false;
-                    }
-                  if (match)
-                    {
-                      chars.erase (chars.begin(), chars.begin() + esc_seq.size());
-                      chars.insert (chars.begin(), ki->second);
-                    }
+                  if (esc_seq[i] != chars[i])
+                    match = false;
+                }
+              if (match)
+                {
+                  chars.erase (chars.begin(), chars.begin() + esc_seq.size());
+                  chars.insert (chars.begin(), ki->second);
                 }
             }
-          // return one interpreted char
-          int rc = *chars.begin();
-          chars.erase (chars.begin());
-          return rc;
         }
+      // return one interpreted char
+      int rc = *chars.begin();
+      chars.erase (chars.begin());
+      return rc;
     }
-  return 0;
 }

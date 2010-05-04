@@ -41,6 +41,7 @@ class Terminal
   KeyHandler                *key_handler;
 
   static gboolean stdin_dispatch (GSource *source, GSourceFunc callback, gpointer user_data);
+  void read_stdin();
   int getch();
 
 public:
