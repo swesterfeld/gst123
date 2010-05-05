@@ -498,6 +498,15 @@ cb_print_position (gpointer *data)
       g_print ("\rTime: %01lu:%02lu:%02lu.%02lu", pos_min / 60, pos_min % 60, tv_pos.tv_sec % 60, tv_pos.tv_usec / 10000);
       if (len > 0)   /* streams (i.e. http) have len == -1 */
 	g_print (" of %01lu:%02lu:%02lu.%02lu", len_min / 60, len_min % 60, tv_len.tv_sec % 60, tv_len.tv_usec / 10000);
+
+      // Print [MUTED] if sound is muted:
+      gdouble cur_volume;
+      g_object_get (G_OBJECT (player.playbin), "volume", &cur_volume, NULL);
+
+      if (cur_volume == 0)
+        g_print (" [MUTED]");
+      else
+        g_print ("        ");
       g_print ("\r");
     }
 
