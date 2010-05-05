@@ -52,6 +52,8 @@ gst123 - A GStreamer based command line media player
     Seek 10 minute  backwards/forwards.
 @item @manb{space} @*
     Toggle pause.
+@item @manb{m} @*
+    Toggle mute/unmute.
 @item @manb{q} @*
     Quit gst123.
 @item @manb{?} @*
