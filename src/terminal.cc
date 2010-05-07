@@ -65,12 +65,43 @@ Terminal::stdin_dispatch (GSource    *source,
                           GSourceFunc callback,
                           gpointer    user_data)
 {
-  int key = terminal_instance->getch();
-  if (key > 0)
-    terminal_instance->key_handler->process_input (key);
+  terminal_instance->read_stdin();
+
+  int key;
+  do
+    {
+      key = terminal_instance->getch();
+
+      if (key > 0)
+        terminal_instance->key_handler->process_input (key);
+    }
+  while (key > 0);
+
   return TRUE;
 }
 
+void
+Terminal::signal_sig_cont (int)
+{
+  terminal_instance->init_terminal();
+}
+
+void
+Terminal::init_terminal()
+{
+  // configure input params of the terminal
+  tcgetattr (0, &tio_orig);
+
+  struct termios tio_new = tio_orig;
+  tio_new.c_lflag &= ~(ICANON|ECHO); /* Clear ICANON and ECHO. */
+  tio_new.c_cc[VMIN] = 0;
+  tio_new.c_cc[VTIME] = 1; /* 0.1 seconds */
+  tcsetattr (0, TCSANOW, &tio_new);
+
+  // enable keypad_xmit
+  printf ("%s", tgetstr ("ks", &term_p));
+  fflush (stdout);
+}
 
 void
 Terminal::init (GMainLoop *loop, KeyHandler *key_handler)
@@ -87,17 +118,8 @@ Terminal::init (GMainLoop *loop, KeyHandler *key_handler)
 
   tgetent (term_buffer, terminal_type.c_str());
 
-  // enable keypad xmit
-  printf ("%s", tgetstr ("ks", &term_p));
-
-  // configure input params of the terminal
-  tcgetattr (0, &tio_orig);
-
-  struct termios tio_new = tio_orig;
-  tio_new.c_lflag &= ~(ICANON|ECHO); /* Clear ICANON and ECHO. */
-  tio_new.c_cc[VMIN] = 0;
-  tio_new.c_cc[VTIME] = 1; /* 0.1 seconds */
-  tcsetattr (0, TCSANOW, &tio_new);
+  // initialize termios & keypad xmit
+  init_terminal();
 
   // initialize common keyboard escape sequences
   keys[tgetstr ("ku", &term_p)] = TERMINAL_KEY_UP;
@@ -112,6 +134,8 @@ Terminal::init (GMainLoop *loop, KeyHandler *key_handler)
   GSource *source = g_source_new (&source_funcs, sizeof (GSource));
   g_source_attach (source, g_main_loop_get_context (loop));
   g_main_context_add_poll (g_main_loop_get_context (loop), &stdin_poll_fd, G_PRIORITY_DEFAULT);
+
+  signal (SIGCONT, signal_sig_cont);
 }
 
 void
@@ -123,51 +147,49 @@ Terminal::end()
   printf ("%s", tgetstr ("ke", &term_p));
 }
 
+void
+Terminal::read_stdin()
+{
+  char buffer[1024];
+  int r = read (0, buffer, 1024);
+  for (int bpos = 0; bpos < r; bpos++)
+    {
+      int c = (unsigned char) buffer[bpos];
+      chars.push_back (c);
+    }
+}
+
 int
 Terminal::getch()
 {
   for (;;)
     {
-      char buffer[1024];
-      int r = read (0, buffer, 1024);
-      if (r >= 1)
-        {
-          for (int bpos = 0; bpos < r; bpos++)
-            {
-              int c = (unsigned char) buffer[bpos];
-              chars.push_back (c);
-            }
-        }
-      if (r == 0)
-        {
-          if (chars.empty())
-            return -1;
+      if (chars.empty())
+        return -1;
 
-          // interpret escape sequences at the start of the chars buffer
-          for (map<string, int>::iterator ki = keys.begin(); ki != keys.end(); ki++)
-            {
-              const string& esc_seq = ki->first;
+      // interpret escape sequences at the start of the chars buffer
+      for (map<string, int>::iterator ki = keys.begin(); ki != keys.end(); ki++)
+        {
+          const string& esc_seq = ki->first;
 
-              if (esc_seq.size() <= chars.size())
+          if (esc_seq.size() <= chars.size())
+            {
+              bool match = true;
+              for (size_t i = 0; i < esc_seq.size(); i++)
                 {
-                  bool match = true;
-                  for (size_t i = 0; i < esc_seq.size(); i++)
-                    {
-                      if (esc_seq[i] != chars[i])
-                        match = false;
-                    }
-                  if (match)
-                    {
-                      chars.erase (chars.begin(), chars.begin() + esc_seq.size());
-                      chars.insert (chars.begin(), ki->second);
-                    }
+                  if (esc_seq[i] != chars[i])
+                    match = false;
+                }
+              if (match)
+                {
+                  chars.erase (chars.begin(), chars.begin() + esc_seq.size());
+                  chars.insert (chars.begin(), ki->second);
                 }
             }
-          // return one interpreted char
-          int rc = *chars.begin();
-          chars.erase (chars.begin());
-          return rc;
         }
+      // return one interpreted char
+      int rc = *chars.begin();
+      chars.erase (chars.begin());
+      return rc;
     }
-  return 0;
 }
