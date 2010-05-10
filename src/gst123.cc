@@ -44,6 +44,7 @@ struct Tags
   string comment;
   string genre;
   string codec;
+  string vcodec;
   guint bitrate;
 
   Tags() : timestamp (-1), bitrate (0)
@@ -52,12 +53,12 @@ struct Tags
 };
 
 static double
-get_time ()
+get_time()
 {
   timeval tv;
   gettimeofday (&tv, 0);
 
-  return double(tv.tv_sec) + double(tv.tv_usec) * (1.0 / 1000000.0);
+  return double (tv.tv_sec) + double (tv.tv_usec) * (1.0 / 1000000.0);
 }
 
 static int
@@ -104,6 +105,8 @@ struct Player : public KeyHandler
   int            cols;
   Tags           tags;
   GstState       last_state;
+
+  gdouble        unmute_volume;
 
   enum
   {
@@ -161,17 +164,17 @@ struct Player : public KeyHandler
 	  overwrite_time_display();
 	  printf ("\n");
 	  if (tags.title != "" || tags.artist != "")
-	    printf ("%s %s\n",	  make_n_char_string ("Title   : " + tags.title, cols / 2 - 1).c_str(),  
+	    printf ("%s %s\n",	  make_n_char_string ("Title   : " + tags.title, cols / 2 - 1).c_str(),
 	                          make_n_char_string ("Artist  : " + tags.artist, cols / 2 - 1).c_str());
 	  if (tags.album != "" || tags.genre != "")
-	    printf ("%s %s\n",	  make_n_char_string ("Album   : " + tags.album, cols / 2 - 1).c_str(),  
+	    printf ("%s %s\n",	  make_n_char_string ("Album   : " + tags.album, cols / 2 - 1).c_str(),
 	                          make_n_char_string ("Genre   : " + tags.genre, cols / 2 - 1).c_str());
 	  if (tags.comment != "" || tags.date != "")
 	    printf ("%s %s\n",	  make_n_char_string ("Comment : " + tags.comment, cols / 2 - 1).c_str(),
 	                          make_n_char_string ("Date    : " + tags.date, cols / 2 - 1).c_str());
-	  if (tags.codec != "" || tags.bitrate != 0)
+	  if (tags.codec != "" || tags.vcodec != "" || tags.bitrate != 0)
 	    printf ("%s %s%.1f kbit/s\n",
-	                          make_n_char_string ("Codec   : " + tags.codec, cols / 2 - 1).c_str(),  
+	                          make_n_char_string ("Codec   : " + tags.codec + " (audio) " + ((tags.vcodec != "") ? tags.vcodec + " (video)":""), cols / 2 - 1).c_str(),
 	                                             ("Bitrate : "), tags.bitrate / 1000.0);
 	  printf ("\n");
 	  reset_tags (KEEP_CODEC_TAGS);
@@ -179,7 +182,7 @@ struct Player : public KeyHandler
   }
 
   void
-  overwrite_time_display ()
+  overwrite_time_display()
   {
     for (int i = 0; i < cols; i++)
       printf (" ");
@@ -245,7 +248,7 @@ struct Player : public KeyHandler
     // * seek position: multiply with GST_SECOND to convert seconds to nanoseconds or with
     //   GST_MSECOND to convert milliseconds to nanoseconds.
 
-    if(new_pos < 0)
+    if (new_pos < 0)
       new_pos = 0;
 
     gst_element_seek (playbin, 1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH, GST_SEEK_TYPE_SET,
@@ -268,18 +271,49 @@ struct Player : public KeyHandler
   {
 //    overwrite_time_display ();
 
-    if(last_state == GST_STATE_PAUSED) {
+    if (last_state == GST_STATE_PAUSED) {
       gst_element_set_state (playbin, GST_STATE_PLAYING);
     }
-    else if(last_state == GST_STATE_PLAYING) {
+    else if (last_state == GST_STATE_PLAYING) {
       gst_element_set_state (playbin, GST_STATE_PAUSED);
     }
   }
 
   void
+  set_volume (gdouble volume_change)
+  {
+    gdouble cur_volume;
+    g_object_get (G_OBJECT (playbin), "volume", &cur_volume, NULL);
+    cur_volume += volume_change;
+
+    overwrite_time_display();
+    printf ("Volume: %4.1f%% \n", cur_volume*100);
+
+    if ((cur_volume >= 0) && (cur_volume <= 10))
+      g_object_set (G_OBJECT (playbin), "volume", cur_volume, NULL);
+  }
+
+  void
+  mute_unmute()
+  {
+    gdouble cur_volume;
+    g_object_get (G_OBJECT (playbin), "volume", &cur_volume, NULL);
+
+    if (cur_volume == 0)
+      {
+        g_object_set (G_OBJECT (playbin), "volume", unmute_volume, NULL);
+      }
+    else
+      {
+        unmute_volume = cur_volume;
+        g_object_set (G_OBJECT (playbin), "volume", 0.0, NULL);
+      }
+  }
+
+  void
   quit()
   {
-    overwrite_time_display ();
+    overwrite_time_display();
 
     gst_element_set_state (playbin, GST_STATE_NULL);
     if (loop)
@@ -301,7 +335,7 @@ collect_tags (const GstTagList *tag_list,
               const gchar *tag,
 	      gpointer user_data)
 {
-  Tags& tags = *(Tags *) user_data;  
+  Tags& tags = *(Tags *) user_data;
   char *value;
   if (strcmp (tag, GST_TAG_TITLE) == 0 && gst_tag_list_get_string (tag_list, GST_TAG_TITLE, &value))
     tags.title = value;
@@ -317,6 +351,8 @@ collect_tags (const GstTagList *tag_list,
     tags.codec = value;
   if (strcmp (tag, GST_TAG_BITRATE) == 0)
     gst_tag_list_get_uint (tag_list, GST_TAG_BITRATE, &tags.bitrate);
+  if (strcmp (tag, GST_TAG_VIDEO_CODEC) == 0 && gst_tag_list_get_string (tag_list, GST_TAG_VIDEO_CODEC, &value))
+    tags.vcodec = value;
 
   if (strcmp (tag, GST_TAG_DATE) == 0)
     {
@@ -465,6 +501,15 @@ cb_print_position (gpointer *data)
       g_print ("\rTime: %01lu:%02lu:%02lu.%02lu", pos_min / 60, pos_min % 60, tv_pos.tv_sec % 60, tv_pos.tv_usec / 10000);
       if (len > 0)   /* streams (i.e. http) have len == -1 */
 	g_print (" of %01lu:%02lu:%02lu.%02lu", len_min / 60, len_min % 60, tv_len.tv_sec % 60, tv_len.tv_usec / 10000);
+
+      // Print [MUTED] if sound is muted:
+      gdouble cur_volume;
+      g_object_get (G_OBJECT (player.playbin), "volume", &cur_volume, NULL);
+
+      if (cur_volume == 0)
+        g_print (" [MUTED]");
+      else
+        g_print ("        ");
       g_print ("\r");
     }
 
@@ -652,11 +697,22 @@ Player::process_input (int key)
       case Terminal::TERMINAL_KEY_PAGE_DOWN:
         relative_seek (-600);
         break;
+      case 'Q':
       case 'q':
         quit();
         break;
       case ' ':
         toggle_pause();
+        break;
+      case '+':
+        set_volume (0.1);
+        break;
+      case '-':
+        set_volume (-0.1);
+        break;
+      case 'M':
+      case 'm':
+        mute_unmute();
         break;
       case '?':
         print_keyboard_help();
@@ -673,6 +729,8 @@ Player::print_keyboard_help()
   printf ("   cursor down/up       -     seek 1  minute  backwards/forwards\n");
   printf ("   page down/up         -     seek 10 minute  backwards/forwards\n");
   printf ("   space                -     toggle pause\n");
+  printf ("   +/-                  -     increase/decrease volume by 10%%\n");
+  printf ("   m                    -     toggle mute/unmute\n");
   printf ("   q                    -     quit gst123\n");
   printf ("   ?                    -     this help\n");
   printf ("=====================================================================\n");
