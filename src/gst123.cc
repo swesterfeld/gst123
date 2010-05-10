@@ -44,6 +44,7 @@ struct Tags
   string comment;
   string genre;
   string codec;
+  string vcodec;
   guint bitrate;
 
   Tags() : timestamp (-1), bitrate (0)
@@ -163,17 +164,17 @@ struct Player : public KeyHandler
 	  overwrite_time_display();
 	  printf ("\n");
 	  if (tags.title != "" || tags.artist != "")
-	    printf ("%s %s\n",	  make_n_char_string ("Title   : " + tags.title, cols / 2 - 1).c_str(),  
+	    printf ("%s %s\n",	  make_n_char_string ("Title   : " + tags.title, cols / 2 - 1).c_str(),
 	                          make_n_char_string ("Artist  : " + tags.artist, cols / 2 - 1).c_str());
 	  if (tags.album != "" || tags.genre != "")
-	    printf ("%s %s\n",	  make_n_char_string ("Album   : " + tags.album, cols / 2 - 1).c_str(),  
+	    printf ("%s %s\n",	  make_n_char_string ("Album   : " + tags.album, cols / 2 - 1).c_str(),
 	                          make_n_char_string ("Genre   : " + tags.genre, cols / 2 - 1).c_str());
 	  if (tags.comment != "" || tags.date != "")
 	    printf ("%s %s\n",	  make_n_char_string ("Comment : " + tags.comment, cols / 2 - 1).c_str(),
 	                          make_n_char_string ("Date    : " + tags.date, cols / 2 - 1).c_str());
-	  if (tags.codec != "" || tags.bitrate != 0)
+	  if (tags.codec != "" || tags.vcodec != "" || tags.bitrate != 0)
 	    printf ("%s %s%.1f kbit/s\n",
-	                          make_n_char_string ("Codec   : " + tags.codec, cols / 2 - 1).c_str(),  
+	                          make_n_char_string ("Codec   : " + tags.codec + " (audio) " + ((tags.vcodec != "") ? tags.vcodec + " (video)":""), cols / 2 - 1).c_str(),
 	                                             ("Bitrate : "), tags.bitrate / 1000.0);
 	  printf ("\n");
 	  reset_tags (KEEP_CODEC_TAGS);
@@ -334,7 +335,7 @@ collect_tags (const GstTagList *tag_list,
               const gchar *tag,
 	      gpointer user_data)
 {
-  Tags& tags = *(Tags *) user_data;  
+  Tags& tags = *(Tags *) user_data;
   char *value;
   if (strcmp (tag, GST_TAG_TITLE) == 0 && gst_tag_list_get_string (tag_list, GST_TAG_TITLE, &value))
     tags.title = value;
@@ -350,6 +351,8 @@ collect_tags (const GstTagList *tag_list,
     tags.codec = value;
   if (strcmp (tag, GST_TAG_BITRATE) == 0)
     gst_tag_list_get_uint (tag_list, GST_TAG_BITRATE, &tags.bitrate);
+  if (strcmp (tag, GST_TAG_VIDEO_CODEC) == 0 && gst_tag_list_get_string (tag_list, GST_TAG_VIDEO_CODEC, &value))
+    tags.vcodec = value;
 
   if (strcmp (tag, GST_TAG_DATE) == 0)
     {
