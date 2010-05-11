@@ -26,6 +26,7 @@
 class GtkInterface
 {
   GtkWidget   *gtk_window;
+  bool         gtk_window_visible;
   KeyHandler  *key_handler;
 
   std::map<int,int>   key_map;

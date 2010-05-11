@@ -46,6 +46,7 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
     {
       gtk_window = NULL;
     }
+  gtk_window_visible = false;
 
   /* initialize map from Gdk keysyms to KeyHandler codes */
   key_map[GDK_Page_Up]   = KEY_HANDLER_PAGE_UP;
@@ -59,7 +60,7 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
 void
 GtkInterface::toggle_fullscreen()
 {
-  if (gtk_window != NULL)
+  if (gtk_window != NULL && gtk_window_visible)
     {
       gboolean isFullscreen = (gdk_window_get_state (GDK_WINDOW (gtk_window->window)) == GDK_WINDOW_STATE_FULLSCREEN);
       if (isFullscreen)
@@ -84,21 +85,24 @@ GtkInterface::window()
 void
 GtkInterface::show()
 {
-  if (gtk_window != NULL)
+  if (gtk_window != NULL && !gtk_window_visible)
     {
       gtk_widget_show_all (gtk_window);
 
       // sync, to make the window really visible before we return
       gdk_display_sync (gdk_display_get_default());
+
+      gtk_window_visible = true;
     }
 }
 
 void
 GtkInterface::hide()
 {
-  if (gtk_window != NULL)
+  if (gtk_window != NULL && gtk_window_visible)
     {
       gtk_widget_hide_all (gtk_window);
+      gtk_window_visible = false;
     }
 }
 
