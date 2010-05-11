@@ -32,6 +32,8 @@ class GtkInterface
 
 public:
   void init (int *argc, char ***argv, class KeyHandler *key_handler);
+  void show();
+  void hide();
   bool init_ok();
   GtkWidget *window();
   void toggle_fullscreen();

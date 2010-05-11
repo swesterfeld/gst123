@@ -206,6 +206,13 @@ struct Player : public KeyHandler
   {
     reset_tags (RESET_ALL_TAGS);
 
+    /*
+     * if we're playing an audio file, we don't need the GtkInterface, so we hide it here
+     * if we're playing a video file, it will be shown again once GStreamer gets to the
+     * point where it sends a "prepare-xwindow-id" message
+     */
+    gtk_interface.hide();
+
     if (options.shuffle)
       {
         if (uris.empty())
@@ -462,6 +469,8 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
       {
         if (gst_structure_has_name (message->structure, "prepare-xwindow-id") && gtk_interface.init_ok())
           {
+            // show gtk window to display video in
+            gtk_interface.show();
             gst_x_overlay_set_xwindow_id (GST_X_OVERLAY (GST_MESSAGE_SRC (message)),
                                           GDK_WINDOW_XWINDOW (gtk_interface.window()->window));
           }

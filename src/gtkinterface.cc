@@ -40,7 +40,6 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
     {
       gtk_init (argc, argv);
       gtk_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-      gtk_widget_show_all (gtk_window);
       g_signal_connect (G_OBJECT (gtk_window), "key-press-event", G_CALLBACK (key_press_event_cb), this);
     }
   else
@@ -80,6 +79,27 @@ GtkWidget*
 GtkInterface::window()
 {
   return gtk_window;
+}
+
+void
+GtkInterface::show()
+{
+  if (gtk_window != NULL)
+    {
+      gtk_widget_show_all (gtk_window);
+
+      // sync, to make the window really visible before we return
+      gdk_display_sync (gdk_display_get_default());
+    }
+}
+
+void
+GtkInterface::hide()
+{
+  if (gtk_window != NULL)
+    {
+      gtk_widget_hide_all (gtk_window);
+    }
 }
 
 bool
