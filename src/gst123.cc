@@ -763,6 +763,7 @@ Player::print_keyboard_help()
   printf ("   space                -     toggle pause\n");
   printf ("   +/-                  -     increase/decrease volume by 10%%\n");
   printf ("   m                    -     toggle mute/unmute\n");
+  printf ("   f                    -     toggle fullscreen (only for videos)\n");
   printf ("   q                    -     quit gst123\n");
   printf ("   ?                    -     this help\n");
   printf ("=====================================================================\n");
