@@ -1,4 +1,5 @@
 - MicroConf -> configure hjkl
+- indicate pause state (like [MUTED])
 
 wishlist:
 - wav output with --wav foo.wav
