@@ -43,15 +43,6 @@ class Terminal
   void init_terminal();
 
 public:
-  enum {
-    TERMINAL_KEY_UP = 300,
-    TERMINAL_KEY_LEFT,
-    TERMINAL_KEY_RIGHT,
-    TERMINAL_KEY_DOWN,
-    TERMINAL_KEY_PAGE_UP,
-    TERMINAL_KEY_PAGE_DOWN
-  };
-
   void init (GMainLoop *loop, KeyHandler *key_handler);
   void end();
 };

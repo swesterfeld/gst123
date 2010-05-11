@@ -19,6 +19,16 @@
 #ifndef GST123_KEY_HANDLER_H
 #define GST123_KEY_HANDLER_H
 
+/* key codes for process input ; everything < 256 is plain ascii */
+enum {
+  KEY_HANDLER_UP = 300,
+  KEY_HANDLER_LEFT,
+  KEY_HANDLER_RIGHT,
+  KEY_HANDLER_DOWN,
+  KEY_HANDLER_PAGE_UP,
+  KEY_HANDLER_PAGE_DOWN
+};
+
 class KeyHandler
 {
 public:

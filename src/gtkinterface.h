@@ -21,11 +21,14 @@
 
 #include <gtk/gtk.h>
 #include "keyhandler.h"
+#include <map>
 
 class GtkInterface
 {
   GtkWidget   *gtk_window;
   KeyHandler  *key_handler;
+
+  std::map<int,int>   key_map;
 
 public:
   void init (int *argc, char ***argv, class KeyHandler *key_handler);

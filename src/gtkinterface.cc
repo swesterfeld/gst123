@@ -47,6 +47,14 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
     {
       gtk_window = NULL;
     }
+
+  /* initialize map from Gdk keysyms to KeyHandler codes */
+  key_map[GDK_Page_Up]   = KEY_HANDLER_PAGE_UP;
+  key_map[GDK_Page_Down] = KEY_HANDLER_PAGE_DOWN;
+  key_map[GDK_Left]      = KEY_HANDLER_LEFT;
+  key_map[GDK_Right]     = KEY_HANDLER_RIGHT;
+  key_map[GDK_Up]        = KEY_HANDLER_UP;
+  key_map[GDK_Down]      = KEY_HANDLER_DOWN;
 }
 
 void
@@ -77,7 +85,17 @@ GtkInterface::window()
 bool
 GtkInterface::handle_keypress_event (GdkEventKey *event)
 {
-  if ((event->keyval >= GDK_A && event->keyval <= GDK_Z)
-  ||  (event->keyval >= GDK_a && event->keyval <= GDK_z))
-    key_handler->process_input (event->keyval);
+  int ch = 0;
+
+  if (event->keyval > 0 && event->keyval <= 127)
+    ch = event->keyval;
+  else
+    ch = key_map[event->keyval];
+
+  if (ch != 0)
+    {
+      key_handler->process_input (ch);
+      return true;
+    }
+  return false;
 }

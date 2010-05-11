@@ -698,22 +698,22 @@ Player::process_input (int key)
 {
   switch (key)
     {
-      case Terminal::TERMINAL_KEY_RIGHT:
+      case KEY_HANDLER_RIGHT:
         relative_seek (10);
         break;
-      case Terminal::TERMINAL_KEY_LEFT:
+      case KEY_HANDLER_LEFT:
         relative_seek (-10);
         break;
-      case Terminal::TERMINAL_KEY_UP:
+      case KEY_HANDLER_UP:
         relative_seek (60);
         break;
-      case Terminal::TERMINAL_KEY_DOWN:
+      case KEY_HANDLER_DOWN:
         relative_seek (-60);
         break;
-      case Terminal::TERMINAL_KEY_PAGE_UP:
+      case KEY_HANDLER_PAGE_UP:
         relative_seek (600);
         break;
-      case Terminal::TERMINAL_KEY_PAGE_DOWN:
+      case KEY_HANDLER_PAGE_DOWN:
         relative_seek (-600);
         break;
       case 'Q':
