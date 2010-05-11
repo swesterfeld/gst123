@@ -783,7 +783,7 @@ main (gint   argc,
 
   /* init GStreamer */
   gst_init (&argc, &argv);
-  gtk_interface.init (&argc, &argv);
+  gtk_interface.init (&argc, &argv, &player);
 
   player.loop = g_main_loop_new (NULL, FALSE);
 

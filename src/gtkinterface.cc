@@ -21,15 +21,27 @@
 
 #include <gtk/gtk.h>
 #include <X11/Xlib.h>
+#include <gdk/gdkkeysyms.h>
+
+static gboolean
+key_press_event_cb (GtkWidget *widget, GdkEventKey *event, gpointer data)
+{
+  GtkInterface *gtk_interface = static_cast<GtkInterface *> (data);
+
+  return gtk_interface->handle_keypress_event (event);
+}
 
 void
-GtkInterface::init (int *argc, char ***argv)
+GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
 {
+  key_handler = handler;
+
   if (XOpenDisplay (NULL))
     {
       gtk_init (argc, argv);
       gtk_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
       gtk_widget_show_all (gtk_window);
+      g_signal_connect (G_OBJECT (gtk_window), "key-press-event", G_CALLBACK (key_press_event_cb), this);
     }
   else
     {
@@ -60,4 +72,12 @@ GtkWidget*
 GtkInterface::window()
 {
   return gtk_window;
+}
+
+bool
+GtkInterface::handle_keypress_event (GdkEventKey *event)
+{
+  if ((event->keyval >= GDK_A && event->keyval <= GDK_Z)
+  ||  (event->keyval >= GDK_a && event->keyval <= GDK_z))
+    key_handler->process_input (event->keyval);
 }

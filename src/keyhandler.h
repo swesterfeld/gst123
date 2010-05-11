@@ -16,23 +16,13 @@
  * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-#ifndef GST123_GTK_INTERFACE_H
-#define GST123_GTK_INTERFACE_H
+#ifndef GST123_KEY_HANDLER_H
+#define GST123_KEY_HANDLER_H
 
-#include <gtk/gtk.h>
-#include "keyhandler.h"
-
-class GtkInterface
+class KeyHandler
 {
-  GtkWidget   *gtk_window;
-  KeyHandler  *key_handler;
-
 public:
-  void init (int *argc, char ***argv, class KeyHandler *key_handler);
-  bool init_ok();
-  GtkWidget *window();
-  void toggle_fullscreen();
-  bool handle_keypress_event (GdkEventKey *event);
+  virtual void process_input (int ch) = 0;
 };
 
 #endif

@@ -24,12 +24,7 @@
 #include <vector>
 #include <string>
 #include <map>
-
-class KeyHandler
-{
-public:
-  virtual void process_input (int ch) = 0;
-};
+#include "keyhandler.h"
 
 class Terminal
 {
