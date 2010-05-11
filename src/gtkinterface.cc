@@ -40,11 +40,14 @@ GtkInterface::init (int *argc, char ***argv)
 void
 GtkInterface::toggle_fullscreen()
 {
-  gboolean isFullscreen = (gdk_window_get_state (GDK_WINDOW (gtk_window->window)) == GDK_WINDOW_STATE_FULLSCREEN);
-  if (isFullscreen)
-    gtk_window_unfullscreen (GTK_WINDOW (gtk_window));
-  else
-    gtk_window_fullscreen (GTK_WINDOW (gtk_window));
+  if (gtk_window != NULL)
+    {
+      gboolean isFullscreen = (gdk_window_get_state (GDK_WINDOW (gtk_window->window)) == GDK_WINDOW_STATE_FULLSCREEN);
+      if (isFullscreen)
+        gtk_window_unfullscreen (GTK_WINDOW (gtk_window));
+      else
+        gtk_window_fullscreen (GTK_WINDOW (gtk_window));
+    }
 }
 
 bool
