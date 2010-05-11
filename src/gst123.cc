@@ -17,6 +17,9 @@
  * Boston, MA 02111-1307, USA.
  */
 #include <gst/gst.h>
+#include <gst/interfaces/xoverlay.h>
+#include <gdk/gdkx.h>
+#include <gtk/gtk.h>
 #include <signal.h>
 #include <sys/time.h>
 #include <time.h>
@@ -24,6 +27,7 @@
 #include "glib-extra.h"
 #include "config.h"
 #include "terminal.h"
+#include "gtkinterface.h"
 #include <vector>
 #include <string>
 #include <list>
@@ -32,7 +36,8 @@ using std::string;
 using std::vector;
 using std::list;
 
-static Terminal terminal;
+static Terminal     terminal;
+static GtkInterface gtk_interface;
 
 struct Tags
 {
@@ -311,6 +316,12 @@ struct Player : public KeyHandler
   }
 
   void
+  toggle_fullscreen()
+  {
+    gtk_interface.toggle_fullscreen();
+  }
+
+  void
   quit()
   {
     overwrite_time_display();
@@ -447,6 +458,14 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
 	player.last_state = state;
       }
       break;
+    case GST_MESSAGE_ELEMENT:
+      {
+        if (gst_structure_has_name (message->structure, "prepare-xwindow-id") && gtk_interface.init_ok())
+          {
+            gst_x_overlay_set_xwindow_id (GST_X_OVERLAY (GST_MESSAGE_SRC (message)),
+                                          GDK_WINDOW_XWINDOW (gtk_interface.window()->window));
+          }
+      }
     default:
       /* unhandled message */
       break;
@@ -714,6 +733,10 @@ Player::process_input (int key)
       case 'm':
         mute_unmute();
         break;
+      case 'F':
+      case 'f':
+        toggle_fullscreen();
+        break;
       case '?':
         print_keyboard_help();
         break;
@@ -760,6 +783,8 @@ main (gint   argc,
 
   /* init GStreamer */
   gst_init (&argc, &argv);
+  gtk_interface.init (&argc, &argv);
+
   player.loop = g_main_loop_new (NULL, FALSE);
 
   options.parse (&argc, &argv);

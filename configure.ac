@@ -17,6 +17,17 @@ AC_DEFUN([AC_GSTREAMER_REQUIREMENTS],
 ])
 
 dnl
+dnl Define gstreamer interface
+dnl
+AC_DEFUN([AC_GSTREAMER_GTK_REQUIREMENTS],
+[
+    dnl We need GLib with friends
+    PKG_CHECK_MODULES(GSTREAMER_GTK, gstreamer-base-0.10 gtk+-2.0 gstreamer-interfaces-0.10)
+    AC_SUBST(GSTREAMER_GTK_CFLAGS)
+    AC_SUBST(GSTREAMER_GTKLIBS)
+])
+
+dnl
 dnl We need libncurses
 dnl
 AC_DEFUN([AC_NCURSES_REQUIREMENTS],
@@ -28,6 +39,7 @@ AC_DEFUN([AC_NCURSES_REQUIREMENTS],
 
 # Check requirement sets
 AC_GSTREAMER_REQUIREMENTS
+AC_GSTREAMER_GTK_REQUIREMENTS
 AC_NCURSES_REQUIREMENTS
 
 AC_CONFIG_FILES([Makefile src/Makefile])
