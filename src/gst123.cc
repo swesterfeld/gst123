@@ -18,6 +18,7 @@
  */
 #include <gst/gst.h>
 #include <gst/interfaces/xoverlay.h>
+#include <gst/video/video.h>
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #include <signal.h>
@@ -329,6 +330,25 @@ struct Player : public KeyHandler
   }
 
   void
+  normal_size()
+  {
+    GstElement *videosink;
+
+    g_object_get (G_OBJECT (playbin), "video-sink", &videosink, NULL);
+    if (videosink)
+      {
+        if (GstPad* pad = gst_element_get_static_pad (videosink, "sink"))
+          {
+            gint x, y = 0;
+            gst_video_get_size (GST_PAD (pad), &x, &y);
+            gtk_interface.resize (x,y);
+            gst_object_unref (GST_OBJECT (pad));
+          }
+        gst_object_unref (GST_OBJECT (videosink));
+      }
+  }
+
+  void
   quit()
   {
     overwrite_time_display();
@@ -473,6 +493,7 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
             gtk_interface.show();
             gst_x_overlay_set_xwindow_id (GST_X_OVERLAY (GST_MESSAGE_SRC (message)),
                                           GDK_WINDOW_XWINDOW (gtk_interface.window()->window));
+            player.normal_size();
           }
       }
     default:
@@ -746,6 +767,9 @@ Player::process_input (int key)
       case 'f':
         toggle_fullscreen();
         break;
+      case '1':
+        normal_size();
+        break;
       case '?':
         print_keyboard_help();
         break;
@@ -764,6 +788,7 @@ Player::print_keyboard_help()
   printf ("   +/-                  -     increase/decrease volume by 10%%\n");
   printf ("   m                    -     toggle mute/unmute\n");
   printf ("   f                    -     toggle fullscreen (only for videos)\n");
+  printf ("   1                    -     normal video size (only for videos)\n");
   printf ("   q                    -     quit gst123\n");
   printf ("   ?                    -     this help\n");
   printf ("=====================================================================\n");
@@ -838,7 +863,7 @@ main (gint   argc,
       options.print_usage();
       return -1;
     }
-  player.playbin = gst_element_factory_make ("playbin", "play");
+  player.playbin = gst_element_factory_make ("playbin2", "play");
   gst_bus_add_watch (gst_pipeline_get_bus (GST_PIPELINE (player.playbin)), my_bus_callback, &player);
   g_timeout_add (130, (GSourceFunc) cb_print_position, &player);
   signal (SIGINT, sigint_handler);

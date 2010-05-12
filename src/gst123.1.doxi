@@ -56,6 +56,8 @@ gst123 - A GStreamer based command line media player
     Toggle mute/unmute.
 @item @manb{f} @*
     Toggle fullscreen display (only for videos).
+@item @manb{1} @*
+    Normal video size (only for videos).
 @item @manb{q} @*
     Quit gst123.
 @item @manb{?} @*

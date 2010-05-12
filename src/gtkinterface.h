@@ -39,6 +39,7 @@ public:
   GtkWidget *window();
   void toggle_fullscreen();
   bool handle_keypress_event (GdkEventKey *event);
+  void resize (int x, int y);
 };
 
 #endif

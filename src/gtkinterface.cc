@@ -106,6 +106,13 @@ GtkInterface::hide()
     }
 }
 
+void
+GtkInterface::resize (int x, int y)
+{
+  if (gtk_window != NULL)
+    gtk_window_resize (GTK_WINDOW (gtk_window), x, y);
+}
+
 bool
 GtkInterface::handle_keypress_event (GdkEventKey *event)
 {
