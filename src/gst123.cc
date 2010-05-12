@@ -112,8 +112,6 @@ struct Player : public KeyHandler
   Tags           tags;
   GstState       last_state;
 
-  gdouble        unmute_volume;
-
   enum
   {
     KEEP_CODEC_TAGS,
@@ -309,18 +307,9 @@ struct Player : public KeyHandler
   void
   mute_unmute()
   {
-    gdouble cur_volume;
-    g_object_get (G_OBJECT (playbin), "volume", &cur_volume, NULL);
-
-    if (cur_volume == 0)
-      {
-        g_object_set (G_OBJECT (playbin), "volume", unmute_volume, NULL);
-      }
-    else
-      {
-        unmute_volume = cur_volume;
-        g_object_set (G_OBJECT (playbin), "volume", 0.0, NULL);
-      }
+    gboolean mute;
+    g_object_get (G_OBJECT (playbin), "mute", &mute, NULL);
+    g_object_set (G_OBJECT (playbin), "mute", !mute, NULL);
   }
 
   void
@@ -552,10 +541,10 @@ cb_print_position (gpointer *data)
 	g_print (" of %01lu:%02lu:%02lu.%02lu", len_min / 60, len_min % 60, tv_len.tv_sec % 60, tv_len.tv_usec / 10000);
 
       // Print [MUTED] if sound is muted:
-      gdouble cur_volume;
-      g_object_get (G_OBJECT (player.playbin), "volume", &cur_volume, NULL);
+      gboolean mute;
+      g_object_get (G_OBJECT (player.playbin), "mute", &mute, NULL);
 
-      if (cur_volume == 0)
+      if (mute)
         g_print (" [MUTED]");
       else
         g_print ("        ");
