@@ -1,6 +1,7 @@
 - MicroConf -> configure hjkl
 - indicate pause state (like [MUTED])
 - closing the window makes things break
+- aspect ratio should be fixed
 
 wishlist:
 - wav output with --wav foo.wav
