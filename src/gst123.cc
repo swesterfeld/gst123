@@ -1,5 +1,6 @@
 /* GST123 - GStreamer based command line media player
  * Copyright (C) 2006 Stefan Westerfeld
+ * Copyright (C) 2010 أحمد المحمودي (Ahmed El-Mahmoudy)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
