@@ -24,7 +24,7 @@ gst123 - A GStreamer based command line media player
 @item @manb{-h}, @manb{--help} @*
 	Shows a brief help message.
 @item @manb{-v}, @manb{--version} @*
-	Prints out @manb{beast} and component versions and file paths.
+	Prints out @manb{gst123} version.
 @item @manb{-z}, @manb{--shuffle} @*
         Play files in pseudo random order.
 @item @manb{-@@} @mani{<playlist>}, @manb{--list} @mani{<playlist>} @*
