@@ -41,6 +41,11 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
       gtk_init (argc, argv);
       gtk_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
       g_signal_connect (G_OBJECT (gtk_window), "key-press-event", G_CALLBACK (key_press_event_cb), this);
+
+      // make background black
+      GdkColor color;
+      gdk_color_parse ("black", &color);
+      gtk_widget_modify_bg (gtk_window, GTK_STATE_NORMAL, &color);
     }
   else
     {
