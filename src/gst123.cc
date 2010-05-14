@@ -82,6 +82,13 @@ get_columns()
   fclose (cols);
 }
 
+void
+force_aspect_ratio (gpointer element, gpointer userdata)
+{
+  if (g_object_class_find_property (G_OBJECT_GET_CLASS (G_OBJECT (element)), "force-aspect-ratio"))
+    g_object_set (G_OBJECT (element), "force-aspect-ratio", TRUE, NULL);
+}
+
 struct Options
 {
   string	program_name; /* FIXME: what to do with that */
@@ -327,6 +334,11 @@ struct Player : public KeyHandler
     g_object_get (G_OBJECT (playbin), "video-sink", &videosink, NULL);
     if (videosink)
       {
+        // Find an sink element that has "force-aspect-ratio" property & set it
+        // to TRUE:
+        GstIterator *iterator = gst_bin_iterate_sinks (GST_BIN (videosink));
+        gst_iterator_foreach (iterator, force_aspect_ratio, NULL);
+
         if (GstPad* pad = gst_element_get_static_pad (videosink, "sink"))
           {
             gint x, y = 0;
