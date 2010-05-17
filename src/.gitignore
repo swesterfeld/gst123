@@ -2,3 +2,4 @@ Makefile
 Makefile.in
 *.o
 gst123
+.deps
