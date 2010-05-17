@@ -23,6 +23,8 @@
 #include <X11/Xlib.h>
 #include <gdk/gdkkeysyms.h>
 
+using std::string;
+
 static gboolean
 key_press_event_cb (GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
@@ -134,4 +136,11 @@ GtkInterface::handle_keypress_event (GdkEventKey *event)
       return true;
     }
   return false;
+}
+
+void
+GtkInterface::set_title (const string& title)
+{
+  if (gtk_window != NULL)
+    gtk_window_set_title (GTK_WINDOW (gtk_window), title.c_str());
 }

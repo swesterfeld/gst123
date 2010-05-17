@@ -239,6 +239,8 @@ struct Player : public KeyHandler
 	overwrite_time_display ();
 	printf ("\nPlaying %s\n", uri.c_str());
 
+        gtk_interface.set_title (g_basename (uri.c_str()));
+
 	gst_element_set_state (playbin, GST_STATE_NULL);
 	g_object_set (G_OBJECT (playbin), "uri", uri.c_str(), NULL);
 	gst_element_set_state (playbin, GST_STATE_PLAYING);

@@ -22,6 +22,7 @@
 #include <gtk/gtk.h>
 #include "keyhandler.h"
 #include <map>
+#include <string>
 
 class GtkInterface
 {
@@ -40,6 +41,7 @@ public:
   void toggle_fullscreen();
   bool handle_keypress_event (GdkEventKey *event);
   void resize (int x, int y);
+  void set_title (const std::string& title);
 };
 
 #endif
