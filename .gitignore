@@ -9,3 +9,4 @@ config.h
 config.h.in
 config.log
 config.status
+stamp-h1
