@@ -33,6 +33,22 @@ key_press_event_cb (GtkWidget *widget, GdkEventKey *event, gpointer data)
   return gtk_interface->handle_keypress_event (event);
 }
 
+static gboolean
+motion_notify_event_cb (GtkWidget *widget, GdkEventMotion *event, gpointer data)
+{
+  GtkInterface *gtk_interface = static_cast<GtkInterface *> (data);
+
+  return gtk_interface->handle_motion_notify_event (event);
+}
+
+static gboolean
+timeout_cb (gpointer data)
+{
+  GtkInterface *gtk_interface = static_cast<GtkInterface *> (data);
+
+  return gtk_interface->handle_timeout();
+}
+
 void
 GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
 {
@@ -43,11 +59,19 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
       gtk_init (argc, argv);
       gtk_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
       g_signal_connect (G_OBJECT (gtk_window), "key-press-event", G_CALLBACK (key_press_event_cb), this);
+      g_signal_connect (G_OBJECT (gtk_window), "motion-notify-event", G_CALLBACK (motion_notify_event_cb), this);
+      g_object_set (G_OBJECT (gtk_window), "events", GDK_POINTER_MOTION_MASK, NULL);
 
       // make background black
       GdkColor color;
       gdk_color_parse ("black", &color);
       gtk_widget_modify_bg (gtk_window, GTK_STATE_NORMAL, &color);
+
+      visible_cursor = NULL;
+      invisible_cursor = gdk_cursor_new (GDK_BLANK_CURSOR);
+
+      cursor_timeout = 3;
+      g_timeout_add (500, (GSourceFunc) timeout_cb, this);
     }
   else
     {
@@ -96,6 +120,10 @@ GtkInterface::show()
     {
       gtk_widget_show_all (gtk_window);
 
+      // get cursor, so we can restore it after hiding it
+      if (!visible_cursor)
+        visible_cursor = gdk_window_get_cursor (GDK_WINDOW (gtk_window->window));
+
       // sync, to make the window really visible before we return
       gdk_display_sync (gdk_display_get_default());
 
@@ -143,4 +171,33 @@ GtkInterface::set_title (const string& title)
 {
   if (gtk_window != NULL)
     gtk_window_set_title (GTK_WINDOW (gtk_window), title.c_str());
+}
+
+bool
+GtkInterface::handle_timeout()
+{
+  if (gtk_window != NULL && gtk_window_visible)
+    {
+      if (cursor_timeout == 0)
+        {
+          gdk_window_set_cursor (GDK_WINDOW (gtk_window->window), invisible_cursor);
+          cursor_timeout = -1;
+        }
+      else if (cursor_timeout > 0)
+        {
+          cursor_timeout--;
+        }
+    }
+  return true;
+}
+
+bool
+GtkInterface::handle_motion_notify_event (GdkEventMotion *event)
+{
+  if (gtk_window != NULL && gtk_window_visible)
+    {
+      gdk_window_set_cursor (GDK_WINDOW (gtk_window->window), visible_cursor);
+      cursor_timeout = 3;
+    }
+  return true;
 }

@@ -29,6 +29,9 @@ class GtkInterface
   GtkWidget   *gtk_window;
   bool         gtk_window_visible;
   KeyHandler  *key_handler;
+  GdkCursor   *invisible_cursor;
+  GdkCursor   *visible_cursor;
+  int          cursor_timeout;      // number of timeout events until we hide the cursor (-1 if already hidden)
 
   std::map<int,int>   key_map;
 
@@ -40,6 +43,8 @@ public:
   GtkWidget *window();
   void toggle_fullscreen();
   bool handle_keypress_event (GdkEventKey *event);
+  bool handle_motion_notify_event (GdkEventMotion *event);
+  bool handle_timeout();
   void resize (int x, int y);
   void set_title (const std::string& title);
 };
