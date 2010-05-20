@@ -2,6 +2,7 @@
 - indicate pause state (like [MUTED])
 - closing the window makes things break
 - aspect ratio should be fixed
+- hide mouse in video widget
 
 wishlist:
 - wav output with --wav foo.wav
