@@ -555,15 +555,24 @@ cb_print_position (gpointer *data)
       if (len > 0)   /* streams (i.e. http) have len == -1 */
 	g_print (" of %01lu:%02lu:%02lu.%02lu", len_min / 60, len_min % 60, tv_len.tv_sec % 60, tv_len.tv_usec / 10000);
 
+      string status, blanks;
       // Print [MUTED] if sound is muted:
       gboolean mute;
       g_object_get (G_OBJECT (player.playbin), "mute", &mute, NULL);
 
       if (mute)
-        g_print (" [MUTED]");
+        status += " [MUTED]";
       else
-        g_print ("        ");
-      g_print ("\r");
+        blanks += "        ";
+
+      // Print [PAUSED] if paused:
+      bool pause = (player.last_state == GST_STATE_PAUSED);
+
+      if (pause)
+        status += " [PAUSED]";
+      else
+        blanks += "         ";
+      g_print ("%s%s\r", status.c_str(), blanks.c_str());
     }
 
   /* call me again */
