@@ -1,5 +1,6 @@
 /* GST123 - GStreamer based command line media player
- * Copyright (C) 2006 Stefan Westerfeld
+ * Copyright (C) 2006-2010 Stefan Westerfeld
+ * Copyright (C) 2010 أحمد المحمودي (Ahmed El-Mahmoudy)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,6 +18,10 @@
  * Boston, MA 02111-1307, USA.
  */
 #include <gst/gst.h>
+#include <gst/interfaces/xoverlay.h>
+#include <gst/video/video.h>
+#include <gdk/gdkx.h>
+#include <gtk/gtk.h>
 #include <signal.h>
 #include <sys/time.h>
 #include <time.h>
@@ -24,6 +29,7 @@
 #include "glib-extra.h"
 #include "config.h"
 #include "terminal.h"
+#include "gtkinterface.h"
 #include <vector>
 #include <string>
 #include <list>
@@ -32,7 +38,8 @@ using std::string;
 using std::vector;
 using std::list;
 
-static Terminal terminal;
+static Terminal     terminal;
+static GtkInterface gtk_interface;
 
 struct Tags
 {
@@ -44,6 +51,7 @@ struct Tags
   string comment;
   string genre;
   string codec;
+  string vcodec;
   guint bitrate;
 
   Tags() : timestamp (-1), bitrate (0)
@@ -72,6 +80,13 @@ get_columns()
   else
     return 80;	/* default */
   fclose (cols);
+}
+
+void
+force_aspect_ratio (gpointer element, gpointer userdata)
+{
+  if (g_object_class_find_property (G_OBJECT_GET_CLASS (G_OBJECT (element)), "force-aspect-ratio"))
+    g_object_set (G_OBJECT (element), "force-aspect-ratio", TRUE, NULL);
 }
 
 struct Options
@@ -104,8 +119,6 @@ struct Player : public KeyHandler
   int            cols;
   Tags           tags;
   GstState       last_state;
-
-  gdouble        unmute_volume;
 
   enum
   {
@@ -163,17 +176,17 @@ struct Player : public KeyHandler
 	  overwrite_time_display();
 	  printf ("\n");
 	  if (tags.title != "" || tags.artist != "")
-	    printf ("%s %s\n",	  make_n_char_string ("Title   : " + tags.title, cols / 2 - 1).c_str(),  
+	    printf ("%s %s\n",	  make_n_char_string ("Title   : " + tags.title, cols / 2 - 1).c_str(),
 	                          make_n_char_string ("Artist  : " + tags.artist, cols / 2 - 1).c_str());
 	  if (tags.album != "" || tags.genre != "")
-	    printf ("%s %s\n",	  make_n_char_string ("Album   : " + tags.album, cols / 2 - 1).c_str(),  
+	    printf ("%s %s\n",	  make_n_char_string ("Album   : " + tags.album, cols / 2 - 1).c_str(),
 	                          make_n_char_string ("Genre   : " + tags.genre, cols / 2 - 1).c_str());
 	  if (tags.comment != "" || tags.date != "")
 	    printf ("%s %s\n",	  make_n_char_string ("Comment : " + tags.comment, cols / 2 - 1).c_str(),
 	                          make_n_char_string ("Date    : " + tags.date, cols / 2 - 1).c_str());
-	  if (tags.codec != "" || tags.bitrate != 0)
+	  if (tags.codec != "" || tags.vcodec != "" || tags.bitrate != 0)
 	    printf ("%s %s%.1f kbit/s\n",
-	                          make_n_char_string ("Codec   : " + tags.codec, cols / 2 - 1).c_str(),  
+	                          make_n_char_string ("Codec   : " + tags.codec + " (audio) " + ((tags.vcodec != "") ? tags.vcodec + " (video)":""), cols / 2 - 1).c_str(),
 	                                             ("Bitrate : "), tags.bitrate / 1000.0);
 	  printf ("\n");
 	  reset_tags (KEEP_CODEC_TAGS);
@@ -200,6 +213,13 @@ struct Player : public KeyHandler
   {
     reset_tags (RESET_ALL_TAGS);
 
+    /*
+     * if we're playing an audio file, we don't need the GtkInterface, so we hide it here
+     * if we're playing a video file, it will be shown again once GStreamer gets to the
+     * point where it sends a "prepare-xwindow-id" message
+     */
+    gtk_interface.hide();
+
     if (options.shuffle)
       {
         if (uris.empty())
@@ -218,6 +238,8 @@ struct Player : public KeyHandler
 
 	overwrite_time_display ();
 	printf ("\nPlaying %s\n", uri.c_str());
+
+        gtk_interface.set_title (g_basename (uri.c_str()));
 
 	gst_element_set_state (playbin, GST_STATE_NULL);
 	g_object_set (G_OBJECT (playbin), "uri", uri.c_str(), NULL);
@@ -295,17 +317,38 @@ struct Player : public KeyHandler
   void
   mute_unmute()
   {
-    gdouble cur_volume;
-    g_object_get (G_OBJECT (playbin), "volume", &cur_volume, NULL);
+    gboolean mute;
+    g_object_get (G_OBJECT (playbin), "mute", &mute, NULL);
+    g_object_set (G_OBJECT (playbin), "mute", !mute, NULL);
+  }
 
-    if (cur_volume == 0)
+  void
+  toggle_fullscreen()
+  {
+    gtk_interface.toggle_fullscreen();
+  }
+
+  void
+  normal_size()
+  {
+    GstElement *videosink;
+
+    g_object_get (G_OBJECT (playbin), "video-sink", &videosink, NULL);
+    if (videosink)
       {
-        g_object_set (G_OBJECT (playbin), "volume", unmute_volume, NULL);
-      }
-    else
-      {
-        unmute_volume = cur_volume;
-        g_object_set (G_OBJECT (playbin), "volume", 0.0, NULL);
+        // Find an sink element that has "force-aspect-ratio" property & set it
+        // to TRUE:
+        GstIterator *iterator = gst_bin_iterate_sinks (GST_BIN (videosink));
+        gst_iterator_foreach (iterator, force_aspect_ratio, NULL);
+
+        if (GstPad* pad = gst_element_get_static_pad (videosink, "sink"))
+          {
+            gint x, y = 0;
+            gst_video_get_size (GST_PAD (pad), &x, &y);
+            gtk_interface.resize (x,y);
+            gst_object_unref (GST_OBJECT (pad));
+          }
+        gst_object_unref (GST_OBJECT (videosink));
       }
   }
 
@@ -334,7 +377,7 @@ collect_tags (const GstTagList *tag_list,
               const gchar *tag,
 	      gpointer user_data)
 {
-  Tags& tags = *(Tags *) user_data;  
+  Tags& tags = *(Tags *) user_data;
   char *value;
   if (strcmp (tag, GST_TAG_TITLE) == 0 && gst_tag_list_get_string (tag_list, GST_TAG_TITLE, &value))
     tags.title = value;
@@ -350,6 +393,8 @@ collect_tags (const GstTagList *tag_list,
     tags.codec = value;
   if (strcmp (tag, GST_TAG_BITRATE) == 0)
     gst_tag_list_get_uint (tag_list, GST_TAG_BITRATE, &tags.bitrate);
+  if (strcmp (tag, GST_TAG_VIDEO_CODEC) == 0 && gst_tag_list_get_string (tag_list, GST_TAG_VIDEO_CODEC, &value))
+    tags.vcodec = value;
 
   if (strcmp (tag, GST_TAG_DATE) == 0)
     {
@@ -444,6 +489,17 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
 	player.last_state = state;
       }
       break;
+    case GST_MESSAGE_ELEMENT:
+      {
+        if (gst_structure_has_name (message->structure, "prepare-xwindow-id") && gtk_interface.init_ok())
+          {
+            // show gtk window to display video in
+            gtk_interface.show();
+            gst_x_overlay_set_xwindow_id (GST_X_OVERLAY (GST_MESSAGE_SRC (message)),
+                                          GDK_WINDOW_XWINDOW (gtk_interface.window()->window));
+            player.normal_size();
+          }
+      }
     default:
       /* unhandled message */
       break;
@@ -499,15 +555,24 @@ cb_print_position (gpointer *data)
       if (len > 0)   /* streams (i.e. http) have len == -1 */
 	g_print (" of %01lu:%02lu:%02lu.%02lu", len_min / 60, len_min % 60, tv_len.tv_sec % 60, tv_len.tv_usec / 10000);
 
+      string status, blanks;
       // Print [MUTED] if sound is muted:
-      gdouble cur_volume;
-      g_object_get (G_OBJECT (player.playbin), "volume", &cur_volume, NULL);
+      gboolean mute;
+      g_object_get (G_OBJECT (player.playbin), "mute", &mute, NULL);
 
-      if (cur_volume == 0)
-        g_print (" [MUTED]");
+      if (mute)
+        status += " [MUTED]";
       else
-        g_print ("        ");
-      g_print ("\r");
+        blanks += "        ";
+
+      // Print [PAUSED] if paused:
+      bool pause = (player.last_state == GST_STATE_PAUSED);
+
+      if (pause)
+        status += " [PAUSED]";
+      else
+        blanks += "         ";
+      g_print ("%s%s\r", status.c_str(), blanks.c_str());
     }
 
   /* call me again */
@@ -676,22 +741,22 @@ Player::process_input (int key)
 {
   switch (key)
     {
-      case Terminal::TERMINAL_KEY_RIGHT:
+      case KEY_HANDLER_RIGHT:
         relative_seek (10);
         break;
-      case Terminal::TERMINAL_KEY_LEFT:
+      case KEY_HANDLER_LEFT:
         relative_seek (-10);
         break;
-      case Terminal::TERMINAL_KEY_UP:
+      case KEY_HANDLER_UP:
         relative_seek (60);
         break;
-      case Terminal::TERMINAL_KEY_DOWN:
+      case KEY_HANDLER_DOWN:
         relative_seek (-60);
         break;
-      case Terminal::TERMINAL_KEY_PAGE_UP:
+      case KEY_HANDLER_PAGE_UP:
         relative_seek (600);
         break;
-      case Terminal::TERMINAL_KEY_PAGE_DOWN:
+      case KEY_HANDLER_PAGE_DOWN:
         relative_seek (-600);
         break;
       case 'Q':
@@ -710,6 +775,13 @@ Player::process_input (int key)
       case 'M':
       case 'm':
         mute_unmute();
+        break;
+      case 'F':
+      case 'f':
+        toggle_fullscreen();
+        break;
+      case '1':
+        normal_size();
         break;
       case '?':
         print_keyboard_help();
@@ -730,6 +802,8 @@ Player::print_keyboard_help()
   printf ("   space                -     toggle pause\n");
   printf ("   +/-                  -     increase/decrease volume by 10%%\n");
   printf ("   m                    -     toggle mute/unmute\n");
+  printf ("   f                    -     toggle fullscreen (only for videos)\n");
+  printf ("   1                    -     normal video size (only for videos)\n");
   printf ("   q                    -     quit gst123\n");
   printf ("   ?                    -     this help\n");
   printf ("=====================================================================\n");
@@ -759,6 +833,8 @@ main (gint   argc,
 
   /* init GStreamer */
   gst_init (&argc, &argv);
+  gtk_interface.init (&argc, &argv, &player);
+
   player.loop = g_main_loop_new (NULL, FALSE);
 
   options.parse (&argc, &argv);
@@ -802,7 +878,7 @@ main (gint   argc,
       options.print_usage();
       return -1;
     }
-  player.playbin = gst_element_factory_make ("playbin", "play");
+  player.playbin = gst_element_factory_make ("playbin2", "play");
   gst_bus_add_watch (gst_pipeline_get_bus (GST_PIPELINE (player.playbin)), my_bus_callback, &player);
   g_timeout_add (130, (GSourceFunc) cb_print_position, &player);
   signal (SIGINT, sigint_handler);

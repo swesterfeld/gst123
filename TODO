@@ -1,6 +1,6 @@
 - MicroConf -> configure hjkl
-- make cursor keys work on video display
-- add key to toggle fullscreen mode for video display
+- closing the window makes things break
+- aspect ratio should be fixed
 
 wishlist:
 - wav output with --wav foo.wav

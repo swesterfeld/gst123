@@ -16,35 +16,37 @@
  * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-#ifndef GST123_TERMINAL_H
-#define GST123_TERMINAL_H
+#ifndef GST123_GTK_INTERFACE_H
+#define GST123_GTK_INTERFACE_H
 
-#include <term.h>
-#include <glib.h>
-#include <vector>
-#include <string>
-#include <map>
+#include <gtk/gtk.h>
 #include "keyhandler.h"
+#include <map>
+#include <string>
 
-class Terminal
+class GtkInterface
 {
-  struct termios             tio_orig;
-  std::string                terminal_type;
-  std::vector<int>           chars;
-  std::map<std::string, int> keys;
+  GtkWidget   *gtk_window;
+  bool         gtk_window_visible;
+  KeyHandler  *key_handler;
+  GdkCursor   *invisible_cursor;
+  GdkCursor   *visible_cursor;
+  int          cursor_timeout;      // number of timeout events until we hide the cursor (-1 if already hidden)
 
-  KeyHandler                *key_handler;
-
-  static gboolean stdin_dispatch (GSource *source, GSourceFunc callback, gpointer user_data);
-  static void signal_sig_cont (int);
-
-  void read_stdin();
-  int getch();
-  void init_terminal();
+  std::map<int,int>   key_map;
 
 public:
-  void init (GMainLoop *loop, KeyHandler *key_handler);
-  void end();
+  void init (int *argc, char ***argv, class KeyHandler *key_handler);
+  void show();
+  void hide();
+  bool init_ok();
+  GtkWidget *window();
+  void toggle_fullscreen();
+  bool handle_keypress_event (GdkEventKey *event);
+  bool handle_motion_notify_event (GdkEventMotion *event);
+  bool handle_timeout();
+  void resize (int x, int y);
+  void set_title (const std::string& title);
 };
 
 #endif
