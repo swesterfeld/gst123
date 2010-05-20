@@ -22,6 +22,7 @@
 #include <term.h>
 #include <unistd.h>
 #include <string.h>
+#include <signal.h>
 
 #include <vector>
 #include <map>
