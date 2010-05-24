@@ -14,7 +14,7 @@ Vcs-Browser: http://git.debian.org/?p=collab-maint/gst123.git
 Package: gst123
 Architecture: any
 Depends: ${shlibs:Depends},
-         ${misc:Depends}
+         ${misc:Depends},
          gstreamer0.10-plugins-base,
          gstreamer0.10-plugins-good
 Recommends: gstreamer0.10-plugins-bad,
