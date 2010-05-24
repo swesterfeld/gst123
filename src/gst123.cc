@@ -120,6 +120,9 @@ struct Player : public KeyHandler
   Tags           tags;
   GstState       last_state;
 
+  gint           video_size_width;
+  gint           video_size_height;
+
   enum
   {
     KEEP_CODEC_TAGS,
@@ -241,6 +244,9 @@ struct Player : public KeyHandler
 
         gtk_interface.set_title (g_basename (uri.c_str()));
 
+        video_size_width = 0;
+        video_size_height = 0;
+
 	gst_element_set_state (playbin, GST_STATE_NULL);
 	g_object_set (G_OBJECT (playbin), "uri", uri.c_str(), NULL);
 	gst_element_set_state (playbin, GST_STATE_PLAYING);
@@ -331,25 +337,8 @@ struct Player : public KeyHandler
   void
   normal_size()
   {
-    GstElement *videosink;
-
-    g_object_get (G_OBJECT (playbin), "video-sink", &videosink, NULL);
-    if (videosink)
-      {
-        // Find an sink element that has "force-aspect-ratio" property & set it
-        // to TRUE:
-        GstIterator *iterator = gst_bin_iterate_sinks (GST_BIN (videosink));
-        gst_iterator_foreach (iterator, force_aspect_ratio, NULL);
-
-        if (GstPad* pad = gst_element_get_static_pad (videosink, "sink"))
-          {
-            gint x, y = 0;
-            gst_video_get_size (GST_PAD (pad), &x, &y);
-            gtk_interface.resize (x,y);
-            gst_object_unref (GST_OBJECT (pad));
-          }
-        gst_object_unref (GST_OBJECT (videosink));
-      }
+    if (video_size_width > 0 && video_size_height > 0)
+      gtk_interface.resize (video_size_width, video_size_height);
   }
 
   void
@@ -409,6 +398,21 @@ collect_tags (const GstTagList *tag_list,
 }
 
 static void
+caps_set_cb (GObject *pad, GParamSpec *pspec, class Player* player)
+{
+  if (GstCaps *caps = gst_pad_get_negotiated_caps (GST_PAD (pad)))
+    {
+      // get video size (if any)
+      gst_video_get_size (GST_PAD (pad), &player->video_size_width, &player->video_size_height);
+
+      // resize window to match video size
+      player->normal_size();
+
+      gst_caps_unref (caps);
+    }
+}
+
+static void
 collect_element (gpointer element,
                  gpointer list_ptr)
 {
@@ -444,7 +448,6 @@ static gboolean
 my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
 {
   Player& player = *(Player *) data;
-
   switch (GST_MESSAGE_TYPE (message)) {
     case GST_MESSAGE_ERROR: {
       GError *err;
@@ -497,7 +500,32 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
             gtk_interface.show();
             gst_x_overlay_set_xwindow_id (GST_X_OVERLAY (GST_MESSAGE_SRC (message)),
                                           GDK_WINDOW_XWINDOW (gtk_interface.window()->window));
-            player.normal_size();
+          }
+        else if (gst_structure_has_name (message->structure, "playbin2-stream-changed"))
+          {
+            // try to figure out the video size
+            GstElement *videosink;
+            g_object_get (G_OBJECT (player.playbin), "video-sink", &videosink, NULL);
+            if (videosink)
+              {
+                // Find an sink element that has "force-aspect-ratio" property & set it
+                // to TRUE:
+                GstIterator *iterator = gst_bin_iterate_sinks (GST_BIN (videosink));
+                gst_iterator_foreach (iterator, force_aspect_ratio, NULL);
+
+                if (GstPad* pad = gst_element_get_static_pad (videosink, "sink"))
+                  {
+                    if (GstCaps *caps = gst_pad_get_negotiated_caps (pad))
+                      {
+                        caps_set_cb (G_OBJECT (pad), NULL, &player);
+                        gst_caps_unref (caps);
+                      }
+
+                    g_signal_connect (pad, "notify::caps", G_CALLBACK (caps_set_cb), &player);
+                    gst_object_unref (GST_OBJECT (pad));
+                  }
+                gst_object_unref (GST_OBJECT (videosink));
+              }
           }
       }
     default:
@@ -532,7 +560,6 @@ sigint_usr_code (gint8    usignal,
 
   return TRUE;
 }
-
 
 static gboolean
 cb_print_position (gpointer *data)
