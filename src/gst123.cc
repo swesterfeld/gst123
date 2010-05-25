@@ -94,6 +94,7 @@ struct Options
   string	program_name; /* FIXME: what to do with that */
   bool          verbose;
   bool          shuffle;
+  bool          novideo;
   list<string>  playlists;
 
   Options ();
@@ -106,6 +107,7 @@ Options::Options ()
   program_name = "gst123";
   shuffle = false;
   verbose = false;
+  novideo = false;
 }
 
 struct Player : public KeyHandler
@@ -506,7 +508,7 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
             // try to figure out the video size
             GstElement *videosink;
             g_object_get (G_OBJECT (player.playbin), "video-sink", &videosink, NULL);
-            if (videosink)
+            if (videosink && !options.novideo)
               {
                 // Find an sink element that has "force-aspect-ratio" property & set it
                 // to TRUE:
@@ -697,6 +699,10 @@ Options::parse (int   *argc_p,
 	{
 	  playlists.push_back (opt_arg);
 	}
+      else if (check_arg (argc, argv, &i, "--novideo") || check_arg (argc, argv, &i, "-x"))
+	{
+	  novideo = true;
+	}
     }
 
   /* resort argc/argv */
@@ -722,6 +728,7 @@ Options::print_usage ()
   g_printerr (" --version                   print version\n");
   g_printerr (" --verbose                   print GStreamer pipeline used to play files\n");
   g_printerr (" -z, --shuffle               play files in pseudo random order\n");
+  g_printerr (" -x, --novideo               do not play the video stream\n");
   g_printerr ("\n");
 }
 
@@ -906,6 +913,11 @@ main (gint   argc,
       return -1;
     }
   player.playbin = gst_element_factory_make ("playbin2", "play");
+  if (options.novideo)
+    {
+      GstElement *fakesink = gst_element_factory_make ("fakesink", "novid");
+      g_object_set (G_OBJECT (player.playbin), "video-sink", fakesink, NULL);
+    }
   gst_bus_add_watch (gst_pipeline_get_bus (GST_PIPELINE (player.playbin)), my_bus_callback, &player);
   g_timeout_add (130, (GSourceFunc) cb_print_position, &player);
   signal (SIGINT, sigint_handler);

@@ -27,6 +27,8 @@ gst123 - A GStreamer based command line media player
 	Prints out @manb{gst123} version.
 @item @manb{-z}, @manb{--shuffle} @*
         Play files in pseudo random order.
+@item @manb{-x}, @manb{--novideo} @*
+        Do not play the video stream.
 @item @manb{-@@} @mani{<playlist>}, @manb{--list} @mani{<playlist>} @*
         Load files to play from the playlist file.
 @item @manb{--verbose} @*
