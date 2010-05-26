@@ -1,6 +1,5 @@
 - MicroConf -> configure hjkl
 - closing the window makes things break
-- 1 should unfullscreen first
 
 wishlist:
 - wav output with --wav foo.wav

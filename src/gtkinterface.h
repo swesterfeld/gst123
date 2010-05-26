@@ -41,6 +41,7 @@ public:
   void hide();
   bool init_ok();
   GtkWidget *window();
+  void unfullscreen();
   void toggle_fullscreen();
   bool handle_keypress_event (GdkEventKey *event);
   bool handle_motion_notify_event (GdkEventMotion *event);

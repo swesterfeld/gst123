@@ -89,6 +89,13 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
 }
 
 void
+GtkInterface::unfullscreen()
+{
+  if (gtk_window != NULL && gtk_window_visible)
+    gtk_window_unfullscreen (GTK_WINDOW (gtk_window));
+}
+
+void
 GtkInterface::toggle_fullscreen()
 {
   if (gtk_window != NULL && gtk_window_visible)

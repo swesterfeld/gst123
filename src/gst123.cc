@@ -341,6 +341,7 @@ struct Player : public KeyHandler
   {
     if (video_size_width > 0 && video_size_height > 0)
       gtk_interface.resize (video_size_width, video_size_height);
+    gtk_interface.unfullscreen();
   }
 
   void
