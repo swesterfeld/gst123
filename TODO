@@ -1,5 +1,4 @@
 - MicroConf -> configure hjkl
-- closing the window makes things break
 
 wishlist:
 - wav output with --wav foo.wav

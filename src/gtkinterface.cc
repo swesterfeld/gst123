@@ -49,6 +49,14 @@ timeout_cb (gpointer data)
   return gtk_interface->handle_timeout();
 }
 
+static gboolean
+close_cb (gpointer data)
+{
+  GtkInterface *gtk_interface = static_cast<GtkInterface *> (data);
+
+  return gtk_interface->handle_close();
+}
+
 void
 GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
 {
@@ -60,6 +68,7 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
       gtk_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
       g_signal_connect (G_OBJECT (gtk_window), "key-press-event", G_CALLBACK (key_press_event_cb), this);
       g_signal_connect (G_OBJECT (gtk_window), "motion-notify-event", G_CALLBACK (motion_notify_event_cb), this);
+      g_signal_connect (G_OBJECT (gtk_window), "delete-event", G_CALLBACK  (close_cb), this);
       g_object_set (G_OBJECT (gtk_window), "events", GDK_POINTER_MOTION_MASK, NULL);
 
       // make background black
@@ -206,5 +215,16 @@ GtkInterface::handle_motion_notify_event (GdkEventMotion *event)
       gdk_window_set_cursor (GDK_WINDOW (gtk_window->window), visible_cursor);
       cursor_timeout = 3;
     }
+  return true;
+}
+
+bool
+GtkInterface::handle_close()
+{
+  g_return_val_if_fail (gtk_window != NULL, true);
+
+  // quit on close
+  key_handler->process_input ('q');
+
   return true;
 }

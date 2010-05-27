@@ -46,6 +46,7 @@ public:
   bool handle_keypress_event (GdkEventKey *event);
   bool handle_motion_notify_event (GdkEventMotion *event);
   bool handle_timeout();
+  bool handle_close();
   void resize (int x, int y);
   void set_title (const std::string& title);
 };
