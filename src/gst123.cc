@@ -30,6 +30,7 @@
 #include "config.h"
 #include "terminal.h"
 #include "gtkinterface.h"
+#include "options.h"
 #include <vector>
 #include <string>
 #include <list>
@@ -89,33 +90,7 @@ force_aspect_ratio (gpointer element, gpointer userdata)
     g_object_set (G_OBJECT (element), "force-aspect-ratio", TRUE, NULL);
 }
 
-struct Options
-{
-  string	program_name; /* FIXME: what to do with that */
-  string        usage;
-
-  // variables filled via command line options:
-  gboolean      verbose;
-  gboolean      shuffle;
-  gboolean      novideo;
-  char        **uris;
-  list<string>  playlists;
-
-  Options ();
-  void parse (int argc, char **argv);
-
-  static void print_version();
-  static void add_playlist (const gchar *option_name, const gchar *value);
-} options;
-
-Options::Options ()
-{
-  program_name = "gst123";
-  shuffle = FALSE;
-  verbose = FALSE;
-  novideo = FALSE;
-  uris = NULL;
-}
+struct Options options;
 
 struct Player : public KeyHandler
 {
@@ -616,56 +591,6 @@ cb_print_position (gpointer *data)
   return TRUE;
 }
 
-void
-Options::print_version ()
-{
-  printf ("%s %s\n", options.program_name.c_str(), VERSION);
-  exit (0);
-}
-
-void
-Options::add_playlist (const gchar *option_name, const gchar *value)
-{
-  options.playlists.push_back (value);
-}
-
-void
-Options::parse (int argc, char **argv)
-{
-  GOptionContext *context = g_option_context_new ("<URI>... - Play video and audio clips");
-  const GOptionEntry all_options[] = {
-    {"list", '@', G_OPTION_FLAG_FILENAME, G_OPTION_ARG_CALLBACK,
-      (GOptionParseFunc*) Options::add_playlist,
-      "read playlist of files and URIs from <filename>", "<filename>"},
-    {"version", '\0', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK,
-      (GOptionParseFunc*) Options::print_version, "print version", NULL },
-    {"verbose", '\0', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_NONE, &options.verbose,
-      "print GStreamer pipeline used to play files", NULL},
-    {"shuffle", 'z', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_NONE, &options.shuffle,
-      "play files in pseudo random order", NULL},
-    {"novideo", 'x', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_NONE, &options.novideo,
-      "do not play the video stream", NULL},
-    {G_OPTION_REMAINING, '\0', G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME_ARRAY, &options.uris, "Movies to play", NULL},
-    {NULL} /* end the list */
-  };
-  g_option_context_add_main_entries (context, all_options, NULL);
-  g_option_context_add_group (context, gst_init_get_option_group());
-
-  if (XOpenDisplay (NULL))
-    g_option_context_add_group (context, gtk_get_option_group (TRUE));
-
-  usage = g_option_context_get_help (context, TRUE, NULL);
-
-  GError *error = NULL;
-  if (!g_option_context_parse (context, &argc, &argv, &error))
-    {
-      g_print ("%s\n%s", error->message, usage.c_str());
-      g_error_free (error);
-      g_option_context_free (context);
-      exit (1);
-    }
-  g_option_context_free (context);
-}
 
 static inline bool
 is_directory (const string& path)
