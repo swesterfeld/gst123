@@ -49,6 +49,8 @@ public:
   bool handle_close();
   void resize (int x, int y);
   void set_title (const std::string& title);
+
+  static bool have_x11_display();
 };
 
 #endif

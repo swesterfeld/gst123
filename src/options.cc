@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include "options.h"
+#include "gtkinterface.h"
 
 Options *Options::instance = NULL;
 
@@ -61,7 +62,7 @@ Options::parse (int argc, char **argv)
   g_option_context_add_main_entries (context, all_options, NULL);
   g_option_context_add_group (context, gst_init_get_option_group());
 
-  if (XOpenDisplay (NULL))
+  if (GtkInterface::have_x11_display())
     g_option_context_add_group (context, gtk_get_option_group (TRUE));
 
   usage = g_option_context_get_help (context, TRUE, NULL);

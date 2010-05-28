@@ -57,12 +57,23 @@ close_cb (gpointer data)
   return gtk_interface->handle_close();
 }
 
+bool
+GtkInterface::have_x11_display()
+{
+  static Display *display = NULL;
+
+  if (!display)
+    display = XOpenDisplay (NULL);   // this should work if and only if we do have an X11 server we can use
+
+  return display != NULL;
+}
+
 void
 GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
 {
   key_handler = handler;
 
-  if (XOpenDisplay (NULL))
+  if (have_x11_display())
     {
       gtk_init (argc, argv);
       gtk_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);

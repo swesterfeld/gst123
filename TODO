@@ -1,4 +1,3 @@
-- remove redundant XOpenDisplay (NULL)
 - MicroConf -> configure hjkl
 
 wishlist:
