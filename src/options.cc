@@ -65,10 +65,10 @@ Options::parse (int argc, char **argv)
   if (GtkInterface::have_x11_display())
     g_option_context_add_group (context, gtk_get_option_group (TRUE));
 
-  usage = g_option_context_get_help (context, TRUE, NULL);
-
   GError *error = NULL;
-  if (!g_option_context_parse (context, &argc, &argv, &error))
+  bool option_parse_ret = g_option_context_parse (context, &argc, &argv, &error);
+  usage = g_option_context_get_help (context, TRUE, NULL);
+  if (!option_parse_ret)
     {
       g_print ("%s\n%s", error->message, usage.c_str());
       g_error_free (error);
