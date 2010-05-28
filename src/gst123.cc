@@ -92,22 +92,29 @@ force_aspect_ratio (gpointer element, gpointer userdata)
 struct Options
 {
   string	program_name; /* FIXME: what to do with that */
-  bool          verbose;
-  bool          shuffle;
-  bool          novideo;
+  string        usage;
+
+  // variables filled via command line options:
+  gboolean      verbose;
+  gboolean      shuffle;
+  gboolean      novideo;
+  char        **uris;
   list<string>  playlists;
 
   Options ();
-  void parse (int *argc_p, char **argv_p[]);
-  static void print_usage ();
+  void parse (int argc, char **argv);
+
+  static void print_version();
+  static void add_playlist (const gchar *option_name, const gchar *value);
 } options;
 
 Options::Options ()
 {
   program_name = "gst123";
-  shuffle = false;
-  verbose = false;
-  novideo = false;
+  shuffle = FALSE;
+  verbose = FALSE;
+  novideo = FALSE;
+  uris = NULL;
 }
 
 struct Player : public KeyHandler
@@ -609,128 +616,55 @@ cb_print_position (gpointer *data)
   return TRUE;
 }
 
-static bool
-check_arg (uint         argc,
-           char        *argv[],
-           uint        *nth,
-           const char  *opt,		  /* for example: --foo */
-           const char **opt_arg = NULL)	  /* if foo needs an argument, pass a pointer to get the argument */
+void
+Options::print_version ()
 {
-  g_return_val_if_fail (opt != NULL, false);
-  g_return_val_if_fail (*nth < argc, false);
-
-  const char *arg = argv[*nth];
-  if (!arg)
-    return false;
-
-  uint opt_len = strlen (opt);
-  if (strcmp (arg, opt) == 0)
-    {
-      if (opt_arg && *nth + 1 < argc)	  /* match foo option with argument: --foo bar */
-        {
-          argv[(*nth)++] = NULL;
-          *opt_arg = argv[*nth];
-          argv[*nth] = NULL;
-          return true;
-        }
-      else if (!opt_arg)		  /* match foo option without argument: --foo */
-        {
-          argv[*nth] = NULL;
-          return true;
-        }
-      /* fall through to error message */
-    }
-  else if (strncmp (arg, opt, opt_len) == 0 && arg[opt_len] == '=')
-    {
-      if (opt_arg)			  /* match foo option with argument: --foo=bar */
-        {
-          *opt_arg = arg + opt_len + 1;
-          argv[*nth] = NULL;
-          return true;
-        }
-      /* fall through to error message */
-    }
-  else
-    return false;
-
-  Options::print_usage();
-  exit (1);
+  printf ("%s %s\n", options.program_name.c_str(), VERSION);
+  exit (0);
 }
 
 void
-Options::parse (int   *argc_p,
-                char **argv_p[])
+Options::add_playlist (const gchar *option_name, const gchar *value)
 {
-  guint argc = *argc_p;
-  gchar **argv = *argv_p;
-  unsigned int i, e;
-
-  g_return_if_fail (argc >= 0);
-
-  /*  I am tired of seeing .libs/lt-gst123 all the time,
-   *  but basically this should be done (to allow renaming the binary):
-   *
-  if (argc && argv[0])
-    program_name = argv[0];
-  */
-
-  for (i = 1; i < argc; i++)
-    {
-      const char *opt_arg;
-      if (strcmp (argv[i], "--help") == 0 ||
-          strcmp (argv[i], "-h") == 0)
-	{
-	  print_usage();
-	  exit (0);
-	}
-      else if (strcmp (argv[i], "--version") == 0 || strcmp (argv[i], "-v") == 0)
-	{
-	  printf ("%s %s\n", program_name.c_str(), VERSION);
-	  exit (0);
-	}
-      else if (check_arg (argc, argv, &i, "--verbose"))
-	{
-	  verbose = true;
-	}
-      else if (check_arg (argc, argv, &i, "--shuffle") || check_arg (argc, argv, &i, "-z"))
-	{
-	  shuffle = true;
-	}
-      else if (check_arg (argc, argv, &i, "--list", &opt_arg) || check_arg (argc, argv, &i, "-@", &opt_arg))
-	{
-	  playlists.push_back (opt_arg);
-	}
-      else if (check_arg (argc, argv, &i, "--novideo") || check_arg (argc, argv, &i, "-x"))
-	{
-	  novideo = true;
-	}
-    }
-
-  /* resort argc/argv */
-  e = 1;
-  for (i = 1; i < argc; i++)
-    if (argv[i])
-      {
-        argv[e++] = argv[i];
-        if (i >= e)
-          argv[i] = NULL;
-      }
-  *argc_p = e;
+  options.playlists.push_back (value);
 }
 
 void
-Options::print_usage ()
+Options::parse (int argc, char **argv)
 {
-  g_printerr ("usage: %s [ <options> ] <URI> ...\n", options.program_name.c_str());
-  g_printerr ("\n");
-  g_printerr ("options:\n");
-  g_printerr (" -h, --help                  help for %s\n", options.program_name.c_str());
-  g_printerr (" -@, --list <filename>       read playlist of files and URIs from \"filename\"\n");
-  g_printerr (" --version                   print version\n");
-  g_printerr (" --verbose                   print GStreamer pipeline used to play files\n");
-  g_printerr (" -z, --shuffle               play files in pseudo random order\n");
-  g_printerr (" -x, --novideo               do not play the video stream\n");
-  g_printerr ("\n");
+  GOptionContext *context = g_option_context_new ("<URI>... - Play video and audio clips");
+  const GOptionEntry all_options[] = {
+    {"list", '@', G_OPTION_FLAG_FILENAME, G_OPTION_ARG_CALLBACK,
+      (GOptionParseFunc*) Options::add_playlist,
+      "read playlist of files and URIs from <filename>", "<filename>"},
+    {"version", '\0', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK,
+      (GOptionParseFunc*) Options::print_version, "print version", NULL },
+    {"verbose", '\0', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_NONE, &options.verbose,
+      "print GStreamer pipeline used to play files", NULL},
+    {"shuffle", 'z', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_NONE, &options.shuffle,
+      "play files in pseudo random order", NULL},
+    {"novideo", 'x', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_NONE, &options.novideo,
+      "do not play the video stream", NULL},
+    {G_OPTION_REMAINING, '\0', G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME_ARRAY, &options.uris, "Movies to play", NULL},
+    {NULL} /* end the list */
+  };
+  g_option_context_add_main_entries (context, all_options, NULL);
+  g_option_context_add_group (context, gst_init_get_option_group());
+
+  if (XOpenDisplay (NULL))
+    g_option_context_add_group (context, gtk_get_option_group (TRUE));
+
+  usage = g_option_context_get_help (context, TRUE, NULL);
+
+  GError *error = NULL;
+  if (!g_option_context_parse (context, &argc, &argv, &error))
+    {
+      g_print ("%s\n%s", error->message, usage.c_str());
+      g_error_free (error);
+      g_option_context_free (context);
+      exit (1);
+    }
+  g_option_context_free (context);
 }
 
 static inline bool
@@ -866,17 +800,24 @@ main (gint   argc,
 {
   Player player;
 
+  /* Setup options */
+  if (!g_thread_supported ())
+    g_thread_init (NULL);
+
+  options.parse (argc, argv);
+
   /* init GStreamer */
   gst_init (&argc, &argv);
   gtk_interface.init (&argc, &argv, &player);
 
   player.loop = g_main_loop_new (NULL, FALSE);
 
-  options.parse (&argc, &argv);
-
   /* set up */
-  for (int i = 1; i < argc; i++)
-    player.add_uri_or_directory (argv[i]);
+  if (options.uris)
+    {
+      for (int i = 0; options.uris[i]; i++)
+        player.add_uri_or_directory (options.uris[i]);
+    }
 
   for (list<string>::iterator pi = options.playlists.begin(); pi != options.playlists.end(); pi++)
     {
@@ -910,7 +851,7 @@ main (gint   argc,
   /* make sure we have a URI */
   if (player.uris.empty())
     {
-      options.print_usage();
+      printf ("%s", options.usage.c_str());
       return -1;
     }
   player.playbin = gst_element_factory_make ("playbin2", "play");
