@@ -1,4 +1,4 @@
-gst123 (0.1.0-1) lucid; urgency=low
+gst123 (0.1.0-1) unstable; urgency=low
 
   * New upstream release.
   * debian/control:
