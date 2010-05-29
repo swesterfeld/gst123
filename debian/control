@@ -5,6 +5,8 @@ Maintainer: Maintainers of GStreamer packages <pkg-gstreamer-maintainers@lists.a
 Uploaders: أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
 Build-Depends: debhelper (>= 7.0.50~),
                libgstreamer0.10-dev,
+               libgtk2.0-dev,
+               libgstreamer-plugins-base0.10-dev,
                libncurses5-dev
 Standards-Version: 3.8.4
 Homepage: http://space.twc.de/~stefan/gst123.php
@@ -15,7 +17,6 @@ Package: gst123
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-         gstreamer0.10-plugins-base,
          gstreamer0.10-plugins-good
 Recommends: gstreamer0.10-plugins-bad,
             gstreamer0.10-plugins-ugly
