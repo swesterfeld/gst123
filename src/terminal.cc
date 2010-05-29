@@ -22,6 +22,7 @@
 #include <term.h>
 #include <unistd.h>
 #include <string.h>
+#include <signal.h>
 
 #include <vector>
 #include <map>
@@ -122,12 +123,12 @@ Terminal::init (GMainLoop *loop, KeyHandler *key_handler)
   init_terminal();
 
   // initialize common keyboard escape sequences
-  keys[tgetstr ("ku", &term_p)] = TERMINAL_KEY_UP;
-  keys[tgetstr ("kd", &term_p)] = TERMINAL_KEY_DOWN;
-  keys[tgetstr ("kl", &term_p)] = TERMINAL_KEY_LEFT;
-  keys[tgetstr ("kr", &term_p)] = TERMINAL_KEY_RIGHT;
-  keys[tgetstr ("kP", &term_p)] = TERMINAL_KEY_PAGE_UP;
-  keys[tgetstr ("kN", &term_p)] = TERMINAL_KEY_PAGE_DOWN;
+  keys[tgetstr ("ku", &term_p)] = KEY_HANDLER_UP;
+  keys[tgetstr ("kd", &term_p)] = KEY_HANDLER_DOWN;
+  keys[tgetstr ("kl", &term_p)] = KEY_HANDLER_LEFT;
+  keys[tgetstr ("kr", &term_p)] = KEY_HANDLER_RIGHT;
+  keys[tgetstr ("kP", &term_p)] = KEY_HANDLER_PAGE_UP;
+  keys[tgetstr ("kN", &term_p)] = KEY_HANDLER_PAGE_DOWN;
 
   // add mainloop source for keys
   static GSourceFuncs source_funcs = { stdin_prepare, stdin_check, stdin_dispatch, };
