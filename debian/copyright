@@ -3,16 +3,21 @@ Name: gst123
 Maintainer: Stefan Westerfeld <stefan@space.twc.de>
 Source: http://space.twc.de/~stefan/gst123.php
 
-Copyright: 2006, Stefan Westerfeld
+Copyright: 2006-2010, Stefan Westerfeld
 License: LGPL-2+
 
+Files: src/options.cc,
+       src/gst123.cc
+Copyright: 2006-2010, Stefan Westerfeld
+           2010, أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
+License: LGPL-2+
 
 Files: src/glib-extra.*
 Copyright: 1997-2002, Tim Janik
 License: LGPL-2+
 
 Files: debian/*
-Copyright: 2010, أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@users@users.sourceforge.net>
+Copyright: 2010, أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
 License: LGPL-2+
 
 License: LGPL-2.1
