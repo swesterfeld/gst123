@@ -3,7 +3,7 @@ gst123 (0.1.0-1) unstable; urgency=low
   * New upstream release.
   * debian/control:
     + Added good & base plugins to Depends
-    + Added ugly & bad plugins to Recommends
+    + Added ffmpeg, ugly & bad plugins to Recommends
     + Added libgtk2.0-dev, libgstreamer-plugins-base0.10-dev to Build-Deps
   * debian/copyright:
     + Updated copyrights
@@ -12,7 +12,7 @@ gst123 (0.1.0-1) unstable; urgency=low
   [ Rogério Brito ]
   * Include a missing comma in the depends field
 
- -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Sat, 29 May 2010 05:45:26 +0300
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Sat, 29 May 2010 11:23:51 +0300
 
 gst123 (0.0.3-1) unstable; urgency=low
 
