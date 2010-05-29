@@ -1,3 +1,15 @@
+Overview of changes in gst123-0.1.0:
+
+* proper support for watching video files with gst123
+  - fullscreen mode (f)
+  - keys (like page up, cursor left, ...)  work within the video window
+  - hide mouse in video widget
+  - use correct aspect ratio during zoom
+* better option parsing (--help, --help-gst, --help-gtk work)
+* possibilty to disable video stream (-x, --novideo)
+* indicate pause / muted state (prints [PAUSED], [MUTED] in status display)
+* use GStreamer playbin2
+
 Overview of changes is gst123-0.0.3:
 
 * fixed buggy key handling when keys are autorepeating

@@ -16,35 +16,33 @@
  * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-#ifndef GST123_TERMINAL_H
-#define GST123_TERMINAL_H
+#ifndef GST123_OPTIONS_H
+#define GST123_OPTIONS_H
 
-#include <term.h>
-#include <glib.h>
-#include <vector>
 #include <string>
-#include <map>
-#include "keyhandler.h"
+#include <list>
+#include <glib.h>
 
-class Terminal
+class Options
 {
-  struct termios             tio_orig;
-  std::string                terminal_type;
-  std::vector<int>           chars;
-  std::map<std::string, int> keys;
+  static Options *instance;
 
-  KeyHandler                *key_handler;
-
-  static gboolean stdin_dispatch (GSource *source, GSourceFunc callback, gpointer user_data);
-  static void signal_sig_cont (int);
-
-  void read_stdin();
-  int getch();
-  void init_terminal();
+  static void print_version();
+  static void add_playlist (const gchar *option_name, const gchar *value);
 
 public:
-  void init (GMainLoop *loop, KeyHandler *key_handler);
-  void end();
+  std::string	program_name; /* FIXME: what to do with that */
+  std::string   usage;
+
+  // variables filled via command line options:
+  gboolean      verbose;
+  gboolean      shuffle;
+  gboolean      novideo;
+  char        **uris;
+  std::list<std::string>  playlists;
+
+  Options ();
+  void parse (int argc, char **argv);
 };
 
 #endif

@@ -16,35 +16,23 @@
  * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-#ifndef GST123_TERMINAL_H
-#define GST123_TERMINAL_H
+#ifndef GST123_KEY_HANDLER_H
+#define GST123_KEY_HANDLER_H
 
-#include <term.h>
-#include <glib.h>
-#include <vector>
-#include <string>
-#include <map>
-#include "keyhandler.h"
+/* key codes for process input ; everything < 256 is plain ascii */
+enum {
+  KEY_HANDLER_UP = 300,
+  KEY_HANDLER_LEFT,
+  KEY_HANDLER_RIGHT,
+  KEY_HANDLER_DOWN,
+  KEY_HANDLER_PAGE_UP,
+  KEY_HANDLER_PAGE_DOWN
+};
 
-class Terminal
+class KeyHandler
 {
-  struct termios             tio_orig;
-  std::string                terminal_type;
-  std::vector<int>           chars;
-  std::map<std::string, int> keys;
-
-  KeyHandler                *key_handler;
-
-  static gboolean stdin_dispatch (GSource *source, GSourceFunc callback, gpointer user_data);
-  static void signal_sig_cont (int);
-
-  void read_stdin();
-  int getch();
-  void init_terminal();
-
 public:
-  void init (GMainLoop *loop, KeyHandler *key_handler);
-  void end();
+  virtual void process_input (int ch) = 0;
 };
 
 #endif

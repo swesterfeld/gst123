@@ -1,2 +1,2 @@
 EXTRA_DIST = TODO
-SUBDIRS = src
+SUBDIRS = src docs
