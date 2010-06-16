@@ -63,7 +63,7 @@ gst123 - A GStreamer based command line media player
 @item @manb{q} @*
     Quit gst123.
 @item @manb{?} @*
-    Show keyboad help.
+    Show keyboard help.
 @done
 
 @heading SEE ALSO
