@@ -1,3 +1,8 @@
+Overview of changes in gst123-0.1.1:
+
+* Fix code to allow uris in playlist. [Siddhesh Poyarekar]
+* Fix building with binutils-gold. [Siddhesh Poyarekar]
+
 Overview of changes in gst123-0.1.0:
 
 * proper support for watching video files with gst123

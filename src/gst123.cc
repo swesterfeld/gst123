@@ -764,7 +764,7 @@ main (gint   argc,
 	  int l = strlen (uri);
 	  while (l && (uri[l-1] == '\n' || uri[l-1] == '\r'))
 	    uri[--l] = 0;
-          if (!g_path_is_absolute (uri))
+	  if (!strchr (uri, ':') && !g_path_is_absolute (uri))
             player.add_uri_or_directory (g_build_filename (playlist_dirname.c_str(), uri, 0));
 	  else
             player.add_uri_or_directory (uri);

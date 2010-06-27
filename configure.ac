@@ -1,4 +1,4 @@
-AC_INIT([gst123], [0.1.0])
+AC_INIT([gst123], [0.1.1])
 AC_CONFIG_SRCDIR([src/gst123.cc])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -29,6 +29,16 @@ AC_DEFUN([AC_GSTREAMER_GTK_REQUIREMENTS],
 ])
 
 dnl
+dnl We need libX11
+dnl
+AC_DEFUN([AC_X11_REQUIREMENTS],
+[
+    AC_CHECK_LIB(X11, XOpenDisplay)
+    X11_LIBS='-lX11'
+    AC_SUBST(X11_LIBS)
+])
+
+dnl
 dnl We need libncurses
 dnl
 AC_DEFUN([AC_NCURSES_REQUIREMENTS],
@@ -41,6 +51,7 @@ AC_DEFUN([AC_NCURSES_REQUIREMENTS],
 # Check requirement sets
 AC_GSTREAMER_REQUIREMENTS
 AC_GSTREAMER_GTK_REQUIREMENTS
+AC_X11_REQUIREMENTS
 AC_NCURSES_REQUIREMENTS
 
 AC_CONFIG_FILES([Makefile src/Makefile docs/Makefile])
