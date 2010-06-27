@@ -1,3 +1,10 @@
+gst123 (0.1.1-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/watch: Add check for bzip2'ed tarballs
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Sun, 27 Jun 2010 05:59:52 +0300
+
 gst123 (0.1.0-1) unstable; urgency=low
 
   * New upstream release.
