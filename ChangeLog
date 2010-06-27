@@ -1,0 +1,413 @@
+2010-06-26 19:01:21 +0200  Stefan Westerfeld 	# 2b9aecd
+
+	Updated NEWS.
+
+2010-06-26 18:57:31 +0200  Stefan Westerfeld 	# 1bbbbf6
+
+	Included Makefile.decl for ChangeLog generation and release rules.
+
+2010-06-16 13:43:17 +0200  Stefan Westerfeld 	# c049c4b
+
+	Include version in manpage properly.
+
+2010-06-16 13:42:51 +0200  Stefan Westerfeld 	# 0d266fe
+
+	Bump version to gst123-0.1.1.
+
+2010-06-16 09:34:00 +0200  Stefan Westerfeld 	# 30b9b44
+
+	Fix man page typo.
+
+2010-06-13 12:04:35 +0200  Stefan Westerfeld 	# 2d805f2
+
+	Allow uris in playlist. Code by Siddhesh Poyarekar.
+
+	Check to see if the entry in the playlist is a uri (http://, file://,
+	etc). Only try to build an absolute path if the entry is not a uri.
+
+2010-06-03 10:59:32 +0200  Stefan Westerfeld 	# 0e91e8d
+
+	Added configure check for libX11. Code by Siddhesh Poyarekar.
+
+	With binutils gold, explicit -lX11 is required for using XOpenDisplay.
+
+2010-05-28 21:30:17 +0300  أحمد المحمودي (Ahmed El-Mahmoudy) 	# 5826c3a
+
+	Move usage assignment after g_option_context_parse
+
+	program name is (null) when usage is assigned before
+	g_option_context_parse
+
+2010-05-28 19:22:37 +0200  Stefan Westerfeld 	# d466c9a
+
+	Updated NEWS file for gst123-0.1.0.
+
+2010-05-28 19:05:34 +0200  Stefan Westerfeld 	# f8b1ca7
+
+	Get rid of redundant XOpenDisplay (NULL).
+
+2010-05-28 18:57:35 +0200  Stefan Westerfeld 	# fdba8b0
+
+	Move option parsing stuff to seperate file.
+
+2010-05-28 18:39:58 +0200  Stefan Westerfeld 	# 960dfc1
+
+	TODO++
+
+2010-05-28 18:32:24 +0200  Stefan Westerfeld 	# 4272716
+
+	Fixed --help option.
+
+2010-05-28 18:31:54 +0200  Stefan Westerfeld 	# 60734cb
+
+	Use glib option parser - based on code from Ahmed El-Mahmoudy.
+
+	* Removed check_args function, rewrote Options::parse.
+	* Added Options::add_playlist & Options::print_version functions.
+	* Converted shuffle,verbose & novideo to gboolean (that was needed to
+	  prevent having Glib's parser to write upon the playlists)
+	* Added uris to option structure.
+
+2010-05-27 15:19:21 +0200  Stefan Westerfeld 	# 2e35db5
+
+	TODO+
+
+2010-05-27 10:20:16 +0200  Stefan Westerfeld 	# 1791e67
+
+	Bump version to 0.1.0.
+
+2010-05-27 10:07:36 +0200  Stefan Westerfeld 	# da4d9f9
+
+	Handle closing the video window properly: quit gst123.
+
+2010-05-26 22:15:10 +0300  أحمد المحمودي (Ahmed El-Mahmoudy) 	# 09466c4
+
+	normal_size() also does unfullscreen
+
+2010-05-25 10:40:04 +0200  Stefan Westerfeld 	# 3f1aaef
+
+	Remove aspect ratio TODO.
+
+2010-05-25 10:39:49 +0200  Stefan Westerfeld 	# adba564
+
+	Added docs publishing rule.
+
+2010-05-25 10:00:52 +0200  Stefan Westerfeld 	# 6415410
+
+	Added option to disable the video stream; code by Ahmed El-Mahmoudy.
+
+	Added -x or --novideo option to play the audio stream only, useful if no
+	X11 display is available.
+
+2010-05-24 12:23:51 +0200  Stefan Westerfeld 	# a4293b4
+
+	Rewrote video size detection; might be more robust than the old algorithm.
+
+2010-05-23 17:48:14 +0200  Stefan Westerfeld 	# 244daa4
+
+	TODO++
+
+2010-05-20 13:58:34 +0200  Stefan Westerfeld 	# 485e877
+
+	Merge branch 'master' of stefan@space.twc.de:/public/git/gst123
+
+2010-05-20 13:58:06 +0200  Stefan Westerfeld 	# 84a0d53
+
+	Added missing include for signals.
+
+2010-05-20 11:47:28 +0200  Stefan Westerfeld 	# e77daa7
+
+	Include paused state into status display (just like muted).
+
+2010-05-20 11:41:00 +0200  Stefan Westerfeld 	# 12dce8c
+
+	Gtk Interface: automatically hide mouse cursor during videos, unless moved
+
+2010-05-20 09:35:35 +0200  Stefan Westerfeld 	# f11e333
+
+	TODO++
+
+2010-05-17 16:55:50 +0200  Stefan Westerfeld 	# 8b53f4d
+
+	Set title of the video window to the filename being played.
+
+2010-05-17 14:05:29 +0200  Stefan Westerfeld 	# c81f85b
+
+	Better .gitignore.
+
+2010-05-17 14:04:13 +0200  Stefan Westerfeld 	# 1fc5427
+
+	Better .gitignore files.
+
+2010-05-17 13:22:34 +0200  Stefan Westerfeld 	# 8011f74
+
+	Added Makefile.am for docs directory.
+
+2010-05-16 20:16:36 +0200  Stefan Westerfeld 	# f5fa2e1
+
+	Moved docs to extra dir.
+
+2010-05-14 22:00:24 +0200  Stefan Westerfeld 	# 3d78b08
+
+	Use black background for the window.
+
+2010-05-14 21:59:50 +0200  Stefan Westerfeld 	# 6d9f595
+
+	Force correct aspect ratio; code by Ahmed El-Mahmoudy.
+
+2010-05-14 16:09:22 +0200  Stefan Westerfeld 	# 7a769a1
+
+	Documentation fix.
+
+2010-05-13 11:28:18 +0200  Stefan Westerfeld 	# 8cbf774
+
+	Copyright fix.
+
+2010-05-13 11:27:04 +0200  Stefan Westerfeld 	# 2057ae9
+
+	Added Ahmed El-Mahmoudy to Copyright/AUTHORS.
+
+2010-05-13 11:22:29 +0200  Stefan Westerfeld 	# 7a78f01
+
+	TODO updated.
+
+2010-05-12 22:31:19 +0200  Stefan Westerfeld 	# a043044
+
+	Simplify mute handling using playbin2 property; code by Ahmed El-Mahmoudy.
+
+2010-05-12 22:26:52 +0200  Stefan Westerfeld 	# 199cce7
+
+	Autoconf stuff for improved video support.
+
+2010-05-12 22:24:49 +0200  Stefan Westerfeld 	# 2cda604
+
+	Improved video support; code by Ahmed El-Mahmoudy.
+
+	* Use playbin2 instead of playbin (according to Sebastian Dröge: "it's
+	  more or less stable now and everybody is using it already"), the
+	  reason is because video-sink property in playbin was not working (I
+	  am currently using gstreamer 0.10.28).
+	* Added resize method to GtkInterface
+	* Added normal_size method to Player, this method sets the window size
+	  of GtkInterface to width,height of the video currently playing.
+	* Call normal_size after doing the X overlay thing.
+	* Added a keybinding '1', which calls normal_size, that's useful if the
+	  user resized the GtkInterface window and wants to return to the
+	  original size.
+	* configure.ac: added gstreamer-video-0.10
+
+2010-05-12 22:18:03 +0200  Stefan Westerfeld 	# c25abc2
+
+	TODO updated.
+
+2010-05-11 17:36:28 +0200  Stefan Westerfeld 	# 9c8ea64
+
+	More TODO.
+
+2010-05-11 17:33:01 +0200  Stefan Westerfeld 	# c3d331a
+
+	Ignore toggle_fullscreen() if window is not visible.
+
+2010-05-11 17:28:15 +0200  Stefan Westerfeld 	# 93850fb
+
+	Document fullscreen mode.
+
+2010-05-11 17:00:49 +0200  Stefan Westerfeld 	# 4121772
+
+	Fullscreen mode is now implemented, keys in GtkInterface work.
+
+2010-05-11 17:00:02 +0200  Stefan Westerfeld 	# ff1e615
+
+	Updated .gitignore.
+
+2010-05-11 16:58:54 +0200  Stefan Westerfeld 	# 4340487
+
+	Show gtk window if and only if we're playing a video file.
+
+2010-05-11 16:10:17 +0200  Stefan Westerfeld 	# 431421c
+
+	Support proper key handling (arrow keys,...) in GtkInterface.
+
+2010-05-11 15:51:41 +0200  Stefan Westerfeld 	# de80e2f
+
+	Bump version.
+
+2010-05-11 15:51:26 +0200  Stefan Westerfeld 	# 6f85938
+
+	Updated gitignore.
+
+2010-05-11 15:50:46 +0200  Stefan Westerfeld 	# b2826f2
+
+	Support key bindings in gtk window.
+
+2010-05-11 14:16:39 +0200  Stefan Westerfeld 	# e9f451c
+
+	Fixes for the non-video case (more to come).
+
+2010-05-11 14:13:29 +0200  Stefan Westerfeld 	# e47153e
+
+	Added minimal fullscreen support via GtkInterface.
+
+	Its implemented in a way that makes gst123 still work (although without
+	video support), when X11 is not present.
+
+2010-05-10 19:34:37 +0200  Stefan Westerfeld 	# 35779ea
+
+	Updated NEWS for gst123-0.0.3.
+
+2010-05-10 19:30:49 +0200  Stefan Westerfeld 	# 4dd8e14
+
+	Display video codec, too (when present); code by Ahmed El-Mahmoudy.
+
+2010-05-07 12:54:26 +0200  Stefan Westerfeld 	# cddd3f9
+
+	Merge branch 'master' of stefan@space.twc.de:/public/git/gst123
+
+2010-05-05 10:48:00 +0200  Stefan Westerfeld 	# 1fa742c
+
+	Make muted state visible to the user; code by Ahmed El-Mahmoudy.
+
+2010-05-05 09:39:35 +0200  Stefan Westerfeld 	# 173fd94
+
+	Added mute and volume control keys; code by Ahmed El-Mahmoudy.
+
+2010-05-05 09:01:52 +0200  Stefan Westerfeld 	# 8bab92d
+
+	Added wishlist section.
+
+2010-05-04 14:17:42 +0200  Stefan Westerfeld 	# af791f8
+
+	Bump version to 0.0.3.
+
+2010-05-04 14:14:04 +0200  Stefan Westerfeld 	# b94815c
+
+	Added a signal handler on SIGCONT and perform terminal reinitialization after the program received SIGCONT.
+
+2010-05-04 13:39:05 +0200  Stefan Westerfeld 	# 821bfdc
+
+	Make terminal code behave better if a key is held down and in auto repeat.
+
+2010-05-03 14:37:00 +0200  Stefan Westerfeld 	# f081432
+
+	Overwrite time display when printing keyboard help.
+
+2010-05-03 11:43:46 +0200  Stefan Westerfeld 	# 5f4abbe
+
+	TODO += 2
+
+2010-05-02 13:16:28 +0200  Stefan Westerfeld 	# a2b03b5
+
+	Update TODO.
+
+2010-05-02 13:16:16 +0200  Stefan Westerfeld 	# 3389040
+
+	Update manpage with information on directory crawling.
+
+2010-05-02 13:15:52 +0200  Stefan Westerfeld 	# 464a08b
+
+	Resolve playlist entries relative to the directory containing the playlist.
+
+2010-05-02 12:54:17 +0200  Stefan Westerfeld 	# 036d0fb
+
+	Document keyboard input; add in-program help for keyboard input.
+
+2010-05-02 12:41:06 +0200  Stefan Westerfeld 	# 09613e5
+
+	Move glib source to terminal.cc; switch to callbacks for keyboard input.
+
+2010-05-02 12:12:14 +0200  Stefan Westerfeld 	# e2f6da2
+
+	Do not create an extra mainloop but use player mainloop.
+
+2010-05-02 11:20:43 +0200  Stefan Westerfeld 	# 493292e
+
+	gitignore
+
+2010-05-02 11:18:59 +0200  Stefan Westerfeld 	# a6ea4ef
+
+	Put terminal initialization/deinitialization near mainloop run.
+
+2010-05-02 11:15:25 +0200  Stefan Westerfeld 	# cd59ad1
+
+	Cleanup escape sequence handling a bit.
+
+2010-05-02 11:05:37 +0200  Stefan Westerfeld 	# 6d127d0
+
+	Introduced cursor key handling, add keys for seeking.
+
+2010-04-17 19:56:25 +0200  Stefan Westerfeld 	# 2072c52
+
+	TODO updated.
+
+2010-04-17 19:54:31 +0200  Stefan Westerfeld 	# 7a96923
+
+	Remove unplayable files from playlist automatically.
+
+2010-04-17 17:42:55 +0200  Stefan Westerfeld 	# 8e7b7cf
+
+	Use version information from configure.ac.
+
+2010-04-17 17:28:29 +0200  Stefan Westerfeld 	# 4ffed13
+
+	First implementation of crawling AKA gst123 /public/music.
+
+2010-04-15 10:59:34 +0200  Stefan Westerfeld 	# 7f43aa5
+
+	Added hours in time display; code by Ahmed El-Mahmoudy.
+
+2010-04-01 10:38:18 +0200  Stefan Westerfeld 	# 3a5517c
+
+	Updated manpage with infos about Ctrl+C.
+
+2010-03-30 11:59:40 +0200  Stefan Westerfeld 	# 1f3dc0e
+
+	TODO
+
+2010-03-30 11:02:40 +0200  Stefan Westerfeld 	# 70152e3
+
+	Added TODO item for wav output.
+
+2010-03-26 19:33:04 +0100  Stefan Westerfeld 	# 2c1ad1d
+
+	Replace with LGPL.
+
+2010-03-26 19:32:47 +0100  Stefan Westerfeld 	# 054f33e
+
+	Make TODO part of the distribution.
+
+2010-03-26 15:40:17 +0100  Stefan Westerfeld 	# d40a16f
+
+	Fixed man installation; added TODO.
+
+2010-03-26 15:32:32 +0100  Stefan Westerfeld 	# 36e6cb1
+
+	More automake stuff.
+
+2010-03-26 15:31:50 +0100  Stefan Westerfeld 	# b60947a
+
+	Added automake stuff.
+
+2010-03-24 17:29:36 +0100  Stefan Westerfeld 	# 724f450
+
+	Removed Makefile.
+
+2010-03-24 17:28:16 +0100  Stefan Westerfeld 	# b558c93
+
+	Make manpage work.
+
+2010-03-24 17:05:23 +0100  Stefan Westerfeld 	# 349899c
+
+	Moved sources into their own directory.
+
+2009-08-15 10:24:27 +0200  Stefan Westerfeld 	# 6856253
+
+	Fix for newer gcc version (4.3.2).
+
+2009-08-15 10:12:07 +0200  Stefan Westerfeld 	# 8318bd9
+
+	Initial import of gst123.
+
+2009-08-15 10:12:16 +0200  Stefan Westerfeld 	# 6124e55
+
+	Initial commit.
+

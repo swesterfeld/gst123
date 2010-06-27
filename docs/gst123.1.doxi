@@ -4,7 +4,7 @@
 @doxer_set{title}	gst123 - A GStreamer based command line media player
 @doxer_set{man-title}	GST123
 @doxer_set{man-date}	@doxer_get{rvstamp}
-@doxer_set{man-source}	beast-@doxer_get{BST_VERSION}
+@doxer_set{man-source}	gst123-@doxer_get{GST123_VERSION}
 @doxer_set{man-manual}	GST123 Manual Page
 
 @heading NAME
@@ -63,7 +63,7 @@ gst123 - A GStreamer based command line media player
 @item @manb{q} @*
     Quit gst123.
 @item @manb{?} @*
-    Show keyboad help.
+    Show keyboard help.
 @done
 
 @heading SEE ALSO
