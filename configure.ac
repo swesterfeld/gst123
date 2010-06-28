@@ -57,7 +57,7 @@ Debian users: aptitude install libncurses-dev
 ])
 ])
     NCURSES_CFLAGS="`$NCURSES5_CONFIG --cflags`"
-    NCURSES_LIBS="`$NCURSES5_CONFIG --libs` -lmenu"
+    NCURSES_LIBS="`$NCURSES5_CONFIG --libs`"
     AC_SUBST(NCURSES_CFLAGS)
     AC_SUBST(NCURSES_LIBS)
 ])
