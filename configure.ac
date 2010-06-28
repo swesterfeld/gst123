@@ -43,8 +43,22 @@ dnl We need libncurses
 dnl
 AC_DEFUN([AC_NCURSES_REQUIREMENTS],
 [
-    AC_CHECK_LIB(ncurses, initscr)
-    NCURSES_LIBS='-lncurses'
+    AC_PATH_PROG(NCURSES5_CONFIG,ncurses5-config,no)
+    if test "$NCURSES5_CONFIG" = "no"; then
+      AC_MSG_ERROR([You need to have ncurses5-config installed to build this package.
+
+Debian users: aptitude install libncurses-dev
+])
+    fi
+    AC_CHECK_LIB(ncurses, initscr,[:],[
+    AC_MSG_ERROR([You need libncurses to build this package.
+
+Debian users: aptitude install libncurses-dev
+])
+])
+    NCURSES_CFLAGS="`$NCURSES5_CONFIG --cflags`"
+    NCURSES_LIBS="`$NCURSES5_CONFIG --libs` -lmenu"
+    AC_SUBST(NCURSES_CFLAGS)
     AC_SUBST(NCURSES_LIBS)
 ])
 
