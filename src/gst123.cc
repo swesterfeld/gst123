@@ -785,6 +785,13 @@ main (gint   argc,
       GstElement *fakesink = gst_element_factory_make ("fakesink", "novid");
       g_object_set (G_OBJECT (player.playbin), "video-sink", fakesink, NULL);
     }
+  if (options.audio_driver && strcmp (options.audio_driver, "alsa") == 0)
+    {
+      GstElement *alsasink = gst_element_factory_make ("alsasink", "alsaaudioout");
+      if (options.audio_device)
+        g_object_set (G_OBJECT (alsasink), "device", options.audio_device, NULL);
+      g_object_set (G_OBJECT (player.playbin), "audio-sink", alsasink, NULL);
+    }
   gst_bus_add_watch (gst_pipeline_get_bus (GST_PIPELINE (player.playbin)), my_bus_callback, &player);
   g_timeout_add (130, (GSourceFunc) cb_print_position, &player);
   signal (SIGINT, sigint_handler);
