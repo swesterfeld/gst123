@@ -3,3 +3,4 @@
 wishlist:
 - wav output with --wav foo.wav
 - gapless playback
+- OSD - https://bugzilla.redhat.com/show_bug.cgi?id=603682
