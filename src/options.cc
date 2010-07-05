@@ -25,6 +25,9 @@
 #include "config.h"
 #include "options.h"
 #include "gtkinterface.h"
+#include "configfile.h"
+
+using std::string;
 
 Options *Options::instance = NULL;
 
@@ -39,6 +42,10 @@ Options::Options ()
   novideo = FALSE;
   uris = NULL;
   audio_output = NULL;
+
+  string default_audio_output = ConfigFile::the()->audio_output();
+  if (default_audio_output != "")
+    audio_output = g_strdup (default_audio_output.c_str());   // leak copy
 }
 
 void

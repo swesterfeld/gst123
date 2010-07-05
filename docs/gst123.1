@@ -1,6 +1,6 @@
 .\" generator: doxer.py 0.6
-.\" generation: 2010-07-05T13:02:45
-.TH "GST123" "1" "Wed Apr 19 00:50:37 2006" "gst123-0.1.2" "GST123 Manual Page"
+.\" generation: 2010-07-05T23:23:12
+.TH "GST123" "1" "Wed Apr 19 00:50:37 2006" "gst123-0.1.3" "GST123 Manual Page"
 
 .SH
 NAME
@@ -137,6 +137,34 @@ Quit gst123.
 \fB?\fP 
 .br
 Show keyboard help.
+
+.PP
+
+
+.SH
+CONFIGURATION FILE
+
+
+.PP
+
+During start, gst123 will read ~/.gst123rc, if this file exists. Empty
+lines and lines starting with a # are ignored. The following commands are
+available:
+.br
+
+.br
+
+
+
+.TP
+\fBaudio_output\fP \fI<driver>[=<device>]\fP
+.br
+This sets the default audio driver (which may be oss or alsa) and the
+default audio device (which may be something like /dev/dsp1 for the oss
+driver or an alsa device like hw:1 for the alsa driver), and has the
+same effect as the -a / --audio-output command line option. When both
+are present, a config file entry and the command line option, the
+value from the command line option will be used
 
 .PP
 
