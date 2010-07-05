@@ -2,6 +2,7 @@ Overview of changes in gst123-0.1.2:
 
 * Fix crash triggered when closing the video window (thanks Siddhesh Poyarekar)
 * Improved configure check (works now if headers are not in /usr/include)
+* Added -a option to select audio driver (oss, alsa) and device (/dev/dsp1, hw:1)
 
 Overview of changes in gst123-0.1.1:
 
