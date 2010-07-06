@@ -1,12 +1,11 @@
-gst123 (0.1.2-1~2.gbp548cc7) UNRELEASED; urgency=low
-
-  ** SNAPSHOT build @548cc7dd6e0a3934d185c9be82222b95099fbfe5 **
+gst123 (0.1.2-1) unstable; urgency=low
 
   * New upstream release.
   * debian/control: Bumped Standards-Version to 3.9.0 (no changes needed)
   * debian/copyright: Replaced empty lines in license text with " ."
+  * Added patch manpage-fixes.diff to fix hyphen-used-as-minus-sign
 
- -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Tue, 06 Jul 2010 14:21:06 +0300
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Tue, 06 Jul 2010 15:28:57 +0300
 
 gst123 (0.1.1-1) unstable; urgency=low
 
