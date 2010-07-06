@@ -1,6 +1,6 @@
 .\" generator: doxer.py 0.6
-.\" generation: 2010-06-16T13:41:58
-.TH "GST123" "1" "Wed Apr 19 00:50:37 2006" "gst123-0.1.1" "GST123 Manual Page"
+.\" generation: 2010-07-05T13:02:45
+.TH "GST123" "1" "Wed Apr 19 00:50:37 2006" "gst123-0.1.2" "GST123 Manual Page"
 
 .SH
 NAME
@@ -57,6 +57,13 @@ Do not play the video stream.
 \fB-@\fP \fI<playlist>\fP, \fB--list\fP \fI<playlist>\fP 
 .br
 Load files to play from the playlist file.
+
+.TP
+\fB-a\fP, \fB--audio-output\fP \fI<driver>[=<device>]\fP 
+.br
+Set audio output driver (and device). For instance using gst123 -a oss ...
+would use the oss driver, and gst123 -a alsa=hw:1 ... would use the alsa
+driver with the alsa device hw:1.
 
 .TP
 \fB--verbose\fP 

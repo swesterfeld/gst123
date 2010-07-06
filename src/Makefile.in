@@ -49,7 +49,8 @@ am_gst123_OBJECTS = gst123.$(OBJEXT) glib-extra.$(OBJEXT) \
 	terminal.$(OBJEXT) gtkinterface.$(OBJEXT) options.$(OBJEXT)
 gst123_OBJECTS = $(am_gst123_OBJECTS)
 am__DEPENDENCIES_1 =
-gst123_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+gst123_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -104,6 +105,8 @@ LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
+NCURSES5_CONFIG = @NCURSES5_CONFIG@
+NCURSES_CFLAGS = @NCURSES_CFLAGS@
 NCURSES_LIBS = @NCURSES_LIBS@
 OBJEXT = @OBJEXT@
 PACKAGE = @PACKAGE@
@@ -165,12 +168,12 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CXXFLAGS = $(GSTREAMER_CFLAGS) $(GSTREAMER_GTK_CFLAGS)
-AM_CFLAGS = $(GSTREAMER_CFLAGS) $(GSTREAMER_GTK_CFLAGS)
+AM_CXXFLAGS = $(GSTREAMER_CFLAGS) $(GSTREAMER_GTK_CFLAGS) $(NCURSES_CFLAGS)
+AM_CFLAGS = $(GSTREAMER_CFLAGS) $(GSTREAMER_GTK_CFLAGS) $(NCURSES_CFLAGS)
 gst123_SOURCES = gst123.cc glib-extra.c glib-extra.h terminal.cc terminal.h gtkinterface.h gtkinterface.cc keyhandler.h \
                  options.cc options.h
 
-gst123_LDADD = $(GSTREAMER_LIBS) $(GSTREAMER_GTK_LIBS)
+gst123_LDADD = $(GSTREAMER_LIBS) $(GSTREAMER_GTK_LIBS) $(NCURSES_LIBS)
 all: all-am
 
 .SUFFIXES:

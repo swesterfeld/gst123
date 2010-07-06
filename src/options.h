@@ -40,6 +40,7 @@ public:
   gboolean      novideo;
   char        **uris;
   std::list<std::string>  playlists;
+  char         *audio_output;
 
   Options ();
   void parse (int argc, char **argv);

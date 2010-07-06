@@ -1,3 +1,42 @@
+2010-07-05 17:51:44 +0200  Stefan Westerfeld 	# 007a371
+
+	Updated NEWS.
+
+2010-07-05 13:04:19 +0200  Stefan Westerfeld 	# b73f1bd
+
+	Rewrote and documented --audio-output option to select driver and device.
+
+2010-07-04 23:45:50 +0200  Stefan Westerfeld 	# 95710b9
+
+	Added code to select alsa output device.
+
+2010-07-01 11:12:14 +0200  Stefan Westerfeld 	# ae38ec1
+
+	Updated NEWS.
+
+2010-07-01 10:58:06 +0200  Stefan Westerfeld 	# 6392cb8
+
+	Fix crash on close window / Alt+F4 due to wrong signature of callback func.
+
+2010-06-28 12:20:10 +0200  Stefan Westerfeld 	# 4b517cc
+
+	Be more verbose.
+
+2010-06-28 12:20:03 +0200  Stefan Westerfeld 	# af766e3
+
+	Don't need libmenu for gst123.
+
+2010-06-28 12:16:32 +0200  Stefan Westerfeld 	# 683053e
+
+	Improved ncurses configure check.
+
+	* fail if libncurses is missing
+	* use cflags and libs from ncurses5-config
+
+2010-06-26 19:04:27 +0200  Stefan Westerfeld 	# 1dffb7c
+
+	Bump version.
+
 2010-06-26 19:01:21 +0200  Stefan Westerfeld 	# 2b9aecd
 
 	Updated NEWS.

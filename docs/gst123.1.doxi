@@ -31,6 +31,10 @@ gst123 - A GStreamer based command line media player
         Do not play the video stream.
 @item @manb{-@@} @mani{<playlist>}, @manb{--list} @mani{<playlist>} @*
         Load files to play from the playlist file.
+@item @manb{-a}, @manb{--audio-output} @mani{<driver>[=<device>]} @*
+        Set audio output driver (and device). For instance using gst123 -a oss ...
+        would use the oss driver, and gst123 -a alsa=hw:1 ... would use the alsa
+        driver with the alsa device hw:1.
 @item @manb{--verbose} @*
         Print GStreamer pipeline used to play files
 @done
