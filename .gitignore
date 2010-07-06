@@ -10,3 +10,4 @@ config.h.in
 config.log
 config.status
 stamp-h1
+ChangeLog
