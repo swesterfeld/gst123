@@ -38,6 +38,7 @@ Options::Options ()
   verbose = FALSE;
   novideo = FALSE;
   uris = NULL;
+  audio_output = NULL;
 }
 
 void
@@ -56,6 +57,8 @@ Options::parse (int argc, char **argv)
       "play files in pseudo random order", NULL},
     {"novideo", 'x', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_NONE, &instance->novideo,
       "do not play the video stream", NULL},
+    {"audio-output", 'a', 0, G_OPTION_ARG_STRING, &instance->audio_output,
+      "set audio output driver and device", "<driver>[=<dev>]"},
     {G_OPTION_REMAINING, '\0', G_OPTION_FLAG_FILENAME, G_OPTION_ARG_FILENAME_ARRAY, &instance->uris, "Movies to play", NULL},
     {NULL} /* end the list */
   };

@@ -1,4 +1,4 @@
-AC_INIT([gst123], [0.1.1])
+AC_INIT([gst123], [0.1.2])
 AC_CONFIG_SRCDIR([src/gst123.cc])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -43,8 +43,22 @@ dnl We need libncurses
 dnl
 AC_DEFUN([AC_NCURSES_REQUIREMENTS],
 [
-    AC_CHECK_LIB(ncurses, initscr)
-    NCURSES_LIBS='-lncurses'
+    AC_PATH_PROG(NCURSES5_CONFIG,ncurses5-config,no)
+    if test "$NCURSES5_CONFIG" = "no"; then
+      AC_MSG_ERROR([You need to have ncurses5-config installed to build this package.
+
+Debian users: aptitude install libncurses-dev
+])
+    fi
+    AC_CHECK_LIB(ncurses, initscr,[:],[
+    AC_MSG_ERROR([You need libncurses to build this package.
+
+Debian users: aptitude install libncurses-dev
+])
+])
+    NCURSES_CFLAGS="`$NCURSES5_CONFIG --cflags`"
+    NCURSES_LIBS="`$NCURSES5_CONFIG --libs`"
+    AC_SUBST(NCURSES_CFLAGS)
     AC_SUBST(NCURSES_LIBS)
 ])
 

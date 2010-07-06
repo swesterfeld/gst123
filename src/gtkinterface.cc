@@ -50,7 +50,9 @@ timeout_cb (gpointer data)
 }
 
 static gboolean
-close_cb (gpointer data)
+close_cb (GtkWidget *widget,
+          GdkEvent  *event,
+          gpointer   data)
 {
   GtkInterface *gtk_interface = static_cast<GtkInterface *> (data);
 
