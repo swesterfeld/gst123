@@ -5,3 +5,4 @@ wishlist:
 - gapless playback
 - OSD - https://bugzilla.redhat.com/show_bug.cgi?id=603682
 - implement a way to disable album-art images completely
+- Sometimes video windows come up at the wrong size (tiny)
