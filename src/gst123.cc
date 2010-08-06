@@ -796,6 +796,8 @@ main (gint   argc,
             audio_sink = gst_element_factory_make ("alsasink", "alsaaudioout");
           else if (strcmp (audio_driver, "oss") == 0)
             audio_sink = gst_element_factory_make ("osssink", "ossaudioout");
+          else if (strcmp (audio_driver, "jack") == 0)
+            audio_sink = gst_element_factory_make ("jackaudiosink", "jackaudioout");
           else
             {
               printf ("%s: unknown audio driver %s\n", argv[0], audio_driver);

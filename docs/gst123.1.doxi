@@ -78,7 +78,7 @@ available:
 
 @itemize{none}
 @item @manb{audio_output} @mani{<driver>[=<device>]}@*
-    This sets the default audio driver (which may be oss or alsa) and the
+    This sets the default audio driver (which may be oss, alsa or jack) and the
     default audio device (which may be something like /dev/dsp1 for the oss
     driver or an alsa device like hw:1 for the alsa driver), and has the
     same effect as the -a / --audio-output command line option. When both
