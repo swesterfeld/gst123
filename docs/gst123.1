@@ -1,5 +1,5 @@
 .\" generator: doxer.py 0.6
-.\" generation: 2010\-08\-06T10:14:09
+.\" generation: 2010\-08\-11T11:43:26
 .TH "GST123" "1" "Wed Apr 19 00:50:37 2006" "gst123\-0.1.3" "GST123 Manual Page"
 
 .SH
@@ -63,7 +63,8 @@ Load files to play from the playlist file.
 .br
 Set audio output driver (and device). For instance using gst123 \-a oss ...
 would use the oss driver, and gst123 \-a alsa=hw:1 ... would use the alsa
-driver with the alsa device hw:1.
+driver with the alsa device hw:1. For JACK support, use \-a jack (device
+is not supported in this case).
 
 .TP
 \fB\-\-verbose\fP 
