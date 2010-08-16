@@ -31,6 +31,7 @@
 #include "terminal.h"
 #include "gtkinterface.h"
 #include "options.h"
+#include "playlist.h"
 #include <vector>
 #include <string>
 #include <list>
@@ -746,32 +747,16 @@ main (gint   argc,
 
   for (list<string>::iterator pi = options.playlists.begin(); pi != options.playlists.end(); pi++)
     {
-      FILE *f = stdin;
-      if (*pi != "-")
-	{
-	  f = fopen (pi->c_str(), "r");
-	  if (!f)
-	    {
-	      g_printerr ("gst123: can't read playlist %s: %s\n", pi->c_str(), strerror (errno));
-	      exit (1);
-	    }
-	}
+      Playlist pls(*pi);
 
-      string playlist_dirname = g_path_get_dirname (pi->c_str());
-      char uri[1024];
-      while (fgets (uri, 1024, f))
-	{
-	  int l = strlen (uri);
-	  while (l && (uri[l-1] == '\n' || uri[l-1] == '\r'))
-	    uri[--l] = 0;
-	  if (!strchr (uri, ':') && !g_path_is_absolute (uri))
-            player.add_uri_or_directory (g_build_filename (playlist_dirname.c_str(), uri, NULL));
-	  else
-            player.add_uri_or_directory (uri);
-	}
-
-      if (*pi != "-")
-	fclose (f);
+      string playlist_dirname = g_path_get_dirname (pi->c_str ());
+      for (unsigned int i = 0; i < pls.size(); i++)
+        {
+          if ((pls[i].find(":") ==string::npos) && !g_path_is_absolute (pls[i].c_str()))
+            player.add_uri_or_directory (g_build_filename (playlist_dirname.c_str (), pls[i].c_str(), NULL));
+          else
+            player.add_uri_or_directory (pls[i].c_str());
+        }
     }
   /* make sure we have a URI */
   if (player.uris.empty())
