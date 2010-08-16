@@ -40,6 +40,8 @@ using std::string;
 using std::vector;
 using std::list;
 
+using namespace Gst123;
+
 static Terminal     terminal;
 static GtkInterface gtk_interface;
 

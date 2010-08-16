@@ -28,8 +28,9 @@ using std::cerr;
 using std::endl;
 using std::string;
 
+using namespace Gst123;
 
-Playlist :: Playlist (const string& uri_str)
+Playlist::Playlist (const string& uri_str)
 {
   string errorstr;
 
@@ -53,7 +54,7 @@ Playlist :: Playlist (const string& uri_str)
 }
 
 void
-Playlist::register_parsers (void)
+Playlist::register_parsers()
 {
   parser_register.push_back(new PLSParser ());
 
@@ -65,7 +66,7 @@ Playlist::register_parsers (void)
 int
 Playlist::parse (URI &uri)
 {
-  GstIOStream *stream = uri.getIOStream ();
+  IOStream *stream = uri.getIOStream ();
 
   for (size_t i = 0; i < parser_register.size(); i++)
     {
@@ -78,4 +79,3 @@ Playlist::parse (URI &uri)
 
   return PLAYLIST_PARSER_NOTIMPL;
 }
-

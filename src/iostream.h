@@ -21,17 +21,20 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GST_IO_STREAM__
-#define __GST_IO_STREAM__
+#ifndef __GST123_IO_STREAM__
+#define __GST123_IO_STREAM__
 
 #include <string>
 #include <cstdio>
 #include <map>
 
+namespace Gst123
+{
+
 enum
 {
-  GST_IO_STREAM_EOF = -1,
-  GST_IO_STREAM_ERROR = -2
+  IO_STREAM_EOF = -1,
+  IO_STREAM_ERROR = -2
 };
 
 /*
@@ -55,15 +58,15 @@ enum
  */
 
 // Base class for I/O Streams
-class GstIOStream
+class IOStream
 {
 public:
-  GstIOStream();
+  IOStream();
 
   int readline (const std::string& separator = "\n");
-  bool contentBeginsWith (const std::string magic);
+  bool contentBeginsWith (const std::string& magic);
   virtual std::string getContentType();
-  std::string &getCurrentLine();
+  std::string& getCurrentLine();
 
 protected:
   int fd;
@@ -76,11 +79,11 @@ private:
 };
 
 // File I/O
-class GstFileStream : public GstIOStream
+class FileStream : public IOStream
 {
 public:
-  GstFileStream (const std::string& path);
-  ~GstFileStream();
+  FileStream (const std::string& path);
+  ~FileStream();
 
 protected:
   void openStream();
@@ -90,11 +93,11 @@ private:
 };
 
 // Raw Network I/O
-class GstNetworkStream : public GstIOStream
+class NetworkStream : public IOStream
 {
 public:
-  GstNetworkStream (const std::string& host, int port);
-  ~GstNetworkStream();
+  NetworkStream (const std::string& host, int port);
+  ~NetworkStream();
 
 protected:
   std::string host;
@@ -104,10 +107,10 @@ protected:
 };
 
 // HTTP I/O stream
-class GstHTTPStream : public GstNetworkStream
+class HTTPStream : public NetworkStream
 {
 public:
-  GstHTTPStream (const std::string& host, int port, const std::string& path);
+  HTTPStream (const std::string& host, int port, const std::string& path);
 
   std::string getHeaderValue(const std::string& name);
   int getResponseCode();
@@ -125,13 +128,15 @@ private:
 };
 
 // Console I/O
-class GstConsoleStream : public GstIOStream
+class ConsoleStream : public IOStream
 {
 public:
-  GstConsoleStream (FILE * f);
+  ConsoleStream (FILE *f);
 
 protected:
   void openStream();
 };
 
-#endif /* __GST_IO_STREAM__ */
+}
+
+#endif /* __GST123_IO_STREAM__ */

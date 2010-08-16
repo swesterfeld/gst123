@@ -23,14 +23,15 @@
 
 #include "iostream.h"
 
-GstConsoleStream :: GstConsoleStream (FILE *f)
-                  : GstIOStream ()
+using namespace Gst123;
+
+ConsoleStream::ConsoleStream (FILE *f)
 {
   fd = fileno (f);
 }
 
 void
-GstConsoleStream :: openStream (void)
+ConsoleStream::openStream()
 {
 // Do nothing. It's already openStream.
 }

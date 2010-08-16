@@ -27,9 +27,12 @@
 #include "uri.h"
 
 #include <iostream>
+
 using std::cerr;
 using std::endl;
 using std::string;
+
+using namespace Gst123;
 
 /*
  * Constructor:
@@ -100,7 +103,7 @@ URI::URI (const string &input)
     }
 }
 
-URI::~URI ()
+URI::~URI()
 {
   if (stream)
     delete stream;
@@ -118,17 +121,17 @@ URI::~URI ()
  * >0: HTTP error
  */
 int
-URI::open (void)
+URI::open()
 {
   if (protocol == "http")
     {
-      GstHTTPStream *http_stream;
+      HTTPStream *http_stream;
       int responsecode = 0;
 
       if (host == "")
         return URI_ERROR_INVALID_HOST;
 
-      stream = http_stream = new GstHTTPStream (host, port, path);
+      stream = http_stream = new HTTPStream (host, port, path);
 
       if ((responsecode = http_stream->getResponseCode()) != 200)
         {
@@ -141,23 +144,23 @@ URI::open (void)
     }
 
   else if (protocol == "stdin")
-    stream = new GstConsoleStream(stdin);
+    stream = new ConsoleStream (stdin);
   else
     {
       if (path == "")
         return URI_ERROR_INVALID_PATH;
 
-      stream = new GstFileStream (path);
+      stream = new FileStream (path);
     }
 
-  if ( stream )
+  if (stream)
     return 0;
   else
     return -1;
 }
 
 bool
-URI::empty_path_allowed (void)
+URI::empty_path_allowed()
 {
   if (protocol == "http")
     return true;
@@ -165,14 +168,14 @@ URI::empty_path_allowed (void)
   return false;
 }
 
-GstIOStream *
-URI::getIOStream (void)
+IOStream *
+URI::getIOStream()
 {
   return stream;
 }
 
 string
-URI :: strerror (int error)
+URI::strerror (int error)
 {
   switch (error)
     {
@@ -186,7 +189,7 @@ URI :: strerror (int error)
       return "URI: Unknown Error";
     /* HTTP Error */
     default:
-      return GstHTTPStream::getResponse(error);
+      return HTTPStream::getResponse (error);
     }
 }
 

@@ -36,19 +36,22 @@ using std::cerr;
 using std::endl;
 using std::string;
 
-GstNetworkStream :: GstNetworkStream (const string &host, int port)
+using namespace Gst123;
+
+NetworkStream::NetworkStream (const string& host, int port)
 {
   this->host = host;
   this->port = port;
   openStream ();
 }
 
-GstNetworkStream :: ~GstNetworkStream (void)
+NetworkStream::~NetworkStream()
 {
   close (fd);
 }
 
-void GstNetworkStream :: openStream (void)
+void
+NetworkStream::openStream()
 {
   struct addrinfo hints;
   struct addrinfo *result = NULL, *rp = NULL;

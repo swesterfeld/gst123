@@ -29,6 +29,9 @@
 #include <stdlib.h>
 #include "iostream.h"
 
+namespace Gst123
+{
+
 enum
 {
   URI_ERROR_UNKNOWN = -1,
@@ -44,7 +47,7 @@ class URI
   std::string path;
   std::string protocol;
 
-  GstIOStream *stream;
+  IOStream *stream;
 
   bool empty_path_allowed();
 
@@ -52,11 +55,13 @@ public:
   URI (const std::string& input);
   ~URI ();
 
-  GstIOStream *getIOStream();
+  IOStream *getIOStream();
 
   static std::string strerror (int error);
 
   int open();
 };
+
+}
 
 #endif

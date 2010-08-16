@@ -32,8 +32,10 @@ using std::cerr;
 using std::endl;
 using std::string;
 
-GstHTTPStream::GstHTTPStream (const string& host, int port, const string& path)
-             : GstNetworkStream (host, port)
+using namespace Gst123;
+
+HTTPStream::HTTPStream (const string& host, int port, const string& path)
+          : NetworkStream (host, port)
 {
   this->path = path;
   setupHttp();
@@ -41,26 +43,26 @@ GstHTTPStream::GstHTTPStream (const string& host, int port, const string& path)
 }
 
 string
-GstHTTPStream::getContentType()
+HTTPStream::getContentType()
 {
   return headers["Content-Type"];
 }
 
 string
-GstHTTPStream::getHeaderValue (const string& name)
+HTTPStream::getHeaderValue (const string& name)
 {
   return headers[name];
 }
 
 int
-GstHTTPStream::getResponseCode()
+HTTPStream::getResponseCode()
 {
   return responsecode;
 }
 
 // Send the HTTP request
 void
-GstHTTPStream::setupHttp()
+HTTPStream::setupHttp()
 {
   char *buf = g_strdup_printf ("GET %s HTTP/1.0\r\n"
                                "Host: %s\r\n"
@@ -80,7 +82,7 @@ GstHTTPStream::setupHttp()
 
 // Read and parse HTTP headers
 void
-GstHTTPStream::httpReadHeaders()
+HTTPStream::httpReadHeaders()
 {
   string line;
   char mode[8];
@@ -117,7 +119,7 @@ GstHTTPStream::httpReadHeaders()
  * of cases
  */
 string
-GstHTTPStream::getResponse (int error)
+HTTPStream::getResponse (int error)
 {
   switch (error)
     {

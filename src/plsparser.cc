@@ -28,10 +28,12 @@
 using std::string;
 using std::vector;
 
+using namespace Gst123;
+
 const string PLSParser::type = "audio/x-scpls";
 
 bool
-PLSParser::identify (GstIOStream *stream)
+PLSParser::identify (IOStream *stream)
 {
   // Trust the content type first
   if (stream->getContentType () == PLSParser::type)
@@ -50,7 +52,7 @@ PLSParser::identify (GstIOStream *stream)
 // and we don't really care about the playlist entry information
 // such as the title, artist, etc.
 int
-PLSParser::parse (vector<string> &list, GstIOStream *stream)
+PLSParser::parse (vector<string> &list, IOStream *stream)
 {
   do
     {

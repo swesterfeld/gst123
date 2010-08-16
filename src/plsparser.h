@@ -26,12 +26,17 @@
 
 #include "playlist.h"
 
-struct PLSParser:PlaylistParser
+namespace Gst123
 {
-  int parse (std::vector<std::string>& list, GstIOStream *stream);
-  bool identify (GstIOStream *stream);
+
+struct PLSParser : PlaylistParser
+{
+  int parse (std::vector<std::string>& list, IOStream *stream);
+  bool identify (IOStream *stream);
 private:
   static const std::string type;
 };
+
+}
 
 #endif

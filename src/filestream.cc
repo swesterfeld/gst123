@@ -34,23 +34,25 @@ using std::cerr;
 using std::endl;
 using std::string;
 
-GstFileStream::GstFileStream (const string& path)
+using namespace Gst123;
+
+FileStream::FileStream (const std::string& path)
 {
   this->path = path;
 
-  openStream ();
+  openStream();
 }
 
-GstFileStream::~GstFileStream()
+FileStream::~FileStream()
 {
   close (fd);
 }
 
 void
-GstFileStream::openStream()
+FileStream::openStream()
 {
-  fd = open (path.c_str (), O_RDONLY);
+  fd = open (path.c_str(), O_RDONLY);
   if (fd < 0)
-    cerr << "Error opening file " << path << ": " << strerror(errno) << endl;
+    cerr << "Error opening file " << path << ": " << strerror (errno) << endl;
 }
 

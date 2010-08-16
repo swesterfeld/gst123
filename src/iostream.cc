@@ -28,11 +28,14 @@
 #include <cstring>
 
 #include <iostream>
+
 using std::cerr;
 using std::endl;
 using std::string;
 
-GstIOStream::GstIOStream()
+using namespace Gst123;
+
+IOStream::IOStream()
 {
   bof = true;
   eof = false;
@@ -40,7 +43,7 @@ GstIOStream::GstIOStream()
 }
 
 string
-GstIOStream::getContentType()
+IOStream::getContentType()
 {
   return "";
 }
@@ -54,7 +57,7 @@ GstIOStream::getContentType()
  * Returns length of the line read
  */
 int
-GstIOStream::readline (const string& newline)
+IOStream::readline (const string& newline)
 {
   char buf [4096];
   int len = -1;
@@ -72,8 +75,8 @@ GstIOStream::readline (const string& newline)
           if (len < 0)
             {
               cerr << "Read error on fd " << fd
-                   << ": " << strerror(errno) << endl;
-              return GST_IO_STREAM_ERROR;
+                   << ": " << strerror (errno) << endl;
+              return IO_STREAM_ERROR;
             }
 
           buf[len] = '\0';
@@ -83,7 +86,7 @@ GstIOStream::readline (const string& newline)
       while ((pos = strbuf.find (newline)) == string::npos);
     }
   else if (strbuf == "")
-    return GST_IO_STREAM_EOF;
+    return IO_STREAM_EOF;
 
   pos = strbuf.find (newline);
 
@@ -105,7 +108,7 @@ GstIOStream::readline (const string& newline)
 
 /* Look for a specific pattern in the first line of content */
 bool
-GstIOStream::contentBeginsWith (const string match)
+IOStream::contentBeginsWith (const string& match)
 {
   if (bof)
     readline();
@@ -114,7 +117,7 @@ GstIOStream::contentBeginsWith (const string match)
 }
 
 std::string&
-GstIOStream::getCurrentLine()
+IOStream::getCurrentLine()
 {
   return curline;
 }

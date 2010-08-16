@@ -21,11 +21,14 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __PLAYLIST_H__
-#define __PLAYLIST_H__
+#ifndef __GST123_PLAYLIST_H__
+#define __GST123_PLAYLIST_H__
+
 #include "uri.h"
 #include <vector>
 #include <string>
+
+namespace Gst123 {
 
 enum
 {
@@ -34,8 +37,8 @@ enum
 
 struct PlaylistParser
 {
-  virtual int parse (std::vector<std::string>& output, GstIOStream *stream) = 0;
-  virtual bool identify (GstIOStream *stream) = 0;
+  virtual int parse (std::vector<std::string>& output, IOStream *stream) = 0;
+  virtual bool identify (IOStream *stream) = 0;
 };
 
 class Playlist : public std::vector<std::string>
@@ -53,6 +56,8 @@ public:
       delete (parser_register[i]);
   }
 };
+
+}
 
 // The list of parsers
 #include "plsparser.h"

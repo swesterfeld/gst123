@@ -26,13 +26,18 @@
 
 #include "playlist.h"
 
+namespace Gst123
+{
+
 struct M3UParser : public PlaylistParser
 {
-  int parse (std::vector<std::string> &list, GstIOStream *stream);
-  bool identify (GstIOStream *stream);
+  int parse (std::vector<std::string> &list, IOStream *stream);
+  bool identify (IOStream *stream);
 private:
   bool extended;
   static const std::string type;
 };
+
+}
 
 #endif
