@@ -21,7 +21,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "gstiostream.h"
+#include "iostream.h"
 #include <sys/types.h>
 #include <fcntl.h>
 #include <errno.h>

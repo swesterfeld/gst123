@@ -21,7 +21,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "gstiostream.h"
+#include "iostream.h"
 
 GstConsoleStream :: GstConsoleStream (FILE *f)
                   : GstIOStream ()

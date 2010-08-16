@@ -27,7 +27,7 @@
 #include <glib.h>
 #include <string>
 #include <stdlib.h>
-#include "gstiostream.h"
+#include "iostream.h"
 
 enum
 {

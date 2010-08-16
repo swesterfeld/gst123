@@ -22,7 +22,7 @@
  */
 
 #include <cstdio>
-#include "gstiostream.h"
+#include "iostream.h"
 #include <errno.h>
 #include <glib.h>
 #include <cstring>
