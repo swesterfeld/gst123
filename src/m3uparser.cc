@@ -25,6 +25,9 @@
 #include <ctype.h>
 #include <cstring>
 
+using std::string;
+using std::vector;
+
 const string M3UParser::type = "audio/x-mpegurl";
 
 // Identify if the playlist is M3U

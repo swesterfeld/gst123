@@ -31,8 +31,10 @@
 #include <errno.h>
 
 #include <iostream>
+
 using std::cerr;
 using std::endl;
+using std::string;
 
 GstNetworkStream :: GstNetworkStream (const string &host, int port)
 {

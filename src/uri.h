@@ -39,24 +39,24 @@ enum
 
 class URI
 {
-  string host;
+  std::string host;
   int port;
-  string path;
-  string protocol;
+  std::string path;
+  std::string protocol;
 
   GstIOStream *stream;
 
-  bool empty_path_allowed (void);
+  bool empty_path_allowed();
 
 public:
-  URI (const string &input);
+  URI (const std::string& input);
   ~URI ();
 
-  GstIOStream *getIOStream (void);
+  GstIOStream *getIOStream();
 
-  static string strerror (int error);
+  static std::string strerror (int error);
 
-  int open (void);
+  int open();
 };
 
 #endif

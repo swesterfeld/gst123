@@ -29,24 +29,25 @@
 #include <glib.h>
 
 #include <iostream>
+
 using std::cerr;
 using std::endl;
+using std::string;
 
-GstFileStream :: GstFileStream (const string &path)
-               : GstIOStream ()
+GstFileStream::GstFileStream (const string& path)
 {
   this->path = path;
 
   openStream ();
 }
 
-GstFileStream :: ~GstFileStream (void)
+GstFileStream::~GstFileStream()
 {
   close (fd);
 }
 
 void
-GstFileStream :: openStream (void)
+GstFileStream::openStream()
 {
   fd = open (path.c_str (), O_RDONLY);
   if (fd < 0)

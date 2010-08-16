@@ -27,8 +27,6 @@
 #include <vector>
 #include <string>
 
-using std::vector;
-
 enum
 {
   PLAYLIST_PARSER_NOTIMPL = -1
@@ -36,18 +34,18 @@ enum
 
 struct PlaylistParser
 {
-  virtual int parse (vector <string> &output, GstIOStream *stream) = 0;
+  virtual int parse (std::vector<std::string>& output, GstIOStream *stream) = 0;
   virtual bool identify (GstIOStream *stream) = 0;
 };
 
-class Playlist : public vector <string>
+class Playlist : public std::vector<std::string>
 {
-  vector<PlaylistParser *> parser_register;
+  std::vector<PlaylistParser *> parser_register;
 
   int parse (URI &uri);
   void register_parsers (void);
 public:
-  Playlist (string &uri_str);
+  Playlist (const std::string& uri_str);
 
   ~Playlist (void)
   {

@@ -28,9 +28,6 @@
 #include <cstdio>
 #include <map>
 
-using std::string;
-using std::map;
-
 enum
 {
   GST_IO_STREAM_EOF = -1,
@@ -61,80 +58,80 @@ enum
 class GstIOStream
 {
 public:
-  GstIOStream (void);
-  int readline (const string & separator = "\n");
-  bool contentBeginsWith (const string magic);
-  virtual string getContentType (void);
-  string &getCurrentLine (void);
+  GstIOStream();
+
+  int readline (const std::string& separator = "\n");
+  bool contentBeginsWith (const std::string magic);
+  virtual std::string getContentType();
+  std::string &getCurrentLine();
 
 protected:
   int fd;
-  virtual void openStream (void) = 0;
+  virtual void openStream() = 0;
 private:
-    string curline;
-    string strbuf;
-    bool bof;
-    bool eof;
+  std::string curline;
+  std::string strbuf;
+  bool bof;
+  bool eof;
 };
 
 // File I/O
-class GstFileStream:public GstIOStream
+class GstFileStream : public GstIOStream
 {
 public:
-  GstFileStream (const string & path);
-  ~GstFileStream (void);
+  GstFileStream (const std::string& path);
+  ~GstFileStream();
 
 protected:
-  void openStream (void);
+  void openStream();
 
 private:
-  string path;
+  std::string path;
 };
 
 // Raw Network I/O
-class GstNetworkStream:public GstIOStream
+class GstNetworkStream : public GstIOStream
 {
 public:
-  GstNetworkStream (const string & host, int port);
-
-  ~GstNetworkStream (void);
+  GstNetworkStream (const std::string& host, int port);
+  ~GstNetworkStream();
 
 protected:
-    string host;
+  std::string host;
   int port;
 
-  void openStream (void);
+  void openStream();
 };
 
 // HTTP I/O stream
-class GstHTTPStream:public GstNetworkStream
+class GstHTTPStream : public GstNetworkStream
 {
 public:
-  GstHTTPStream (const string & host, int port, const string & path);
+  GstHTTPStream (const std::string& host, int port, const std::string& path);
 
-  string getHeaderValue (const string & name);
-  int getResponseCode (void);
-  string getContentType (void);
+  std::string getHeaderValue(const std::string& name);
+  int getResponseCode();
+  std::string getContentType();
 
-  static string getResponse(int error);
+  static std::string getResponse (int error);
 
 private:
-  string path;
+  std::string path;
   int responsecode;
-  map < string, string > headers;
+  std::map<std::string, std::string> headers;
 
-  void setupHttp (void);
-  void httpReadHeaders (void);
+  void setupHttp();
+  void httpReadHeaders();
 };
 
 // Console I/O
-class GstConsoleStream:public GstIOStream
+class GstConsoleStream : public GstIOStream
 {
 public:
   GstConsoleStream (FILE * f);
 
 protected:
-  void openStream (void);
+  void openStream();
 };
 
 #endif /* __GST_IO_STREAM__ */

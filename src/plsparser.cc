@@ -25,6 +25,9 @@
 #include <ctype.h>
 #include <cstring>
 
+using std::string;
+using std::vector;
+
 const string PLSParser::type = "audio/x-scpls";
 
 bool

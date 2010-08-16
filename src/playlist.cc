@@ -23,11 +23,13 @@
 
 #include "playlist.h"
 #include <iostream>
+
 using std::cerr;
 using std::endl;
+using std::string;
 
 
-Playlist :: Playlist (string &uri_str)
+Playlist :: Playlist (const string& uri_str)
 {
   string errorstr;
 

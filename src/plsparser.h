@@ -28,10 +28,10 @@
 
 struct PLSParser:PlaylistParser
 {
-  int parse (vector<string> &list, GstIOStream *stream);
+  int parse (std::vector<std::string>& list, GstIOStream *stream);
   bool identify (GstIOStream *stream);
 private:
-  static const string type;
+  static const std::string type;
 };
 
 #endif

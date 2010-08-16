@@ -27,38 +27,40 @@
 #include <errno.h>
 
 #include <iostream>
+
 using std::cerr;
 using std::endl;
+using std::string;
 
-GstHTTPStream :: GstHTTPStream (const string &host, int port, const string &path)
-               : GstNetworkStream (host, port)
+GstHTTPStream::GstHTTPStream (const string& host, int port, const string& path)
+             : GstNetworkStream (host, port)
 {
   this->path = path;
-  setupHttp ();
-  httpReadHeaders ();
+  setupHttp();
+  httpReadHeaders();
 }
 
 string
-GstHTTPStream :: getContentType (void)
+GstHTTPStream::getContentType()
 {
-  return headers ["Content-Type"];
+  return headers["Content-Type"];
 }
 
 string
-GstHTTPStream :: getHeaderValue (const string & name)
+GstHTTPStream::getHeaderValue (const string& name)
 {
   return headers[name];
 }
 
 int
-GstHTTPStream :: getResponseCode (void)
+GstHTTPStream::getResponseCode()
 {
   return responsecode;
 }
 
 // Send the HTTP request
 void
-GstHTTPStream :: setupHttp (void)
+GstHTTPStream::setupHttp()
 {
   char *buf = g_strdup_printf ("GET %s HTTP/1.0\r\n"
                                "Host: %s\r\n"
@@ -78,7 +80,7 @@ GstHTTPStream :: setupHttp (void)
 
 // Read and parse HTTP headers
 void
-GstHTTPStream :: httpReadHeaders (void)
+GstHTTPStream::httpReadHeaders()
 {
   string line;
   char mode[8];
@@ -99,13 +101,13 @@ GstHTTPStream :: httpReadHeaders (void)
     {
       string name, value;
 
-      line = getCurrentLine ();
+      line = getCurrentLine();
       int sep = line.find(": ");
 
       name = line.substr (0, sep);
       value = line.substr (sep + 2);
 
-      headers [name] = value;
+      headers[name] = value;
     }
 }
 
@@ -115,7 +117,7 @@ GstHTTPStream :: httpReadHeaders (void)
  * of cases
  */
 string
-GstHTTPStream::getResponse(int error)
+GstHTTPStream::getResponse (int error)
 {
   switch (error)
     {
@@ -133,4 +135,3 @@ GstHTTPStream::getResponse(int error)
       return "HTTP: Error code " + error;;
     }
 }
-

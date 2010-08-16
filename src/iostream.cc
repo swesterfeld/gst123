@@ -30,8 +30,9 @@
 #include <iostream>
 using std::cerr;
 using std::endl;
+using std::string;
 
-GstIOStream :: GstIOStream (void)
+GstIOStream::GstIOStream()
 {
   bof = true;
   eof = false;
@@ -39,7 +40,7 @@ GstIOStream :: GstIOStream (void)
 }
 
 string
-GstIOStream :: getContentType (void)
+GstIOStream::getContentType()
 {
   return "";
 }
@@ -53,7 +54,7 @@ GstIOStream :: getContentType (void)
  * Returns length of the line read
  */
 int
-GstIOStream::readline (const string &newline)
+GstIOStream::readline (const string& newline)
 {
   char buf [4096];
   int len = -1;
@@ -104,7 +105,7 @@ GstIOStream::readline (const string &newline)
 
 /* Look for a specific pattern in the first line of content */
 bool
-GstIOStream :: contentBeginsWith (const string match)
+GstIOStream::contentBeginsWith (const string match)
 {
   if (bof)
     readline();
@@ -112,8 +113,8 @@ GstIOStream :: contentBeginsWith (const string match)
   return (curline.find(match) == 0);
 }
 
-string &
-GstIOStream :: getCurrentLine (void)
+std::string&
+GstIOStream::getCurrentLine()
 {
   return curline;
 }
