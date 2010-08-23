@@ -87,7 +87,7 @@ URI::URI (const string &input)
     {
       host = input.substr (start, portsep - start);
       string port_str = input.substr (portsep, walk - portsep);
-      port = atoi(port_str.c_str());
+      port = atoi (port_str.c_str());
     }
   else
     {
@@ -133,7 +133,7 @@ URI::open()
 
       stream = http_stream = new HTTPStream (host, port, path);
 
-      if ((responsecode = http_stream->getResponseCode()) != 200)
+      if ((responsecode = http_stream->get_response_code()) != 200)
         {
           // We don't want to accidentally send a success
           if (responsecode == 0)
@@ -169,7 +169,7 @@ URI::empty_path_allowed()
 }
 
 IOStream *
-URI::getIOStream()
+URI::get_io_stream()
 {
   return stream;
 }
@@ -189,7 +189,7 @@ URI::strerror (int error)
       return "URI: Unknown Error";
     /* HTTP Error */
     default:
-      return HTTPStream::getResponse (error);
+      return HTTPStream::get_response (error);
     }
 }
 

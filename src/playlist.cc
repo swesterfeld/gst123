@@ -66,7 +66,7 @@ Playlist::register_parsers()
 int
 Playlist::parse (URI &uri)
 {
-  IOStream *stream = uri.getIOStream ();
+  IOStream *stream = uri.get_io_stream ();
 
   for (size_t i = 0; i < parser_register.size(); i++)
     {

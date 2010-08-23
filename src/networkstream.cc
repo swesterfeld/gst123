@@ -42,7 +42,7 @@ NetworkStream::NetworkStream (const string& host, int port)
 {
   this->host = host;
   this->port = port;
-  openStream ();
+  open_stream ();
 }
 
 NetworkStream::~NetworkStream()
@@ -51,21 +51,21 @@ NetworkStream::~NetworkStream()
 }
 
 void
-NetworkStream::openStream()
+NetworkStream::open_stream()
 {
   struct addrinfo hints;
   struct addrinfo *result = NULL, *rp = NULL;
   char port_str[10];
   int save_errno = 0, ret = 0;
 
-  memset(&hints, 0, sizeof(struct addrinfo));
+  memset (&hints, 0, sizeof(struct addrinfo));
 
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
 
-  snprintf(port_str, sizeof(port), "%d", port);
+  snprintf (port_str, sizeof(port), "%d", port);
 
-  if ((ret = getaddrinfo(host.c_str (), port_str, &hints, &result)) < 0)
+  if ((ret = getaddrinfo (host.c_str (), port_str, &hints, &result)) < 0)
     {
       cerr << "Connect: unable to create socket for "
            << host << ":" << port << "(" << gai_strerror(ret) << ")"

@@ -40,7 +40,7 @@ FileStream::FileStream (const std::string& path)
 {
   this->path = path;
 
-  openStream();
+  open_stream();
 }
 
 FileStream::~FileStream()
@@ -49,7 +49,7 @@ FileStream::~FileStream()
 }
 
 void
-FileStream::openStream()
+FileStream::open_stream()
 {
   fd = open (path.c_str(), O_RDONLY);
   if (fd < 0)

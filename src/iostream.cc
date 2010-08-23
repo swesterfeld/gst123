@@ -43,7 +43,7 @@ IOStream::IOStream()
 }
 
 string
-IOStream::getContentType()
+IOStream::get_content_type()
 {
   return "";
 }
@@ -108,16 +108,16 @@ IOStream::readline (const string& newline)
 
 /* Look for a specific pattern in the first line of content */
 bool
-IOStream::contentBeginsWith (const string& match)
+IOStream::content_begins_with (const string& match)
 {
   if (bof)
     readline();
 
-  return (curline.find(match) == 0);
+  return (curline.find (match) == 0);
 }
 
 std::string&
-IOStream::getCurrentLine()
+IOStream::get_current_line()
 {
   return curline;
 }

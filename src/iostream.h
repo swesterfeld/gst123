@@ -64,13 +64,13 @@ public:
   IOStream();
 
   int readline (const std::string& separator = "\n");
-  bool contentBeginsWith (const std::string& magic);
-  virtual std::string getContentType();
-  std::string& getCurrentLine();
+  bool content_begins_with (const std::string& magic);
+  virtual std::string get_content_type();
+  std::string& get_current_line();
 
 protected:
   int fd;
-  virtual void openStream() = 0;
+  virtual void open_stream() = 0;
 private:
   std::string curline;
   std::string strbuf;
@@ -86,7 +86,7 @@ public:
   ~FileStream();
 
 protected:
-  void openStream();
+  void open_stream();
 
 private:
   std::string path;
@@ -103,7 +103,7 @@ protected:
   std::string host;
   int port;
 
-  void openStream();
+  void open_stream();
 };
 
 // HTTP I/O stream
@@ -112,19 +112,19 @@ class HTTPStream : public NetworkStream
 public:
   HTTPStream (const std::string& host, int port, const std::string& path);
 
-  std::string getHeaderValue(const std::string& name);
-  int getResponseCode();
-  std::string getContentType();
+  std::string get_header_value (const std::string& name);
+  int get_response_code();
+  std::string get_content_type();
 
-  static std::string getResponse (int error);
+  static std::string get_response (int error);
 
 private:
   std::string path;
   int responsecode;
   std::map<std::string, std::string> headers;
 
-  void setupHttp();
-  void httpReadHeaders();
+  void setup_http();
+  void http_read_headers();
 };
 
 // Console I/O
@@ -134,7 +134,7 @@ public:
   ConsoleStream (FILE *f);
 
 protected:
-  void openStream();
+  void open_stream();
 };
 
 }

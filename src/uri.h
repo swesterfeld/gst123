@@ -55,7 +55,7 @@ public:
   URI (const std::string& input);
   ~URI ();
 
-  IOStream *getIOStream();
+  IOStream *get_io_stream();
 
   static std::string strerror (int error);
 

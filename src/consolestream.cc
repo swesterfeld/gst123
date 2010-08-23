@@ -31,7 +31,7 @@ ConsoleStream::ConsoleStream (FILE *f)
 }
 
 void
-ConsoleStream::openStream()
+ConsoleStream::open_stream()
 {
 // Do nothing. It's already openStream.
 }

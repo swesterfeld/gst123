@@ -36,12 +36,12 @@ bool
 PLSParser::identify (IOStream *stream)
 {
   // Trust the content type first
-  if (stream->getContentType () == PLSParser::type)
+  if (stream->get_content_type() == PLSParser::type)
     return true;
-  else if (stream->getContentType () != "")
+  else if (stream->get_content_type() != "")
     return false;
 
-  if (stream->contentBeginsWith("[playlist]"))
+  if (stream->content_begins_with ("[playlist]"))
     return true;
   else
     return false;
@@ -56,7 +56,7 @@ PLSParser::parse (vector<string> &list, IOStream *stream)
 {
   do
     {
-      string curline = stream->getCurrentLine ();
+      string curline = stream->get_current_line();
 
       if (curline == "")
 	continue;
@@ -66,8 +66,8 @@ PLSParser::parse (vector<string> &list, IOStream *stream)
 
       if (curline.substr(0, 4) == "File")
 	{
-	  int pos = curline.find("=");
-	  string ret = curline.substr(pos+1, string::npos);
+	  int pos = curline.find ("=");
+	  string ret = curline.substr (pos+1, string::npos);
 	  while (ret[0] && isspace (ret[0]))
 	    ret.erase (0, 1);
 

@@ -37,12 +37,12 @@ bool
 M3UParser::identify (IOStream *stream)
 {
   // Trust the content type first
-  if (stream->getContentType () == M3UParser::type)
+  if (stream->get_content_type() == M3UParser::type)
     return true;
-  else if (stream->getContentType () != "")
+  else if (stream->get_content_type () != "")
     return false;
 
-  if (stream->contentBeginsWith("#EXTM3U"))
+  if (stream->content_begins_with("#EXTM3U"))
     extended = true;
   else
     extended = false;
@@ -59,7 +59,7 @@ M3UParser::parse (vector<string> &list, IOStream *stream)
 {
   do
     {
-      string curline = stream->getCurrentLine ();
+      string curline = stream->get_current_line ();
 
       if (curline == "")
 	continue;

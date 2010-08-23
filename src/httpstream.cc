@@ -38,31 +38,31 @@ HTTPStream::HTTPStream (const string& host, int port, const string& path)
           : NetworkStream (host, port)
 {
   this->path = path;
-  setupHttp();
-  httpReadHeaders();
+  setup_http();
+  http_read_headers();
 }
 
 string
-HTTPStream::getContentType()
+HTTPStream::get_content_type()
 {
   return headers["Content-Type"];
 }
 
 string
-HTTPStream::getHeaderValue (const string& name)
+HTTPStream::get_header_value (const string& name)
 {
   return headers[name];
 }
 
 int
-HTTPStream::getResponseCode()
+HTTPStream::get_response_code()
 {
   return responsecode;
 }
 
 // Send the HTTP request
 void
-HTTPStream::setupHttp()
+HTTPStream::setup_http()
 {
   char *buf = g_strdup_printf ("GET %s HTTP/1.0\r\n"
                                "Host: %s\r\n"
@@ -82,7 +82,7 @@ HTTPStream::setupHttp()
 
 // Read and parse HTTP headers
 void
-HTTPStream::httpReadHeaders()
+HTTPStream::http_read_headers()
 {
   string line;
   char mode[8];
@@ -90,7 +90,7 @@ HTTPStream::httpReadHeaders()
 
   readline ("\r\n");
 
-  line = getCurrentLine ();
+  line = get_current_line();
 
   // Our first line: HTTP <responsecode> <description>
   if (line != "")
@@ -103,8 +103,8 @@ HTTPStream::httpReadHeaders()
     {
       string name, value;
 
-      line = getCurrentLine();
-      int sep = line.find(": ");
+      line = get_current_line();
+      int sep = line.find (": ");
 
       name = line.substr (0, sep);
       value = line.substr (sep + 2);
@@ -119,7 +119,7 @@ HTTPStream::httpReadHeaders()
  * of cases
  */
 string
-HTTPStream::getResponse (int error)
+HTTPStream::get_response (int error)
 {
   switch (error)
     {
