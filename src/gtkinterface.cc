@@ -102,12 +102,14 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
   gtk_window_visible = false;
 
   /* initialize map from Gdk keysyms to KeyHandler codes */
-  key_map[GDK_Page_Up]   = KEY_HANDLER_PAGE_UP;
-  key_map[GDK_Page_Down] = KEY_HANDLER_PAGE_DOWN;
-  key_map[GDK_Left]      = KEY_HANDLER_LEFT;
-  key_map[GDK_Right]     = KEY_HANDLER_RIGHT;
-  key_map[GDK_Up]        = KEY_HANDLER_UP;
-  key_map[GDK_Down]      = KEY_HANDLER_DOWN;
+  key_map[GDK_Page_Up]     = KEY_HANDLER_PAGE_UP;
+  key_map[GDK_Page_Down]   = KEY_HANDLER_PAGE_DOWN;
+  key_map[GDK_Left]        = KEY_HANDLER_LEFT;
+  key_map[GDK_Right]       = KEY_HANDLER_RIGHT;
+  key_map[GDK_Up]          = KEY_HANDLER_UP;
+  key_map[GDK_Down]        = KEY_HANDLER_DOWN;
+  key_map[GDK_KP_Add]      = '+';
+  key_map[GDK_KP_Subtract] = '-';
 }
 
 void
