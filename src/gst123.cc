@@ -749,12 +749,12 @@ main (gint   argc,
 
   for (list<string>::iterator pi = options.playlists.begin(); pi != options.playlists.end(); pi++)
     {
-      Playlist pls(*pi);
+      Playlist pls (*pi);
 
       string playlist_dirname = g_path_get_dirname (pi->c_str ());
       for (unsigned int i = 0; i < pls.size(); i++)
         {
-          if ((pls[i].find(":") ==string::npos) && !g_path_is_absolute (pls[i].c_str()))
+          if ((pls[i].find (":") == string::npos) && !g_path_is_absolute (pls[i].c_str()))
             player.add_uri_or_directory (g_build_filename (playlist_dirname.c_str (), pls[i].c_str(), NULL));
           else
             player.add_uri_or_directory (pls[i].c_str());

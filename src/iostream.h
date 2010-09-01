@@ -62,6 +62,7 @@ class IOStream
 {
 public:
   IOStream();
+  virtual ~IOStream();
 
   int readline (const std::string& separator = "\n");
   bool content_begins_with (const std::string& magic);

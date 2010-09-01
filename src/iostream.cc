@@ -42,6 +42,10 @@ IOStream::IOStream()
   fd = -1;
 }
 
+IOStream::~IOStream()
+{
+}
+
 string
 IOStream::get_content_type()
 {

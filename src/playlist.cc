@@ -1,8 +1,4 @@
 /* GST123 - GStreamer based command line media player
- * Copyright (C) 2006-2010 Stefan Westerfeld
- * Copyright (C) 2010 أحمد المحمودي (Ahmed El-Mahmoudy)
- *
- * Playlist support: Playlist base object
  * Copyright (C) 2010 Siddhesh Poyarekar
  *
  * This library is free software; you can redistribute it and/or
@@ -35,7 +31,7 @@ Playlist::Playlist (const string& uri_str)
   string errorstr;
 
   register_parsers ();
-  URI uri(uri_str);
+  URI uri (uri_str);
   int error = uri.open();
 
   if (!error)
@@ -56,11 +52,11 @@ Playlist::Playlist (const string& uri_str)
 void
 Playlist::register_parsers()
 {
-  parser_register.push_back(new PLSParser ());
+  parser_register.push_back(new PLSParser());
 
   // Make sure that this is last. It acts as a catch-all since the format
   // is simply one entry per line.
-  parser_register.push_back(new M3UParser ());
+  parser_register.push_back(new M3UParser());
 }
 
 int

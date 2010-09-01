@@ -52,8 +52,8 @@ public:
 
   ~Playlist (void)
   {
-    for (unsigned int i=0; i < parser_register.size(); i++)
-      delete (parser_register[i]);
+    for (unsigned int i = 0; i < parser_register.size(); i++)
+      delete parser_register[i];
   }
 };
 
