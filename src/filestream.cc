@@ -32,7 +32,7 @@ using std::string;
 
 using namespace Gst123;
 
-FileStream::FileStream (const std::string& path)
+FileStream::FileStream (const string& path)
 {
   this->path = path;
 
@@ -53,7 +53,7 @@ FileStream::open_stream()
 }
 
 string
-FileStream::str_error_impl(int error)
+FileStream::str_error_impl (int error)
 {
-  return "Unable to open file " + path + ": " + strerror(error);
+  return "Unable to open file " + path + ": " + strerror (error);
 }

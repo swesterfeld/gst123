@@ -19,6 +19,8 @@
 
 #include "iostream.h"
 
+using std::string;
+
 using namespace Gst123;
 
 ConsoleStream::ConsoleStream (FILE *f)
@@ -32,8 +34,8 @@ ConsoleStream::open_stream()
 // Do nothing. It's already open.
 }
 
-std::string
-ConsoleStream::str_error_impl(int error)
+string
+ConsoleStream::str_error_impl (int error)
 {
   return "";
 }

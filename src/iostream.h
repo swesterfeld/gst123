@@ -65,13 +65,13 @@ public:
   virtual std::string get_content_type();
   std::string& get_current_line();
 
-  int get_status (void);
+  int get_status();
   std::string str_error (int error);
 
 protected:
   int fd;
   int status;
-  virtual void open_stream(void) = 0;
+  virtual void open_stream() = 0;
   virtual std::string str_error_impl (int error) = 0;
 
 private:

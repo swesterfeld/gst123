@@ -94,7 +94,7 @@ HTTPStream::http_read_headers()
 
   // Our first line: HTTP <responsecode> <description>
   if (line != "")
-    sscanf(line.c_str(), "%s %d %s", mode, &status, message);
+    sscanf (line.c_str(), "%s %d %s", mode, &status, message);
   else
     status = -1;
 
@@ -122,16 +122,16 @@ HTTPStream::http_read_headers()
  * of cases
  */
 string
-HTTPStream::str_error_impl(int error)
+HTTPStream::str_error_impl (int error)
 {
   if (!http_error)
     {
-      return net_error_impl(error);
+      return net_error_impl (error);
     }
   if (error < -1)
     {
       std::string str = "HTTP: ";
-      str += strerror(-error);
+      str += strerror (-error);
       return str;
     }
   else if (error == -1)
