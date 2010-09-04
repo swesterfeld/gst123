@@ -38,6 +38,7 @@ NetworkStream::NetworkStream (const string& host, int port)
 {
   this->host = host;
   this->port = port;
+  this->lookup_error = false;
   open_stream();
 }
 
@@ -52,7 +53,7 @@ NetworkStream::open_stream()
   struct addrinfo hints;
   struct addrinfo *result = NULL, *rp = NULL;
   char port_str[10];
-  int save_errno = 0, ret = 0;
+  int ret = 0;
 
   memset (&hints, 0, sizeof (struct addrinfo));
 
@@ -63,9 +64,8 @@ NetworkStream::open_stream()
 
   if ((ret = getaddrinfo (host.c_str(), port_str, &hints, &result)) < 0)
     {
-      cerr << "Connect: unable to create socket for "
-           << host << ":" << port << "(" << gai_strerror(ret) << ")"
-           << endl;
+      status = ret;
+      lookup_error = true;
     }
   else
     {
@@ -75,24 +75,44 @@ NetworkStream::open_stream()
                        rp->ai_protocol);
 
           if (fd == -1)
-            continue;
+	    {
+	      status = errno;
+              continue;
+	    }
 
-          if (connect(fd, rp->ai_addr, rp->ai_addrlen) != -1)
+          if (connect (fd, rp->ai_addr, rp->ai_addrlen) != -1)
             {
               freeaddrinfo (result);
+	      status = 0;
               return;
             }
           else
-            save_errno = errno;
+            status = errno;
         }
     }
 
   if (result)
     freeaddrinfo (result);
-
-  if (save_errno)
-    cerr << "Connect: unable to connect to "
-         << host << ":" << port << "(" << gai_strerror(ret) << ")"
-         << endl;
 }
 
+string
+NetworkStream::str_error_impl (int error)
+{
+  return net_error_impl (error);
+}
+ 
+string
+NetworkStream::net_error_impl (int error)
+{
+  string str = "Network Error: ";
+
+  if (lookup_error)
+    {
+      str += "Failed to look up host " + host + ":";
+      str += port + " (";
+      str += gai_strerror (error);
+      return str;
+    }
+
+  return str + strerror (error);
+}

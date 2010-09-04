@@ -33,7 +33,8 @@ enum
   URI_ERROR_UNKNOWN = -1,
   URI_ERROR_INVALID_HOST = -2,
   URI_ERROR_INVALID_HTTP = -3,
-  URI_ERROR_INVALID_PATH = -4
+  URI_ERROR_INVALID_URI  = -4,
+  URI_ERROR_INVALID_PATH = -5
 };
 
 class URI
@@ -42,6 +43,7 @@ class URI
   int port;
   std::string path;
   std::string protocol;
+  int status;
 
   IOStream *stream;
 
@@ -53,7 +55,7 @@ public:
 
   IOStream *get_io_stream();
 
-  static std::string strerror (int error);
+  std::string strerror (int error);
 
   int open();
 };

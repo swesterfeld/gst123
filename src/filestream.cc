@@ -49,6 +49,11 @@ FileStream::open_stream()
 {
   fd = open (path.c_str(), O_RDONLY);
   if (fd < 0)
-    cerr << "Error opening file " << path << ": " << strerror (errno) << endl;
+    status = errno;
 }
 
+string
+FileStream::str_error_impl(int error)
+{
+  return "Unable to open file " + path + ": " + strerror(error);
+}

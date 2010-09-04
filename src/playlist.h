@@ -47,8 +47,10 @@ class Playlist : public std::vector<std::string>
 
   int parse (URI &uri);
   void register_parsers (void);
+  int error;
 public:
   Playlist (const std::string& uri_str);
+  bool is_valid();
 
   ~Playlist (void)
   {

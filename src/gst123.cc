@@ -35,6 +35,7 @@
 #include <vector>
 #include <string>
 #include <list>
+#include <iostream>
 
 using std::string;
 using std::vector;
@@ -751,6 +752,12 @@ main (gint   argc,
     {
       Playlist pls (*pi);
 
+      if (!pls.is_valid())
+        {
+          std::cerr << "Could not load playlist " << *pi << std::endl;
+	  continue;
+        }
+
       string playlist_dirname = g_path_get_dirname (pi->c_str());
       for (unsigned int i = 0; i < pls.size(); i++)
         {
@@ -763,7 +770,9 @@ main (gint   argc,
   /* make sure we have a URI */
   if (player.uris.empty())
     {
-      printf ("%s", options.usage.c_str());
+      /* Don't print usage if a playlist was provided */
+      if (!options.playlists.size())
+        printf ("%s", options.usage.c_str());
       return -1;
     }
   player.playbin = gst_element_factory_make ("playbin2", "play");

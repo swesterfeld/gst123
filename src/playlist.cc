@@ -32,21 +32,19 @@ Playlist::Playlist (const string& uri_str)
 
   register_parsers ();
   URI uri (uri_str);
-  int error = uri.open();
 
-  if (!error)
-    error = parse (uri);
-  else
-    {
-      errorstr = uri.strerror(error);
-      error = 0;
-    }
+  error = uri.open();
 
   if (error)
-    errorstr = "Parser not implemented for this playlist type";
+    {
+      cerr << "Playlist Error: " << uri.strerror(error) << endl;
+      return;
+    }
 
-  if (errorstr != "")
-    cerr << "Playlist Error: " << errorstr << endl;
+  error = parse (uri);
+
+  if (error)
+    cerr << "Playlist Error: Parser not implemented for this playlist type" << endl;
 }
 
 void
@@ -57,6 +55,15 @@ Playlist::register_parsers()
   // Make sure that this is last. It acts as a catch-all since the format
   // is simply one entry per line.
   parser_register.push_back(new M3UParser());
+}
+
+bool
+Playlist::is_valid()
+{
+  if (error)
+    return false;
+  else
+    return true;
 }
 
 int

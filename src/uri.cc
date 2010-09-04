@@ -51,6 +51,7 @@ URI::URI (const string &input)
   size_t portsep = string::npos;
 
   stream = NULL;
+  status = 0;
 
   if (input == "-")
     {
@@ -69,7 +70,7 @@ URI::URI (const string &input)
 
   if ((walk = input.find("/", start)) == string::npos && !empty_path_allowed ())
     {
-      cerr << "URI: Invalid URI";
+      status = URI_ERROR_INVALID_URI;
       return;
     }
   else if (walk == string::npos)
@@ -94,7 +95,7 @@ URI::URI (const string &input)
 
   if (protocol == "http" && host == "")
     {
-      cerr << "URI: Invalid HTTP URI";
+      status = URI_ERROR_INVALID_HTTP;
       return;
     }
 }
@@ -119,24 +120,16 @@ URI::~URI()
 int
 URI::open()
 {
+  // Don't even bother if we have already encountered an error
+  if (status)
+    return status;
+
   if (protocol == "http")
     {
-      HTTPStream *http_stream;
-      int responsecode = 0;
-
       if (host == "")
-        return URI_ERROR_INVALID_HOST;
+        return (status = URI_ERROR_INVALID_HOST);
 
-      stream = http_stream = new HTTPStream (host, port, path);
-
-      if ((responsecode = http_stream->get_response_code()) != 200)
-        {
-          // We don't want to accidentally send a success
-          if (responsecode == 0)
-            return URI_ERROR_INVALID_HTTP;
-
-          return responsecode;
-        }
+      stream = new HTTPStream (host, port, path);
     }
 
   else if (protocol == "stdin")
@@ -144,15 +137,12 @@ URI::open()
   else
     {
       if (path == "")
-        return URI_ERROR_INVALID_PATH;
+        return (status = URI_ERROR_INVALID_PATH);
 
       stream = new FileStream (path);
     }
 
-  if (stream)
-    return 0;
-  else
-    return -1;
+  return stream->get_status ();
 }
 
 bool
@@ -173,19 +163,23 @@ URI::get_io_stream()
 string
 URI::strerror (int error)
 {
+  if (!status && stream)
+    {
+      return stream->str_error(error);
+    }
+
   switch (error)
     {
+    case URI_ERROR_INVALID_URI:
+      return "URI: Invalid URI format";
     case URI_ERROR_INVALID_HOST:
       return "URI: Invalid Host name";
     case URI_ERROR_INVALID_HTTP:
       return "URI: Invalid HTTP response";
     case URI_ERROR_INVALID_PATH:
       return "URI: Invalid URI path";
-    case URI_ERROR_UNKNOWN:
-      return "URI: Unknown Error";
-    /* HTTP Error */
     default:
-      return HTTPStream::get_response (error);
+      return "URI: Unknown Error";
     }
 }
 

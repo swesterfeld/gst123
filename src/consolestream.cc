@@ -29,6 +29,11 @@ ConsoleStream::ConsoleStream (FILE *f)
 void
 ConsoleStream::open_stream()
 {
-// Do nothing. It's already openStream.
+// Do nothing. It's already open.
 }
 
+std::string
+ConsoleStream::str_error_impl(int error)
+{
+  return "";
+}

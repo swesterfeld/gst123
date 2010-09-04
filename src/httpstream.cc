@@ -34,8 +34,17 @@ HTTPStream::HTTPStream (const string& host, int port, const string& path)
           : NetworkStream (host, port)
 {
   this->path = path;
+  this->http_error = false;
+
+  // The network barfed. Get out of here
+  if (status)
+    return;
+
   setup_http();
   http_read_headers();
+
+  if (status)
+    http_error = true;
 }
 
 string
@@ -48,12 +57,6 @@ string
 HTTPStream::get_header_value (const string& name)
 {
   return headers[name];
-}
-
-int
-HTTPStream::get_response_code()
-{
-  return responsecode;
 }
 
 // Send the HTTP request
@@ -70,7 +73,8 @@ HTTPStream::setup_http()
 
   if (ret == -1)
     {
-      cerr << "HTTP Request failed: " << strerror (errno) << endl;
+      // cerr << "HTTP Request failed: " << strerror (errno) << endl;
+      status = -errno;
       return;
     }
 
@@ -90,9 +94,12 @@ HTTPStream::http_read_headers()
 
   // Our first line: HTTP <responsecode> <description>
   if (line != "")
-    sscanf(line.c_str(), "%s %d %s", mode, &responsecode, message);
+    sscanf(line.c_str(), "%s %d %s", mode, &status, message);
   else
-    responsecode = -1;
+    status = -1;
+
+  if (status == 200)
+    status = 0;
 
   // HTTP Headers
   while ((readline ("\r\n") > 0))
@@ -115,8 +122,21 @@ HTTPStream::http_read_headers()
  * of cases
  */
 string
-HTTPStream::get_response (int error)
+HTTPStream::str_error_impl(int error)
 {
+  if (!http_error)
+    {
+      return net_error_impl(error);
+    }
+  if (error < -1)
+    {
+      std::string str = "HTTP: ";
+      str += strerror(-error);
+      return str;
+    }
+  else if (error == -1)
+    return "HTTP: Invalid Request";
+
   switch (error)
     {
     case 404:

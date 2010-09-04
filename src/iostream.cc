@@ -36,6 +36,7 @@ IOStream::IOStream()
   bof = true;
   eof = false;
   fd = -1;
+  status = 0;
 }
 
 IOStream::~IOStream()
@@ -120,4 +121,26 @@ std::string&
 IOStream::get_current_line()
 {
   return curline;
+}
+
+int
+IOStream::get_status()
+{
+  return status;
+}
+
+string
+IOStream::str_error(int error)
+{
+  string ret;
+
+  if (!error)
+    error = status;
+
+  ret = str_error_impl(error);
+
+  if (ret == "")
+    return "IOStream: Unknown error " + error;
+  else
+    return ret;
 }

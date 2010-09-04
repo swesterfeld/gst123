@@ -65,9 +65,15 @@ public:
   virtual std::string get_content_type();
   std::string& get_current_line();
 
+  int get_status (void);
+  std::string str_error (int error);
+
 protected:
   int fd;
-  virtual void open_stream() = 0;
+  int status;
+  virtual void open_stream(void) = 0;
+  virtual std::string str_error_impl (int error) = 0;
+
 private:
   std::string curline;
   std::string strbuf;
@@ -84,6 +90,7 @@ public:
 
 protected:
   void open_stream();
+  std::string str_error_impl (int error);
 
 private:
   std::string path;
@@ -99,8 +106,13 @@ public:
 protected:
   std::string host;
   int port;
+  bool lookup_error;
 
   void open_stream();
+  std::string str_error_impl (int error);
+  std::string net_error_impl (int errno);
+
+private:
 };
 
 // HTTP I/O stream
@@ -110,15 +122,18 @@ public:
   HTTPStream (const std::string& host, int port, const std::string& path);
 
   std::string get_header_value (const std::string& name);
-  int get_response_code();
   std::string get_content_type();
 
   static std::string get_response (int error);
 
+protected:
+  std::string str_error_impl (int error);
+
 private:
   std::string path;
-  int responsecode;
   std::map<std::string, std::string> headers;
+
+  bool http_error;
 
   void setup_http();
   void http_read_headers();
@@ -132,6 +147,7 @@ public:
 
 protected:
   void open_stream();
+  std::string str_error_impl (int error);
 };
 
 }
