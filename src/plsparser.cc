@@ -1,8 +1,4 @@
 /* GST123 - GStreamer based command line media player
- * Copyright (C) 2006-2010 Stefan Westerfeld
- * Copyright (C) 2010 أحمد المحمودي (Ahmed El-Mahmoudy)
- *
- * Playlist support: PLS playlist parser
  * Copyright (C) 2010 Siddhesh Poyarekar
  *
  * This library is free software; you can redistribute it and/or
@@ -52,7 +48,7 @@ PLSParser::identify (IOStream *stream)
 // and we don't really care about the playlist entry information
 // such as the title, artist, etc.
 int
-PLSParser::parse (vector<string> &list, IOStream *stream)
+PLSParser::parse (vector<string>& list, IOStream *stream)
 {
   do
     {
@@ -62,19 +58,19 @@ PLSParser::parse (vector<string> &list, IOStream *stream)
 	continue;
 
       while (curline[0] && isspace (curline[0]))
-        curline.erase(0, 1);
+        curline.erase (0, 1);
 
-      if (curline.substr(0, 4) == "File")
+      if (curline.substr (0, 4) == "File")
 	{
 	  int pos = curline.find ("=");
 	  string ret = curline.substr (pos+1, string::npos);
 	  while (ret[0] && isspace (ret[0]))
 	    ret.erase (0, 1);
 
-	  list.push_back(ret);
+	  list.push_back (ret);
 	}
     }
-  while (stream->readline () >= 0);
+  while (stream->readline() >= 0);
 
   return 0;
 }

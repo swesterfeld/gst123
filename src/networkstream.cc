@@ -1,8 +1,4 @@
 /* GST123 - GStreamer based command line media player
- * Copyright (C) 2006-2010 Stefan Westerfeld
- * Copyright (C) 2010 أحمد المحمودي (Ahmed El-Mahmoudy)
- *
- * Playlist support: GstNetworkStream
  * Copyright (C) 2010 Siddhesh Poyarekar
  *
  * This library is free software; you can redistribute it and/or
@@ -42,7 +38,7 @@ NetworkStream::NetworkStream (const string& host, int port)
 {
   this->host = host;
   this->port = port;
-  open_stream ();
+  open_stream();
 }
 
 NetworkStream::~NetworkStream()
@@ -58,14 +54,14 @@ NetworkStream::open_stream()
   char port_str[10];
   int save_errno = 0, ret = 0;
 
-  memset (&hints, 0, sizeof(struct addrinfo));
+  memset (&hints, 0, sizeof (struct addrinfo));
 
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
 
-  snprintf (port_str, sizeof(port), "%d", port);
+  snprintf (port_str, sizeof (port), "%d", port);
 
-  if ((ret = getaddrinfo (host.c_str (), port_str, &hints, &result)) < 0)
+  if ((ret = getaddrinfo (host.c_str(), port_str, &hints, &result)) < 0)
     {
       cerr << "Connect: unable to create socket for "
            << host << ":" << port << "(" << gai_strerror(ret) << ")"
@@ -75,15 +71,15 @@ NetworkStream::open_stream()
     {
       for (rp = result; rp; rp = rp->ai_next)
         {
-          fd = socket(rp->ai_family, rp->ai_socktype,
-                      rp->ai_protocol);
+          fd = socket (rp->ai_family, rp->ai_socktype,
+                       rp->ai_protocol);
 
           if (fd == -1)
             continue;
 
           if (connect(fd, rp->ai_addr, rp->ai_addrlen) != -1)
             {
-              freeaddrinfo(result);
+              freeaddrinfo (result);
               return;
             }
           else
@@ -92,7 +88,7 @@ NetworkStream::open_stream()
     }
 
   if (result)
-    freeaddrinfo(result);
+    freeaddrinfo (result);
 
   if (save_errno)
     cerr << "Connect: unable to connect to "

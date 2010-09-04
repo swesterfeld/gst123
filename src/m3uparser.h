@@ -1,8 +1,4 @@
 /* GST123 - GStreamer based command line media player
- * Copyright (C) 2006-2010 Stefan Westerfeld
- * Copyright (C) 2010 أحمد المحمودي (Ahmed El-Mahmoudy)
- *
- * Playlist support: M3U playlist parser
  * Copyright (C) 2010 Siddhesh Poyarekar
  *
  * This library is free software; you can redistribute it and/or
@@ -31,7 +27,7 @@ namespace Gst123
 
 struct M3UParser : public PlaylistParser
 {
-  int parse (std::vector<std::string> &list, IOStream *stream);
+  int parse (std::vector<std::string>& list, IOStream *stream);
   bool identify (IOStream *stream);
 private:
   bool extended;

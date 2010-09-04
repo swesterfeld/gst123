@@ -226,7 +226,7 @@ struct Player : public KeyHandler
       {
 	string uri = uris[play_position++];
 
-	overwrite_time_display ();
+	overwrite_time_display();
 	printf ("\nPlaying %s\n", uri.c_str());
 
         gtk_interface.set_title (g_basename (uri.c_str()));
@@ -248,7 +248,7 @@ struct Player : public KeyHandler
   void
   seek (gint64 new_pos)
   {
-//    overwrite_time_display ();
+//    overwrite_time_display();
 
     // * seekflag:
     //   GST_SEEK_FLAG_NONE     no flag
@@ -283,7 +283,7 @@ struct Player : public KeyHandler
   void
   toggle_pause()
   {
-//    overwrite_time_display ();
+//    overwrite_time_display();
 
     if (last_state == GST_STATE_PAUSED) {
       gst_element_set_state (playbin, GST_STATE_PLAYING);
@@ -729,7 +729,7 @@ main (gint   argc,
   Player player;
 
   /* Setup options */
-  if (!g_thread_supported ())
+  if (!g_thread_supported())
     g_thread_init (NULL);
 
   options.parse (argc, argv);
@@ -751,11 +751,11 @@ main (gint   argc,
     {
       Playlist pls (*pi);
 
-      string playlist_dirname = g_path_get_dirname (pi->c_str ());
+      string playlist_dirname = g_path_get_dirname (pi->c_str());
       for (unsigned int i = 0; i < pls.size(); i++)
         {
           if ((pls[i].find (":") == string::npos) && !g_path_is_absolute (pls[i].c_str()))
-            player.add_uri_or_directory (g_build_filename (playlist_dirname.c_str (), pls[i].c_str(), NULL));
+            player.add_uri_or_directory (g_build_filename (playlist_dirname.c_str(), pls[i].c_str(), NULL));
           else
             player.add_uri_or_directory (pls[i].c_str());
         }

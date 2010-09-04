@@ -1,8 +1,4 @@
 /* GST123 - GStreamer based command line media player
- * Copyright (C) 2006-2010 Stefan Westerfeld
- * Copyright (C) 2010 أحمد المحمودي (Ahmed El-Mahmoudy)
- *
- * Playlist support: M3U playlist parser
  * Copyright (C) 2010 Siddhesh Poyarekar
  *
  * This library is free software; you can redistribute it and/or
@@ -39,10 +35,10 @@ M3UParser::identify (IOStream *stream)
   // Trust the content type first
   if (stream->get_content_type() == M3UParser::type)
     return true;
-  else if (stream->get_content_type () != "")
+  else if (stream->get_content_type() != "")
     return false;
 
-  if (stream->content_begins_with("#EXTM3U"))
+  if (stream->content_begins_with ("#EXTM3U"))
     extended = true;
   else
     extended = false;
@@ -55,11 +51,11 @@ M3UParser::identify (IOStream *stream)
 // and we don't really care about the playlist entry information
 // such as the title, artist, etc.
 int
-M3UParser::parse (vector<string> &list, IOStream *stream)
+M3UParser::parse (vector<string>& list, IOStream *stream)
 {
   do
     {
-      string curline = stream->get_current_line ();
+      string curline = stream->get_current_line();
 
       if (curline == "")
 	continue;

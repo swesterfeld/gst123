@@ -1,8 +1,4 @@
 /* GST123 - GStreamer based command line media player
- * Copyright (C) 2006-2010 Stefan Westerfeld
- * Copyright (C) 2010 أحمد المحمودي (Ahmed El-Mahmoudy)
- *
- * Playlist support: GstHTTPStream
  * Copyright (C) 2010 Siddhesh Poyarekar
  *
  * This library is free software; you can redistribute it and/or
@@ -67,14 +63,14 @@ HTTPStream::setup_http()
   char *buf = g_strdup_printf ("GET %s HTTP/1.0\r\n"
                                "Host: %s\r\n"
                                "User-Agent: gst123\r\n\r\n",
-                               path.c_str (), host.c_str ());
+                               path.c_str(), host.c_str());
 
   int ret = write (fd, buf, strlen (buf));
   g_free (buf);
 
   if (ret == -1)
     {
-      cerr << "HTTP Request failed: " << strerror(errno) << endl;
+      cerr << "HTTP Request failed: " << strerror (errno) << endl;
       return;
     }
 
@@ -134,6 +130,6 @@ HTTPStream::get_response (int error)
     case 302:
       return "HTTP: Content moved to another location";
     default:
-      return "HTTP: Error code " + error;;
+      return "HTTP: Error code " + error;
     }
 }
