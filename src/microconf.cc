@@ -121,8 +121,8 @@ MicroConf::tokenize()
         {
           s += *i;
         }
-      else if (state == STRING && white_space (*i)
-           ||  state == QUOTED_STRING && *i == '"')
+      else if ((state == STRING && white_space (*i))
+           ||  (state == QUOTED_STRING && *i == '"'))
         {
           tokens.push_back (s);
           s = "";
