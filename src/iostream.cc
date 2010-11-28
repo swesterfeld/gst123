@@ -132,15 +132,8 @@ IOStream::get_status()
 string
 IOStream::str_error (int error)
 {
-  string ret;
-
   if (!error)
     error = status;
 
-  ret = str_error_impl (error);
-
-  if (ret == "")
     return "IOStream: Unknown error " + error;
-  else
-    return ret;
 }

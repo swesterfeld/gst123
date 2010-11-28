@@ -122,11 +122,14 @@ HTTPStream::http_read_headers()
  * of cases
  */
 string
-HTTPStream::str_error_impl (int error)
+HTTPStream::str_error (int error)
 {
+  if (!error)
+    error = status;
+
   if (!http_error)
     {
-      return net_error_impl (error);
+      return net_error (error);
     }
   if (error < -1)
     {

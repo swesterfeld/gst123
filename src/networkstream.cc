@@ -96,21 +96,23 @@ NetworkStream::open_stream()
 }
 
 string
-NetworkStream::str_error_impl (int error)
+NetworkStream::str_error (int error)
 {
-  return net_error_impl (error);
+  return net_error (error);
 }
  
 string
-NetworkStream::net_error_impl (int error)
+NetworkStream::net_error (int error)
 {
   string str = "Network Error: ";
+
+  if (!error)
+    error = status;
 
   if (lookup_error)
     {
       str += "Failed to look up host " + host + ":";
-      str += port + " (";
-      str += gai_strerror (error);
+      str += port + " (" + string (gai_strerror (error)) + ")";
       return str;
     }
 

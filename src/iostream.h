@@ -66,13 +66,12 @@ public:
   std::string& get_current_line();
 
   int get_status();
-  std::string str_error (int error);
+  virtual std::string str_error (int error = 0);
 
 protected:
   int fd;
   int status;
   virtual void open_stream() = 0;
-  virtual std::string str_error_impl (int error) = 0;
 
 private:
   std::string curline;
@@ -88,9 +87,10 @@ public:
   FileStream (const std::string& path);
   ~FileStream();
 
+  std::string str_error (int error = 0);
+
 protected:
   void open_stream();
-  std::string str_error_impl (int error);
 
 private:
   std::string path;
@@ -103,14 +103,15 @@ public:
   NetworkStream (const std::string& host, int port);
   ~NetworkStream();
 
+  std::string str_error (int error = 0);
+
 protected:
   std::string host;
   int port;
   bool lookup_error;
 
   void open_stream();
-  std::string str_error_impl (int error);
-  std::string net_error_impl (int errno);
+  std::string net_error (int errno);
 
 private:
 };
@@ -126,8 +127,7 @@ public:
 
   static std::string get_response (int error);
 
-protected:
-  std::string str_error_impl (int error);
+  std::string str_error (int error = 0);
 
 private:
   std::string path;
@@ -147,7 +147,6 @@ public:
 
 protected:
   void open_stream();
-  std::string str_error_impl (int error);
 };
 
 }

@@ -33,9 +33,3 @@ ConsoleStream::open_stream()
 {
 // Do nothing. It's already open.
 }
-
-string
-ConsoleStream::str_error_impl (int error)
-{
-  return "";
-}

@@ -53,7 +53,10 @@ FileStream::open_stream()
 }
 
 string
-FileStream::str_error_impl (int error)
+FileStream::str_error (int error)
 {
+  if (!error)
+    error = status;
+
   return "Unable to open file " + path + ": " + strerror (error);
 }
