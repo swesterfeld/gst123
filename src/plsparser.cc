@@ -75,6 +75,9 @@ PLSParser::parse (vector<string>& list, IOStream *stream)
     }
   while ((ret = stream->readline()) >= 0);
 
+  if (ret == IO_STREAM_EOF)  // EOF is not an error
+    ret = 0;
+
   if (ret < 0)
     ret = errno;
 
