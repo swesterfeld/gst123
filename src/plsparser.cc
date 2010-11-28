@@ -60,14 +60,14 @@ PLSParser::parse (vector<string>& list, IOStream *stream)
       if (curline == "")
 	continue;
 
-      while (curline[0] && isspace (curline[0]))
+      while (!curline.empty() && isspace (curline[0]))
         curline.erase (0, 1);
 
       if (curline.substr (0, 4) == "File")
 	{
 	  int pos = curline.find ("=");
 	  string ret = curline.substr (pos+1, string::npos);
-	  while (ret[0] && isspace (ret[0]))
+	  while (!ret.empty() && isspace (ret[0]))
 	    ret.erase (0, 1);
 
 	  list.push_back (ret);

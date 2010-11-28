@@ -63,11 +63,11 @@ M3UParser::parse (vector<string>& list, IOStream *stream)
       if (curline == "")
 	continue;
 
-      while (curline[0] && isspace (curline[0]))
+      while (!curline.empty() && isspace (curline[0]))
         curline.erase (0, 1);
 
       // Avoid comments
-      if (curline[0] && curline[0] != '#')
+      if (!curline.empty() && curline[0] != '#')
         list.push_back (curline);
     }
   while ((ret = stream->readline()) >= 0);
