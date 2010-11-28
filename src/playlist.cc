@@ -60,11 +60,11 @@ void
 Playlist::register_parsers()
 {
   current_parser = NULL;
-  parser_register.push_back(new PLSParser());
+  parser_register.push_back (new PLSParser());
 
   // Make sure that this is last. It acts as a catch-all since the format
   // is simply one entry per line.
-  parser_register.push_back(new M3UParser());
+  parser_register.push_back (new M3UParser());
 }
 
 bool
