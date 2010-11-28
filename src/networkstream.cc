@@ -100,7 +100,7 @@ NetworkStream::str_error (int error)
 {
   return net_error (error);
 }
- 
+
 string
 NetworkStream::net_error (int error)
 {

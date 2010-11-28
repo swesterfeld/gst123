@@ -59,16 +59,16 @@ URI::URI (const string &input)
       return;
     }
 
-  if ((start = input.find("://")) == string::npos)
+  if ((start = input.find ("://")) == string::npos)
     {
       path = input;
       return;
     }
 
-  protocol = input.substr(0, start);
+  protocol = input.substr (0, start);
   start += 3;
 
-  if ((walk = input.find("/", start)) == string::npos && !empty_path_allowed ())
+  if ((walk = input.find ("/", start)) == string::npos && !empty_path_allowed())
     {
       status = URI_ERROR_INVALID_URI;
       return;
@@ -76,7 +76,7 @@ URI::URI (const string &input)
   else if (walk == string::npos)
     path = "/";
   else
-    path = input.substr(walk);
+    path = input.substr (walk);
 
   portsep = input.find (":", start, walk);
 
@@ -165,7 +165,7 @@ URI::strerror (int error)
 {
   if (!status && stream)
     {
-      return stream->str_error(error);
+      return stream->str_error (error);
     }
 
   switch (error)

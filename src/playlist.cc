@@ -30,7 +30,7 @@ Playlist::Playlist (const string& uri_str)
 {
   string errorstr;
 
-  register_parsers ();
+  register_parsers();
   URI uri (uri_str);
 
   error = uri.open();

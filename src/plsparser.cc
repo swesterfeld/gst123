@@ -84,5 +84,5 @@ PLSParser::parse (vector<string>& list, IOStream *stream)
 string
 PLSParser::str_error (int error)
 {
-	return "";
+  return "";
 }

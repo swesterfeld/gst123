@@ -81,5 +81,5 @@ M3UParser::parse (vector<string>& list, IOStream *stream)
 string
 M3UParser::str_error (int error)
 {
-	return "";
+  return "";
 }
