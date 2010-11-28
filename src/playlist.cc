@@ -85,9 +85,9 @@ Playlist::parse (URI &uri)
     {
       if (parser_register[i]->identify (stream))
         {
-	  current_parser = parser_register[i];
+          current_parser = parser_register[i];
           return parser_register[i]->parse (*this, stream);
-	}
+        }
     }
 
   return PLAYLIST_PARSER_NOTIMPL;

@@ -755,7 +755,7 @@ main (gint   argc,
       if (!pls.is_valid())
         {
           std::cerr << "Could not load playlist " << *pi << std::endl;
-	  return -1;
+          return -1;
         }
 
       string playlist_dirname = g_path_get_dirname (pi->c_str());

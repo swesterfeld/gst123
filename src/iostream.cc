@@ -155,5 +155,5 @@ IOStream::read_str_error(int error)
   if (error == IO_STREAM_EOF)
     return "Read Error: End of File";
 
-  return string("Read error: ") + strerror(-error);
+  return string ("Read error: ") + strerror (-error);
 }
