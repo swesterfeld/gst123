@@ -39,11 +39,16 @@ struct PlaylistParser
 {
   virtual int parse (std::vector<std::string>& output, IOStream *stream) = 0;
   virtual bool identify (IOStream *stream) = 0;
+  virtual std::string str_error (int error = 0) = 0;
+
+protected:
+  int status;
 };
 
 class Playlist : public std::vector<std::string>
 {
   std::vector<PlaylistParser *> parser_register;
+  PlaylistParser *current_parser;
 
   int parse (URI &uri);
   void register_parsers (void);

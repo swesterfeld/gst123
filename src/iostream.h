@@ -67,6 +67,7 @@ public:
 
   int get_status();
   virtual std::string str_error (int error = 0);
+  std::string read_str_error (int error = 0);
 
 protected:
   int fd;

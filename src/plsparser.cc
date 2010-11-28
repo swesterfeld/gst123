@@ -20,6 +20,7 @@
 #include "plsparser.h"
 #include <ctype.h>
 #include <cstring>
+#include <errno.h>
 
 using std::string;
 using std::vector;
@@ -50,6 +51,8 @@ PLSParser::identify (IOStream *stream)
 int
 PLSParser::parse (vector<string>& list, IOStream *stream)
 {
+  int ret = 0;
+
   do
     {
       string curline = stream->get_current_line();
@@ -70,7 +73,16 @@ PLSParser::parse (vector<string>& list, IOStream *stream)
 	  list.push_back (ret);
 	}
     }
-  while (stream->readline() >= 0);
+  while ((ret = stream->readline()) >= 0);
 
-  return 0;
+  if (ret < 0)
+    ret = errno;
+
+  return ret;
+}
+
+string
+PLSParser::str_error (int error)
+{
+	return "";
 }

@@ -56,6 +56,7 @@ public:
   IOStream *get_io_stream();
 
   std::string strerror (int error);
+  std::string read_strerror (int error);
 
   int open();
 };

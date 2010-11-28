@@ -88,7 +88,8 @@ HTTPStream::http_read_headers()
   char mode[8];
   char message[256];
 
-  readline ("\r\n");
+  if (readline ("\r\n") < 0)
+    return;
 
   line = get_current_line();
 

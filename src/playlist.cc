@@ -43,13 +43,23 @@ Playlist::Playlist (const string& uri_str)
 
   error = parse (uri);
 
-  if (error)
+  if (error == PLAYLIST_PARSER_NOTIMPL)
     cerr << "Playlist Error: Parser not implemented for this playlist type" << endl;
+  else if (error)
+    {
+      string err = current_parser->str_error (error);
+
+      if (err == "")
+        err = uri.read_strerror (error);
+
+      cerr << "Playlist Error: " << err << endl;
+    }
 }
 
 void
 Playlist::register_parsers()
 {
+  current_parser = NULL;
   parser_register.push_back(new PLSParser());
 
   // Make sure that this is last. It acts as a catch-all since the format
@@ -74,9 +84,9 @@ Playlist::parse (URI &uri)
   for (size_t i = 0; i < parser_register.size(); i++)
     {
       if (parser_register[i]->identify (stream))
-	{
-	  parser_register[i]->parse (*this, stream);
-	  return 0;
+        {
+	  current_parser = parser_register[i];
+          return parser_register[i]->parse (*this, stream);
 	}
     }
 

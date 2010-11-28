@@ -20,6 +20,7 @@
 #include "m3uparser.h"
 #include <ctype.h>
 #include <cstring>
+#include <errno.h>
 
 using std::string;
 using std::vector;
@@ -53,6 +54,8 @@ M3UParser::identify (IOStream *stream)
 int
 M3UParser::parse (vector<string>& list, IOStream *stream)
 {
+  int ret = 0;
+
   do
     {
       string curline = stream->get_current_line();
@@ -67,7 +70,16 @@ M3UParser::parse (vector<string>& list, IOStream *stream)
       if (curline[0] && curline[0] != '#')
         list.push_back (curline);
     }
-  while (stream->readline() >= 0);
+  while ((ret = stream->readline()) >= 0);
 
-  return 0;
+  if (ret < 0)
+    ret = errno;
+
+  return ret;
+}
+
+string
+M3UParser::str_error (int error)
+{
+	return "";
 }

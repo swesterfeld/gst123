@@ -29,6 +29,7 @@ struct M3UParser : public PlaylistParser
 {
   int parse (std::vector<std::string>& list, IOStream *stream);
   bool identify (IOStream *stream);
+  std::string str_error (int error);
 private:
   bool extended;
   static const std::string type;

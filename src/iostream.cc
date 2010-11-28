@@ -24,10 +24,12 @@
 #include <cstring>
 
 #include <iostream>
+#include <sstream>
 
 using std::cerr;
 using std::endl;
 using std::string;
+using std::stringstream;
 
 using namespace Gst123;
 
@@ -77,7 +79,8 @@ IOStream::readline (const string& newline)
             {
               cerr << "Read error on fd " << fd
                    << ": " << strerror (errno) << endl;
-              return IO_STREAM_ERROR;
+              status = errno;
+              return -status;
             }
 
           buf[len] = '\0';
@@ -87,7 +90,7 @@ IOStream::readline (const string& newline)
       while ((pos = strbuf.find (newline)) == string::npos);
     }
   else if (strbuf == "")
-    return IO_STREAM_EOF;
+    return (status = IO_STREAM_EOF);
 
   pos = strbuf.find (newline);
 
@@ -132,8 +135,25 @@ IOStream::get_status()
 string
 IOStream::str_error (int error)
 {
+  stringstream o;
+
   if (!error)
     error = status;
 
-    return "IOStream: Unknown error " + error;
+  o << "IOStream: Unknown error "
+    << error;
+
+  return o.str();
+}
+
+string
+IOStream::read_str_error(int error)
+{
+  if (!error)
+    error = status;
+
+  if (error == IO_STREAM_EOF)
+    return "Read Error: End of File";
+
+  return string("Read error: ") + strerror(-error);
 }

@@ -183,3 +183,8 @@ URI::strerror (int error)
     }
 }
 
+string
+URI::read_strerror (int error)
+{
+  return stream->read_str_error (error);
+}
