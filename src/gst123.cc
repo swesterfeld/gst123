@@ -31,13 +31,17 @@
 #include "terminal.h"
 #include "gtkinterface.h"
 #include "options.h"
+#include "playlist.h"
 #include <vector>
 #include <string>
 #include <list>
+#include <iostream>
 
 using std::string;
 using std::vector;
 using std::list;
+
+using namespace Gst123;
 
 static Terminal     terminal;
 static GtkInterface gtk_interface;
@@ -223,7 +227,7 @@ struct Player : public KeyHandler
       {
 	string uri = uris[play_position++];
 
-	overwrite_time_display ();
+	overwrite_time_display();
 	printf ("\nPlaying %s\n", uri.c_str());
 
         gtk_interface.set_title (g_basename (uri.c_str()));
@@ -245,7 +249,7 @@ struct Player : public KeyHandler
   void
   seek (gint64 new_pos)
   {
-//    overwrite_time_display ();
+//    overwrite_time_display();
 
     // * seekflag:
     //   GST_SEEK_FLAG_NONE     no flag
@@ -280,7 +284,7 @@ struct Player : public KeyHandler
   void
   toggle_pause()
   {
-//    overwrite_time_display ();
+//    overwrite_time_display();
 
     if (last_state == GST_STATE_PAUSED) {
       gst_element_set_state (playbin, GST_STATE_PLAYING);
@@ -726,7 +730,7 @@ main (gint   argc,
   Player player;
 
   /* Setup options */
-  if (!g_thread_supported ())
+  if (!g_thread_supported())
     g_thread_init (NULL);
 
   options.parse (argc, argv);
@@ -746,37 +750,29 @@ main (gint   argc,
 
   for (list<string>::iterator pi = options.playlists.begin(); pi != options.playlists.end(); pi++)
     {
-      FILE *f = stdin;
-      if (*pi != "-")
-	{
-	  f = fopen (pi->c_str(), "r");
-	  if (!f)
-	    {
-	      g_printerr ("gst123: can't read playlist %s: %s\n", pi->c_str(), strerror (errno));
-	      exit (1);
-	    }
-	}
+      Playlist pls (*pi);
+
+      if (!pls.is_valid())
+        {
+          std::cerr << "Could not load playlist " << *pi << std::endl;
+          return -1;
+        }
 
       string playlist_dirname = g_path_get_dirname (pi->c_str());
-      char uri[1024];
-      while (fgets (uri, 1024, f))
-	{
-	  int l = strlen (uri);
-	  while (l && (uri[l-1] == '\n' || uri[l-1] == '\r'))
-	    uri[--l] = 0;
-	  if (!strchr (uri, ':') && !g_path_is_absolute (uri))
-            player.add_uri_or_directory (g_build_filename (playlist_dirname.c_str(), uri, 0));
-	  else
-            player.add_uri_or_directory (uri);
-	}
-
-      if (*pi != "-")
-	fclose (f);
+      for (unsigned int i = 0; i < pls.size(); i++)
+        {
+          if ((pls[i].find (":") == string::npos) && !g_path_is_absolute (pls[i].c_str()))
+            player.add_uri_or_directory (g_build_filename (playlist_dirname.c_str(), pls[i].c_str(), NULL));
+          else
+            player.add_uri_or_directory (pls[i].c_str());
+        }
     }
   /* make sure we have a URI */
   if (player.uris.empty())
     {
-      printf ("%s", options.usage.c_str());
+      /* Don't print usage if a playlist was provided */
+      if (!options.playlists.size())
+        printf ("%s", options.usage.c_str());
       return -1;
     }
   player.playbin = gst_element_factory_make ("playbin2", "play");
@@ -796,6 +792,8 @@ main (gint   argc,
             audio_sink = gst_element_factory_make ("alsasink", "alsaaudioout");
           else if (strcmp (audio_driver, "oss") == 0)
             audio_sink = gst_element_factory_make ("osssink", "ossaudioout");
+          else if (strcmp (audio_driver, "jack") == 0)
+            audio_sink = gst_element_factory_make ("jackaudiosink", "jackaudioout");
           else
             {
               printf ("%s: unknown audio driver %s\n", argv[0], audio_driver);

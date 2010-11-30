@@ -1,4 +1,4 @@
-AC_INIT([gst123], [0.1.2])
+AC_INIT([gst123], [0.1.3])
 AC_CONFIG_SRCDIR([src/gst123.cc])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -62,11 +62,41 @@ Debian users: aptitude install libncurses-dev
     AC_SUBST(NCURSES_LIBS)
 ])
 
+dnl ----------------------------- from acbirnet.m4 -------------------------------
+dnl Check whether cc accepts a certain option
+dnl MC_PROG_CC_SUPPORTS_OPTION(OPTIONS, ACTION-IF-FOUND [,ACTION-IF-NOT-FOUND])
+AC_DEFUN([MC_PROG_CC_SUPPORTS_OPTION], [
+AC_MSG_CHECKING([whether ${CC-cc} supports $1])
+echo >conftest.c;
+if ${CC-cc} [$1] -c $CFLAGS conftest.c >/dev/null 2>&1 ; then
+    AC_MSG_RESULT(yes)
+    [$2]
+else
+    AC_MSG_RESULT(no)
+    [$3]
+fi
+rm -fr conftest*
+])dnl
+
+# Less cluttered build output
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+
 # Check requirement sets
 AC_GSTREAMER_REQUIREMENTS
 AC_GSTREAMER_GTK_REQUIREMENTS
 AC_X11_REQUIREMENTS
 AC_NCURSES_REQUIREMENTS
+
+MC_PROG_CC_SUPPORTS_OPTION([-Wall], [
+  CFLAGS="$CFLAGS -Wall"
+  CXXFLAGS="$CXXFLAGS -Wall"
+])
+
+AC_ARG_ENABLE(debug-cxx,AS_HELP_STRING([--enable-debug-cxx], [setup compiler flags to do C++ STL debug checks]),
+[
+  CFLAGS="$CFLAGS -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
+  CXXFLAGS="$CXXFLAGS -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
+])
 
 AC_CONFIG_FILES([Makefile src/Makefile docs/Makefile])
 AC_OUTPUT
