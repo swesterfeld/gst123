@@ -1,3 +1,11 @@
+gst123 (0.1.3-1) unstable; urgency=low
+
+  * New upstream release.
+  * Removed manpage-fixes.diff as it got fixed upstream
+  * debian/control: Bumped Standards-Version to 3.9.1, no changes needed.
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Tue, 30 Nov 2010 09:18:12 +0200
+
 gst123 (0.1.2-1) unstable; urgency=low
 
   * New upstream release.
