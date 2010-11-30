@@ -1,3 +1,158 @@
+2010-11-28 16:06:08 +0100  Stefan Westerfeld 	# 0fbf167
+
+	NEWS, manpage rebuilt.
+
+2010-11-28 15:16:25 +0100  Stefan Westerfeld 	# 4a5aa6b
+
+	Fix post-string-end access (catched by STL C++ pedantic debugging checks).
+
+2010-11-28 15:12:51 +0100  Stefan Westerfeld 	# 60ae8b8
+
+	Don't check errno on normal EOF.
+
+2010-11-28 15:12:25 +0100  Stefan Westerfeld 	# 7a0ba97
+
+	Coding style fixes.
+
+2010-11-28 15:11:50 +0100  Stefan Westerfeld 	# 513e2e1
+
+	BUILD: New configure flag "--enable-debug-cxx" to enable C++ STL debugging
+
+2010-11-28 13:47:01 +0100  Stefan Westerfeld 	# e3b84db
+
+	Coding style fixes.
+
+2010-11-28 13:33:08 +0100  Stefan Westerfeld 	# fee0ce1
+
+	Code formatting. Code by Siddhesh Poyarekar.
+
+2010-11-28 13:30:48 +0100  Stefan Westerfeld 	# 8348c89
+
+	Exit with an error if a playlist error occurs. Code by Siddhesh Poyarekar.
+
+2010-11-28 13:29:15 +0100  Stefan Westerfeld 	# 8d16379
+
+	Trap errors properly while parsing playlist. Code by Siddhesh Poyarekar.
+
+2010-11-28 13:27:16 +0100  Stefan Westerfeld 	# 5f4bdd5
+
+	Better error handling. Code by Siddhesh Poyarekar.
+
+2010-09-04 22:16:52 +0200  Stefan Westerfeld 	# f27ae20
+
+	Coding style fixes.
+
+2010-09-04 22:09:36 +0200  Stefan Westerfeld 	# 3ac81e0
+
+	Applied better error handling patches by Siddhesh Poyarekar.
+
+2010-09-04 21:56:27 +0200  Stefan Westerfeld 	# 7c6619f
+
+	More coding style fixes.
+
+2010-09-01 19:06:34 +0200  Stefan Westerfeld 	# ca107e1
+
+	Make IOStream destructor virtual. Coding style / Copyright fixes.
+
+	Without virtual destructor derived class destructor will not be called,
+	and filedescriptor close() will not be executed on delete.
+
+2010-08-23 10:19:52 +0200  Stefan Westerfeld 	# 363e948
+
+	Coding style fixes: mainly fooBar() -> foo_bar().
+
+2010-08-16 17:26:54 +0200  Stefan Westerfeld 	# e65f950
+
+	Get rid of Gst prefix. Instead introduce Gst123 namespace. Coding style fixes.
+
+2010-08-16 17:09:06 +0200  Stefan Westerfeld 	# 87b71e5
+
+	Coding style fixes. Mostly: avoid "using std::foo;" statements in headers.
+
+2010-08-16 16:53:52 +0200  Stefan Westerfeld 	# 286b166
+
+	Get rid of gst prefix for filenames.
+
+2010-08-16 16:46:53 +0200  Stefan Westerfeld 	# d17186f
+
+	Enhanced playlist support: Code by Siddhesh Poyarekar.
+
+2010-11-28 12:46:13 +0100  Stefan Westerfeld 	# 7bc69a6
+
+	TODO++
+
+2010-11-27 20:58:23 +0100  Stefan Westerfeld 	# 48e43eb
+
+	BUILD: less cluttered build output
+
+2010-11-27 20:57:21 +0100  Stefan Westerfeld 	# 6626872
+
+	MicroConf: fixed compiler warning
+
+2010-09-01 00:33:32 +0200  Stefan Westerfeld 	# 29dc64e
+
+	Support keypad +/- in Gtk interface for volume control.
+
+2010-08-11 11:43:34 +0200  Stefan Westerfeld 	# 9744e95
+
+	JACK support documented.
+
+2010-08-11 11:43:22 +0200  Stefan Westerfeld 	# 8d08dc2
+
+	Documented JACK support, enabled using -a jack.
+
+2010-08-06 10:14:28 +0200  Stefan Westerfeld 	# 39f2c56
+
+	Add JACK audio output support.
+
+2010-08-05 11:07:27 +0200  Stefan Westerfeld 	# fe32d2e
+
+	Compile with -Wall if the compiler supports it.
+
+2010-07-08 14:35:39 +0200  Stefan Westerfeld 	# b7d8670
+
+	Regenerated manual pages after fixing problems with minus(\-) vs. hyphen(-).
+
+2010-07-08 14:20:59 +0200  Stefan Westerfeld 	# c7d6634
+
+	TODO++
+
+2010-07-08 13:39:02 +0200  Stefan Westerfeld 	# b8371b1
+
+	TODO++
+
+2010-07-08 13:37:29 +0200  Stefan Westerfeld 	# 43862ca
+
+	TODO++
+
+2010-07-06 11:33:13 +0200  Stefan Westerfeld 	# a94a6b7
+
+	ChangeLog is generated these days.
+
+2010-07-06 11:32:46 +0200  Stefan Westerfeld 	# 69a92c2
+
+	Added missing header for .gst123rc parsing.
+
+2010-07-05 23:25:58 +0200  Stefan Westerfeld 	# 460aad6
+
+	Rebuild manpage.
+
+2010-07-05 23:24:21 +0200  Stefan Westerfeld 	# 27b9c15
+
+	Added .gst123rc config file, support setting audio_output via config file.
+
+2010-07-05 23:16:46 +0200  Stefan Westerfeld 	# 23fcc3c
+
+	Bump version.
+
+2010-07-05 21:52:09 +0200  Stefan Westerfeld 	# 5ed4cd1
+
+	OSD as proposed by Fedora bug.
+
+2010-07-05 18:06:07 +0200  Stefan Westerfeld 	# b18bafc
+
+	Fix NEWS.
+
 2010-07-05 17:51:44 +0200  Stefan Westerfeld 	# 007a371
 
 	Updated NEWS.
