@@ -90,7 +90,7 @@ Terminal::signal_sig_cont (int)
 void
 Terminal::print_term (const char *key)
 {
-  char *ret = tgetstr (key, &term_p);
+  char *ret = tgetstr (const_cast<char *> (key), &term_p);
 
   if (ret)
     printf ("%s", ret);
@@ -116,7 +116,7 @@ Terminal::init_terminal()
 void
 Terminal::bind_key (const char *key, int handler)
 {
-  char *ret = tgetstr (key, &term_p);
+  char *ret = tgetstr (const_cast<char *> (key), &term_p);
   if (ret)
     keys[ret] = handler;
 }
