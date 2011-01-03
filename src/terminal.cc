@@ -88,6 +88,15 @@ Terminal::signal_sig_cont (int)
 }
 
 void
+Terminal::print_term (const char *key)
+{
+  char *ret = tgetstr (key, &term_p);
+
+  if (ret)
+    printf ("%s", ret);
+}
+
+void
 Terminal::init_terminal()
 {
   // configure input params of the terminal
@@ -100,8 +109,16 @@ Terminal::init_terminal()
   tcsetattr (0, TCSANOW, &tio_new);
 
   // enable keypad_xmit
-  printf ("%s", tgetstr ("ks", &term_p));
+  print_term ("ks");
   fflush (stdout);
+}
+
+void
+Terminal::bind_key (const char *key, int handler)
+{
+  char *ret = tgetstr (key, &term_p);
+  if (ret)
+    keys[ret] = handler;
 }
 
 void
@@ -123,12 +140,12 @@ Terminal::init (GMainLoop *loop, KeyHandler *key_handler)
   init_terminal();
 
   // initialize common keyboard escape sequences
-  keys[tgetstr ("ku", &term_p)] = KEY_HANDLER_UP;
-  keys[tgetstr ("kd", &term_p)] = KEY_HANDLER_DOWN;
-  keys[tgetstr ("kl", &term_p)] = KEY_HANDLER_LEFT;
-  keys[tgetstr ("kr", &term_p)] = KEY_HANDLER_RIGHT;
-  keys[tgetstr ("kP", &term_p)] = KEY_HANDLER_PAGE_UP;
-  keys[tgetstr ("kN", &term_p)] = KEY_HANDLER_PAGE_DOWN;
+  bind_key ("ku", KEY_HANDLER_UP);
+  bind_key ("kd", KEY_HANDLER_DOWN);
+  bind_key ("kl", KEY_HANDLER_LEFT);
+  bind_key ("kr", KEY_HANDLER_RIGHT);
+  bind_key ("kP", KEY_HANDLER_PAGE_UP);
+  bind_key ("kN", KEY_HANDLER_PAGE_DOWN);
 
   // add mainloop source for keys
   static GSourceFuncs source_funcs = { stdin_prepare, stdin_check, stdin_dispatch, };
@@ -143,9 +160,8 @@ void
 Terminal::end()
 {
   tcsetattr(0,TCSANOW,&tio_orig);
-
   // disable keypad xmit
-  printf ("%s", tgetstr ("ke", &term_p));
+  print_term("ke");
 }
 
 void
