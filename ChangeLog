@@ -1,3 +1,22 @@
+2011-01-16 15:03:19 +0100  Stefan Westerfeld 	# 6221a28
+
+	Prepare gst123-0.1.4 release.
+
+2011-01-03 13:00:33 +0100  Stefan Westerfeld 	# 97a850a
+
+	Fix compile on systems where the first argument of tgetstr() is char* (not const char*).
+
+2011-01-03 12:16:27 +0100  Stefan Westerfeld 	# 23fd4e9
+
+	Don't crash with terminals that don't define all escape sequences.
+
+	Code by Siddhesh Poyarekar. Crash was reported for "dumb" terminals, for
+	instance at startup of gnome). See Fedora bugzilla #666059.
+
+2010-11-28 16:30:23 +0100  Stefan Westerfeld 	# 79746ca
+
+	Bump version.
+
 2010-11-28 16:06:08 +0100  Stefan Westerfeld 	# 0fbf167
 
 	NEWS, manpage rebuilt.

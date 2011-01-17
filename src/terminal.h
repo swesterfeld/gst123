@@ -41,6 +41,8 @@ class Terminal
   void read_stdin();
   int getch();
   void init_terminal();
+  void bind_key (const char *key, int handler);
+  void print_term (const char *key);
 
 public:
   void init (GMainLoop *loop, KeyHandler *key_handler);
