@@ -1,3 +1,7 @@
+Overview of changes in gst123-0.1.4:
+
+* Fixed crash for "dumb" terminals. [Siddhesh Poyarekar]
+
 Overview of changes in gst123-0.1.3:
 
 * Support for m3u and pls playlists. [Siddhesh Poyarekar]
