@@ -58,6 +58,8 @@ Options::parse (int argc, char **argv)
       "read playlist of files and URIs from <filename>", "<filename>"},
     {"version", '\0', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK,
       (GOptionParseFunc*) Options::print_version, "print version", NULL },
+    {"full-version", '\0', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK,
+      (GOptionParseFunc*) Options::print_full_version, "print full version", NULL },
     {"verbose", '\0', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_NONE, &instance->verbose,
       "print GStreamer pipeline used to play files", NULL},
     {"shuffle", 'z', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_NONE, &instance->shuffle,
@@ -89,9 +91,20 @@ Options::parse (int argc, char **argv)
 }
 
 void
-Options::print_version ()
+Options::print_version()
 {
   printf ("%s %s\n", instance->program_name.c_str(), VERSION);
+  exit (0);
+}
+
+void
+Options::print_full_version()
+{
+  printf ("%-10s %s\n", (instance->program_name + ":").c_str(), VERSION);
+  printf ("%-10s %d.%d.%d-%d\n", "GStreamer:", GST_VERSION_MAJOR, GST_VERSION_MINOR, GST_VERSION_MICRO, GST_VERSION_NANO);
+  printf ("%-10s %u.%u.%u\n", "GTK+:", gtk_major_version, gtk_minor_version, gtk_micro_version);
+  printf ("%-10s %u.%u.%u\n", "GLib:", glib_major_version, glib_minor_version, glib_micro_version);
+
   exit (0);
 }
 

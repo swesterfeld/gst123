@@ -28,6 +28,7 @@ class Options
   static Options *instance;
 
   static void print_version();
+  static void print_full_version();
   static void add_playlist (const gchar *option_name, const gchar *value);
 
 public:
