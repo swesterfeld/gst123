@@ -442,12 +442,12 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
   Player& player = *(Player *) data;
   switch (GST_MESSAGE_TYPE (message)) {
     case GST_MESSAGE_ERROR: {
-      GError *err;
-      gchar *debug;
+      GError *err = NULL;
+      gchar *debug = NULL;
 
       gst_message_parse_error (message, &err, &debug);
       player.overwrite_time_display();
-      g_print ("Error: %s\n", err->message);
+      g_print ("Error: %s\n", err ? err->message : "<NULL Error>");
       g_error_free (err);
       g_free (debug);
 
@@ -496,7 +496,7 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
         else if (gst_structure_has_name (message->structure, "playbin2-stream-changed"))
           {
             // try to figure out the video size
-            GstElement *videosink;
+            GstElement *videosink = NULL;
             g_object_get (G_OBJECT (player.playbin), "video-sink", &videosink, NULL);
             if (videosink && !options.novideo)
               {
