@@ -26,6 +26,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include <string.h>
+#include <assert.h>
 #include "glib-extra.h"
 #include "config.h"
 #include "terminal.h"
@@ -195,6 +196,8 @@ struct Player : public KeyHandler
   void
   remove_current_uri()
   {
+    assert (play_position > 0);
+
     play_position--;
     uris.erase (uris.begin() + play_position);
   }
