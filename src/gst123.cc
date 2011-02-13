@@ -134,7 +134,7 @@ struct Player : public KeyHandler
   void
   add_uri (string uri)
   {
-    if (uri.find (':') == uri.npos)
+    if (uri.find (":/") == uri.npos)
       {
 	if (!g_path_is_absolute (uri.c_str()))
 	  uri = g_get_current_dir() + string (G_DIR_SEPARATOR + uri);
