@@ -38,6 +38,7 @@ public:
   // variables filled via command line options:
   gboolean      verbose;
   gboolean      shuffle;
+  gboolean      repeat;
   gboolean      novideo;
   char        **uris;
   std::list<std::string>  playlists;

@@ -41,6 +41,7 @@
 using std::string;
 using std::vector;
 using std::list;
+using std::swap;
 
 using namespace Gst123;
 
@@ -214,16 +215,22 @@ struct Player : public KeyHandler
      */
     gtk_interface.hide();
 
-    if (options.shuffle)
+    if (play_position == uris.size() && options.repeat)
       {
         if (uris.empty())
           {
             printf ("No files remaining in playlist.\n");
             quit();
           }
-        else
+        play_position = 0;
+      }
+    if (options.shuffle && play_position == 0)
+      {
+        // Fisher–Yates shuffle
+        for (guint i = 0; i < uris.size(); i++)
           {
-            play_position = g_random_int_range (0, uris.size());
+            guint j = g_random_int_range (i, uris.size());
+            swap (uris[i], uris[j]);
           }
       }
     if (play_position < uris.size())
