@@ -25,6 +25,8 @@ gst123 - A GStreamer based command line media player
 	Shows a brief help message.
 @item @manb{-v}, @manb{--version} @*
 	Prints out @manb{gst123} version.
+@item @manb{-v}, @manb{--full-version} @*
+	Prints out @manb{gst123} version and version of libraries used by gst123.
 @item @manb{-r}, @manb{--repeat} @*
         Repeat playlist forever.
 @item @manb{-z}, @manb{--shuffle} @*
