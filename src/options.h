@@ -28,6 +28,7 @@ class Options
   static Options *instance;
 
   static void print_version();
+  static void print_full_version();
   static void add_playlist (const gchar *option_name, const gchar *value);
 
 public:
@@ -37,6 +38,7 @@ public:
   // variables filled via command line options:
   gboolean      verbose;
   gboolean      shuffle;
+  gboolean      repeat;
   gboolean      novideo;
   char        **uris;
   std::list<std::string>  playlists;

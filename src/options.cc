@@ -37,6 +37,7 @@ Options::Options ()
   instance = this; // singleton
 
   program_name = "gst123";
+  repeat  = FALSE;
   shuffle = FALSE;
   verbose = FALSE;
   novideo = FALSE;
@@ -51,6 +52,7 @@ Options::Options ()
 void
 Options::parse (int argc, char **argv)
 {
+  gboolean random = FALSE; // --random is equivalent to --shuffle --repeat
   GOptionContext *context = g_option_context_new ("<URI>... - Play video and audio clips");
   const GOptionEntry all_options[] = {
     {"list", '@', G_OPTION_FLAG_FILENAME, G_OPTION_ARG_CALLBACK,
@@ -58,10 +60,16 @@ Options::parse (int argc, char **argv)
       "read playlist of files and URIs from <filename>", "<filename>"},
     {"version", '\0', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK,
       (GOptionParseFunc*) Options::print_version, "print version", NULL },
+    {"full-version", '\0', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK,
+      (GOptionParseFunc*) Options::print_full_version, "print full version", NULL },
     {"verbose", '\0', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_NONE, &instance->verbose,
       "print GStreamer pipeline used to play files", NULL},
+    {"repeat", 'r', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_NONE, &instance->repeat,
+      "repeat playlist forever", NULL},
     {"shuffle", 'z', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_NONE, &instance->shuffle,
-      "play files in pseudo random order", NULL},
+      "shuffle playlist before playing", NULL},
+    {"random",  'Z', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_NONE, &random,
+      "play files in random order forever", NULL},
     {"novideo", 'x', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_NONE, &instance->novideo,
       "do not play the video stream", NULL},
     {"audio-output", 'a', 0, G_OPTION_ARG_STRING, &instance->audio_output,
@@ -86,12 +94,29 @@ Options::parse (int argc, char **argv)
       exit (1);
     }
   g_option_context_free (context);
+
+  if (random)
+    {
+      shuffle = TRUE;
+      repeat = TRUE;
+    }
 }
 
 void
-Options::print_version ()
+Options::print_version()
 {
   printf ("%s %s\n", instance->program_name.c_str(), VERSION);
+  exit (0);
+}
+
+void
+Options::print_full_version()
+{
+  printf ("%-10s %s\n", (instance->program_name + ":").c_str(), VERSION);
+  printf ("%-10s %d.%d.%d-%d\n", "GStreamer:", GST_VERSION_MAJOR, GST_VERSION_MINOR, GST_VERSION_MICRO, GST_VERSION_NANO);
+  printf ("%-10s %u.%u.%u\n", "GTK+:", gtk_major_version, gtk_minor_version, gtk_micro_version);
+  printf ("%-10s %u.%u.%u\n", "GLib:", glib_major_version, glib_minor_version, glib_micro_version);
+
   exit (0);
 }
 

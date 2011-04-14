@@ -1,6 +1,6 @@
 .\" generator: doxer.py 0.6
-.\" generation: 2011\-01\-16T15:01:31
-.TH "GST123" "1" "Wed Apr 19 00:50:37 2006" "gst123\-0.1.4" "GST123 Manual Page"
+.\" generation: 2011\-04\-12T11:42:57
+.TH "GST123" "1" "Wed Apr 19 00:50:37 2006" "gst123\-0.2.0" "GST123 Manual Page"
 
 .SH
 NAME
@@ -44,9 +44,24 @@ Shows a brief help message.
 Prints out \fBgst123\fP version.
 
 .TP
+\fB\-v\fP, \fB\-\-full\-version\fP 
+.br
+Prints out \fBgst123\fP version and version of libraries used by gst123.
+
+.TP
+\fB\-r\fP, \fB\-\-repeat\fP 
+.br
+Repeat playlist forever.
+
+.TP
 \fB\-z\fP, \fB\-\-shuffle\fP 
 .br
-Play files in pseudo random order.
+Shuffle playlist before playing.
+
+.TP
+\fB\-Z\fP, \fB\-\-random\fP 
+.br
+Play files in random order forever.
 
 .TP
 \fB\-x\fP, \fB\-\-novideo\fP 
@@ -61,10 +76,7 @@ Load files to play from the playlist file.
 .TP
 \fB\-a\fP, \fB\-\-audio\-output\fP \fI<driver>[=<device>]\fP 
 .br
-Set audio output driver (and device). For instance using gst123 \-a oss ...
-would use the oss driver, and gst123 \-a alsa=hw:1 ... would use the alsa
-driver with the alsa device hw:1. For JACK support, use \-a jack (device
-is not supported in this case).
+Set audio output driver (and device). See section audio drivers for details.
 
 .TP
 \fB\-\-verbose\fP 
@@ -160,12 +172,47 @@ available:
 .TP
 \fBaudio_output\fP \fI<driver>[=<device>]\fP
 .br
-This sets the default audio driver (which may be oss, alsa or jack) and the
-default audio device (which may be something like /dev/dsp1 for the oss
-driver or an alsa device like hw:1 for the alsa driver), and has the
-same effect as the \-a / \-\-audio\-output command line option. When both
-are present, a config file entry and the command line option, the
-value from the command line option will be used.
+This sets the default audio driver and the default audio device.
+It has the same effect as the \-a / \-\-audio\-output command line option.
+When both are present, a config file entry and the command line option,
+the value from the command line option will be used. Read the section
+on audio drivers for details on the available drivers and syntax.
+
+.PP
+
+
+.SH
+AUDIO DRIVERS
+
+
+.PP
+
+
+
+
+.TP
+\fBalsa=[<device>]\fP
+.br
+The ALSA driver; when used without argument (as in \-a alsa), the ALSA
+driver uses the default device. To select an ALSA device, its possible to
+use for example alsa=hw:1 (which will use the hw:1 ALSA device).
+
+.TP
+\fBjack\fP
+.br
+The JACK driver. Device selection is not supported in this case.
+
+.TP
+\fBnone\fP
+.br
+Dummy output driver, will not output any audio.
+
+.TP
+\fBoss=[<device>]\fP
+.br
+The OSS driver; when used without argument (as in \-a oss), the OSS
+driver uses the default device. The device can be specified using for
+example oss=/dev/dsp1 (which would use the OSS device /dev/dsp1).
 
 .PP
 
