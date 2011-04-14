@@ -25,17 +25,20 @@ gst123 - A GStreamer based command line media player
 	Shows a brief help message.
 @item @manb{-v}, @manb{--version} @*
 	Prints out @manb{gst123} version.
+@item @manb{-v}, @manb{--full-version} @*
+	Prints out @manb{gst123} version and version of libraries used by gst123.
+@item @manb{-r}, @manb{--repeat} @*
+        Repeat playlist forever.
 @item @manb{-z}, @manb{--shuffle} @*
-        Play files in pseudo random order.
+        Shuffle playlist before playing.
+@item @manb{-Z}, @manb{--random} @*
+        Play files in random order forever.
 @item @manb{-x}, @manb{--novideo} @*
         Do not play the video stream.
 @item @manb{-@@} @mani{<playlist>}, @manb{--list} @mani{<playlist>} @*
         Load files to play from the playlist file.
 @item @manb{-a}, @manb{--audio-output} @mani{<driver>[=<device>]} @*
-        Set audio output driver (and device). For instance using gst123 -a oss ...
-        would use the oss driver, and gst123 -a alsa=hw:1 ... would use the alsa
-        driver with the alsa device hw:1. For JACK support, use -a jack (device
-        is not supported in this case).
+        Set audio output driver (and device). See section audio drivers for details.
 @item @manb{--verbose} @*
         Print GStreamer pipeline used to play files
 @done
@@ -79,12 +82,28 @@ available:
 
 @itemize{none}
 @item @manb{audio_output} @mani{<driver>[=<device>]}@*
-    This sets the default audio driver (which may be oss, alsa or jack) and the
-    default audio device (which may be something like /dev/dsp1 for the oss
-    driver or an alsa device like hw:1 for the alsa driver), and has the
-    same effect as the -a / --audio-output command line option. When both
-    are present, a config file entry and the command line option, the
-    value from the command line option will be used.
+    This sets the default audio driver and the default audio device.
+    It has the same effect as the -a / --audio-output command line option.
+    When both are present, a config file entry and the command line option,
+    the value from the command line option will be used. Read the section
+    on audio drivers for details on the available drivers and syntax.
+@done
+
+@heading AUDIO DRIVERS
+
+@itemize{none}
+@item @manb{alsa=[<device>]}@*
+    The ALSA driver; when used without argument (as in -a alsa), the ALSA
+    driver uses the default device. To select an ALSA device, its possible to
+    use for example alsa=hw:1 (which will use the hw:1 ALSA device).
+@item @manb{jack}@*
+    The JACK driver. Device selection is not supported in this case.
+@item @manb{none}@*
+    Dummy output driver, will not output any audio.
+@item @manb{oss=[<device>]}@*
+    The OSS driver; when used without argument (as in -a oss), the OSS
+    driver uses the default device. The device can be specified using for
+    example oss=/dev/dsp1 (which would use the OSS device /dev/dsp1).
 @done
 
 @heading SEE ALSO

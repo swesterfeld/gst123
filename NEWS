@@ -1,3 +1,13 @@
+Overview of changes in gst123-0.2.0:
+
+* Made --shuffle, --repeat and --random behave identical to ogg123 options.
+* Allow colon in filenames. [Siddhesh Poyarekar]
+* Support "none" audio driver which disables audio output.
+* Added --full-version option which prints versions of the
+  libraries used by gst123.
+* Support --enable-debug configure option.
+* Minor fixes.
+
 Overview of changes in gst123-0.1.4:
 
 * Fixed crash for "dumb" terminals. [Siddhesh Poyarekar]

@@ -1,3 +1,77 @@
+2011-04-12 11:43:06 +0200  Stefan Westerfeld 	# 8154a56
+
+	dovumentation updates
+
+2011-04-12 11:42:32 +0200  Stefan Westerfeld 	# 0da23b4
+
+	Updated NEWS for gst123-0.2.0.
+
+2011-04-12 11:24:24 +0200  Stefan Westerfeld 	# 9b247b2
+
+	DOCS: document --full-version
+
+2011-04-12 11:17:59 +0200  Stefan Westerfeld 	# b2364aa
+
+	update docs
+
+2011-04-12 11:16:17 +0200  Stefan Westerfeld 	# be8e5d8
+
+	BUILD: bump version to 0.2.0
+
+2011-04-12 11:15:41 +0200  Stefan Westerfeld 	# 5aaf483
+
+	MicroConf: updated from SpectMorph
+
+2011-02-24 16:32:53 +0100  Stefan Westerfeld 	# 07d3536
+
+	Bump version.
+
+2011-02-24 16:32:14 +0100  Stefan Westerfeld 	# ff82d98
+
+	Made --shuffle, --repeat and --random behave identical to ogg123 options.
+
+	Before this change, gst123 --shuffle behaved like ogg123 --random, the other
+	two were not supported. Now we have
+
+	  -r, --repeat                            repeat playlist forever
+	  -z, --shuffle                           shuffle playlist before playing
+	  -Z, --random                            play files in random order forever
+
+	which means the old gst123 --shuffle is now called gst123 --random, and the
+	other two options were added, so that gst123 now supports the same options
+	ogg123 does.
+
+2011-02-13 22:15:59 +0530  Siddhesh Poyarekar 	# 1583444
+
+	Allow colon in filename
+
+	The necessary condition for a parameter being a uri is :/ and not
+	simply : since : is allowed in filenames
+
+2011-02-03 16:05:11 +0100  Stefan Westerfeld 	# 5c6960b
+
+	gst123: use NULL initialization for pointers that could point to junk otherwise
+
+2011-02-03 15:57:04 +0100  Stefan Westerfeld 	# fdd1b21
+
+	gst123: added assert for code that could crash when assertion doesn't hold
+
+2011-01-23 17:51:10 +0100  Stefan Westerfeld 	# cf79a09
+
+	gst123: support -a none (for no audio output)
+
+2011-01-23 17:31:13 +0100  Stefan Westerfeld 	# d7d3ec0
+
+	BUILD: support --enable-debug configure option
+
+2011-01-23 16:17:51 +0100  Stefan Westerfeld 	# 063de55
+
+	options: support gst123 --full-version for printing dependancy versions
+
+2011-01-18 11:10:06 +0100  Stefan Westerfeld 	# 9eee93c
+
+	TODO updates
+
 2011-01-16 15:03:19 +0100  Stefan Westerfeld 	# 6221a28
 
 	Prepare gst123-0.1.4 release.

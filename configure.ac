@@ -1,8 +1,49 @@
-AC_INIT([gst123], [0.1.4])
+AC_INIT([gst123], [0.2.0])
 AC_CONFIG_SRCDIR([src/gst123.cc])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
+
+dnl ----------------------------- from acbirnet.m4 -------------------------------
+dnl Check whether cc accepts a certain option
+dnl MC_PROG_CC_SUPPORTS_OPTION(OPTIONS, ACTION-IF-FOUND [,ACTION-IF-NOT-FOUND])
+AC_DEFUN([MC_PROG_CC_SUPPORTS_OPTION], [
+AC_MSG_CHECKING([whether ${CC-cc} supports $1])
+echo >conftest.c;
+if ${CC-cc} [$1] -c $CFLAGS conftest.c >/dev/null 2>&1 ; then
+    AC_MSG_RESULT(yes)
+    [$2]
+else
+    AC_MSG_RESULT(no)
+    [$3]
+fi
+rm -fr conftest*
+])dnl
+
+# debug builds
+AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug], [enable debugging (default=no)]), ENABLE_DEBUG=$enableval)
+DEBUG_FLAGS=""
+if test "$ENABLE_DEBUG" = "yes"; then
+  MC_PROG_CC_SUPPORTS_OPTION([-g], [ DEBUG_FLAGS="-g" ])
+fi
+
+if test -z "$CFLAGS"; then
+  CFLAGS="$DEBUG_FLAGS"
+else
+  CFLAGS="$CFLAGS $DEBUG_FLAGS"
+fi
+if test -z "$CXXFLAGS"; then
+  CXXFLAGS="$DEBUG_FLAGS"
+else
+  CXXFLAGS="$CXXFLAGS $DEBUG_FLAGS"
+fi
+
+# optimizer settings
+MC_PROG_CC_SUPPORTS_OPTION([-O2], [
+  CFLAGS="$CFLAGS -O2"
+  CXXFLAGS="$CXXFLAGS -O2"
+])
+
 AC_PROG_CXX
 AC_PROG_CC
 
@@ -61,22 +102,6 @@ Debian users: aptitude install libncurses-dev
     AC_SUBST(NCURSES_CFLAGS)
     AC_SUBST(NCURSES_LIBS)
 ])
-
-dnl ----------------------------- from acbirnet.m4 -------------------------------
-dnl Check whether cc accepts a certain option
-dnl MC_PROG_CC_SUPPORTS_OPTION(OPTIONS, ACTION-IF-FOUND [,ACTION-IF-NOT-FOUND])
-AC_DEFUN([MC_PROG_CC_SUPPORTS_OPTION], [
-AC_MSG_CHECKING([whether ${CC-cc} supports $1])
-echo >conftest.c;
-if ${CC-cc} [$1] -c $CFLAGS conftest.c >/dev/null 2>&1 ; then
-    AC_MSG_RESULT(yes)
-    [$2]
-else
-    AC_MSG_RESULT(no)
-    [$3]
-fi
-rm -fr conftest*
-])dnl
 
 # Less cluttered build output
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])

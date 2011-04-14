@@ -26,6 +26,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include <string.h>
+#include <assert.h>
 #include "glib-extra.h"
 #include "config.h"
 #include "terminal.h"
@@ -40,6 +41,7 @@
 using std::string;
 using std::vector;
 using std::list;
+using std::swap;
 
 using namespace Gst123;
 
@@ -133,7 +135,7 @@ struct Player : public KeyHandler
   void
   add_uri (string uri)
   {
-    if (uri.find (':') == uri.npos)
+    if (uri.find (":/") == uri.npos)
       {
 	if (!g_path_is_absolute (uri.c_str()))
 	  uri = g_get_current_dir() + string (G_DIR_SEPARATOR + uri);
@@ -195,6 +197,8 @@ struct Player : public KeyHandler
   void
   remove_current_uri()
   {
+    assert (play_position > 0);
+
     play_position--;
     uris.erase (uris.begin() + play_position);
   }
@@ -211,16 +215,22 @@ struct Player : public KeyHandler
      */
     gtk_interface.hide();
 
-    if (options.shuffle)
+    if (play_position == uris.size() && options.repeat)
       {
         if (uris.empty())
           {
             printf ("No files remaining in playlist.\n");
             quit();
           }
-        else
+        play_position = 0;
+      }
+    if (options.shuffle && play_position == 0)
+      {
+        // Fisher–Yates shuffle
+        for (guint i = 0; i < uris.size(); i++)
           {
-            play_position = g_random_int_range (0, uris.size());
+            guint j = g_random_int_range (i, uris.size());
+            swap (uris[i], uris[j]);
           }
       }
     if (play_position < uris.size())
@@ -439,12 +449,12 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
   Player& player = *(Player *) data;
   switch (GST_MESSAGE_TYPE (message)) {
     case GST_MESSAGE_ERROR: {
-      GError *err;
-      gchar *debug;
+      GError *err = NULL;
+      gchar *debug = NULL;
 
       gst_message_parse_error (message, &err, &debug);
       player.overwrite_time_display();
-      g_print ("Error: %s\n", err->message);
+      g_print ("Error: %s\n", err ? err->message : "<NULL Error>");
       g_error_free (err);
       g_free (debug);
 
@@ -493,7 +503,7 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
         else if (gst_structure_has_name (message->structure, "playbin2-stream-changed"))
           {
             // try to figure out the video size
-            GstElement *videosink;
+            GstElement *videosink = NULL;
             g_object_get (G_OBJECT (player.playbin), "video-sink", &videosink, NULL);
             if (videosink && !options.novideo)
               {
@@ -794,6 +804,8 @@ main (gint   argc,
             audio_sink = gst_element_factory_make ("osssink", "ossaudioout");
           else if (strcmp (audio_driver, "jack") == 0)
             audio_sink = gst_element_factory_make ("jackaudiosink", "jackaudioout");
+          else if (strcmp (audio_driver, "none") == 0)
+            audio_sink = gst_element_factory_make ("fakesink", "fakeaudioout");
           else
             {
               printf ("%s: unknown audio driver %s\n", argv[0], audio_driver);
