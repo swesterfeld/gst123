@@ -8,7 +8,7 @@ Build-Depends: debhelper (>= 7.0.50~),
                libgtk2.0-dev,
                libgstreamer-plugins-base0.10-dev,
                libncurses5-dev
-Standards-Version: 3.9.1
+Standards-Version: 3.9.2
 Homepage: http://space.twc.de/~stefan/gst123.php
 Vcs-Git: git://git.debian.org/git/collab-maint/gst123.git
 Vcs-Browser: http://git.debian.org/?p=collab-maint/gst123.git
