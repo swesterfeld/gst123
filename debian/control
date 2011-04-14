@@ -3,7 +3,7 @@ Section: video
 Priority: extra
 Maintainer: Maintainers of GStreamer packages <pkg-gstreamer-maintainers@lists.alioth.debian.org>
 Uploaders: أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
-Build-Depends: debhelper (>= 7.0.50~),
+Build-Depends: debhelper (>= 8),
                libgstreamer0.10-dev,
                libgtk2.0-dev,
                libgstreamer-plugins-base0.10-dev,
