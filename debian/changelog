@@ -1,3 +1,13 @@
+gst123 (0.2.0-1) unstable; urgency=low
+
+  * New upstream release.
+    + Made --shuffle, --repeat and --random behave identical to ogg123
+      options. (Closes: #613864)
+  * debian/control: Bumped Standards-Version to 3.9.2, no changes required
+  * Bumped compat level to 8
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Thu, 14 Apr 2011 09:32:42 +0200
+
 gst123 (0.1.4-1) unstable; urgency=low
 
   * New upstream release.
