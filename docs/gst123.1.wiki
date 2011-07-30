@@ -1,0 +1,106 @@
+= gst123(1) =
+
+Manual: gst123 Manual Page <br />
+Release: Revision {{REVISIONID}} <br />
+Updated: {{REVISIONYEAR}}-{{padleft:{{REVISIONMONTH}}|2}}-{{REVISIONDAY}} <br />
+
+==NAME==
+gst123 - A GStreamer based command line media player
+
+==SYNOPSIS==
+'''gst123''' [''OPTIONS''] [''URIS...'']
+
+==DESCRIPTION==
+'''gst123''' is a command line based media player released as free software under the GNU LGPL.
+
+==OPTIONS==
+'''gst123''' follows the usual GNU command line syntax, with long options starting with two dashes ('-').
+
+; '''-h''', '''--help'''
+: Shows a brief help message.
+
+; '''-v''', '''--version'''
+: Prints out gst123 version.
+
+; '''--full-version'''
+: Prints out gst123 version and version of libraries used by gst123.
+
+; '''-r''', '''--repeat'''
+: Repeat playlist forever.
+
+; '''-z''', '''--shuffle'''
+: Shuffle playlist before playing.
+
+; '''-Z''', '''--random'''
+: Play files in random order forever.
+
+; '''-x''', '''--novideo'''
+: Do not play the video stream.
+
+; '''-@''' ''<playlist>'', '''--list''' ''<playlist>''
+: Load files to play from the playlist file.
+
+; '''-a''', '''--audio-output''' ''<driver>[=<device>]''
+: Set audio output driver (and device). See section audio drivers for details.
+
+; '''--verbose'''
+: Print GStreamer pipeline used to play files
+
+Besides filenames, playlist entries or command line args can be directories. In this case, '''gst123''' recursively searches the directory and plays all files contained in it.
+
+==INTERRUPT==
+You  can  abort  '''gst123'''  at  any  time by pressing Ctrl-C. If you are playing multiple files, this will stop the current file and begin playing the next one. If you want to abort playing immediately
+instead of skipping to the next file, press Ctrl-C within the first second of the playback of a new file.
+
+==KEYBOARD INPUT==
+
+; '''cursor left/right'''
+: Seek 10 seconds backwards/forwards.
+
+; '''cursor down/up'''
+: Seek 1 minute backwards/forwards.
+
+; '''page down/up'''
+: Seek 10 minute backwards/forwards.
+
+; '''space'''
+: Toggle pause.
+
+; '''m'''
+: Toggle mute/unmute.
+
+; '''f'''
+: Toggle fullscreen display (only for videos).
+
+; '''1'''
+: Normal video size (only for videos).
+
+; '''q'''
+: Quit '''gst123'''.
+
+; '''?'''
+: Show keyboard help.
+
+==CONFIGURATION FILE==
+
+During start, gst123 will read ~/.gst123rc, if this file exists. Empty lines and lines starting with a # are ignored. The following commands are available:
+
+; '''audio_output''' ''<driver>[=<device>]''
+: This sets the default audio driver and the default audio device.  It has the same effect as the -a / --audio-output command line option.  When both are present, a config file  entry  and  the command line option, the value from the command line option will be used. Read the section on audio drivers for details on the available drivers and syntax.
+
+
+==AUDIO DRIVERS==
+; '''alsa'''=[''<device>'']
+: The  ALSA  driver; when used without argument (as in -a alsa), the ALSA driver uses the default device. To select an ALSA device, its possible to use for example alsa=hw:1 (which will use the hw:1 ALSA device).
+
+; '''jack'''
+: The JACK driver. Device selection is not supported in this case.
+
+; '''none'''
+: Dummy output driver, will not output any audio.
+
+; '''oss'''=[''<device>'']
+: The OSS driver; when used without argument (as in -a oss), the OSS driver uses the default device. The device can be specified using for example oss=/dev/dsp1 (which would use the OSS  device /dev/dsp1).
+
+==SEE ALSO==
+gst123 Website (http://space.twc.de/~stefan/gst123.php)
