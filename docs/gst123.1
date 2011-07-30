@@ -1,225 +1,136 @@
-.\" generator: doxer.py 0.6
-.\" generation: 2011\-04\-12T11:42:57
-.TH "GST123" "1" "Wed Apr 19 00:50:37 2006" "gst123\-0.2.0" "GST123 Manual Page"
+.TH "GST123" "1" "2011\-07\-30" "Revision 595" "gst123 Manual Page"
 
-.SH
-NAME
+.SH NAME
 
+gst123 - A GStreamer based command line media player
 
-.PP
-gst123 \- A GStreamer based command line media player
-.SH
-SYNOPSIS
+.SH SYNOPSIS
 
+\fBgst123\fR [\fIOPTIONS\fR] [\fIURIS...\fR]
 
-.PP
-\fBgst123\fP [\fIOPTIONS\fP] [\fIURIS...\fP]
-.SH
-DESCRIPTION
+.SH DESCRIPTION
 
+\fBgst123\fR is a command line based media player released as free software under the GNU LGPL.
 
-.PP
-\fBgst123\fP is a command line based media player released as free
-software under the GNU LGPL.
-.SH
-OPTIONS
+.SH OPTIONS
 
-
-.PP
-\fBgst123\fP follows the usual GNU command line syntax, with long options starting with two dashes ('\-').
-.br
-
-.br
-
-
-
+\fBgst123\fR follows the usual GNU command line syntax, with long options starting with two dashes ('-').
 .TP
-\fB\-h\fP, \fB\-\-help\fP 
-.br
+\fB-h\fR, \fB--help\fR
 Shows a brief help message.
-
+.PP
 .TP
-\fB\-v\fP, \fB\-\-version\fP 
-.br
-Prints out \fBgst123\fP version.
-
+\fB-v\fR, \fB--version\fR
+Prints out gst123 version.
+.PP
 .TP
-\fB\-v\fP, \fB\-\-full\-version\fP 
-.br
-Prints out \fBgst123\fP version and version of libraries used by gst123.
-
+\fB--full-version\fR
+Prints out gst123 version and version of libraries used by gst123.
+.PP
 .TP
-\fB\-r\fP, \fB\-\-repeat\fP 
-.br
+\fB-r\fR, \fB--repeat\fR
 Repeat playlist forever.
-
+.PP
 .TP
-\fB\-z\fP, \fB\-\-shuffle\fP 
-.br
+\fB-z\fR, \fB--shuffle\fR
 Shuffle playlist before playing.
-
+.PP
 .TP
-\fB\-Z\fP, \fB\-\-random\fP 
-.br
+\fB-Z\fR, \fB--random\fR
 Play files in random order forever.
-
+.PP
 .TP
-\fB\-x\fP, \fB\-\-novideo\fP 
-.br
+\fB-x\fR, \fB--novideo\fR
 Do not play the video stream.
-
+.PP
 .TP
-\fB\-@\fP \fI<playlist>\fP, \fB\-\-list\fP \fI<playlist>\fP 
-.br
+\fB-@\fR \fI<playlist>\fR, \fB--list\fR \fI<playlist>\fR
 Load files to play from the playlist file.
-
+.PP
 .TP
-\fB\-a\fP, \fB\-\-audio\-output\fP \fI<driver>[=<device>]\fP 
-.br
+\fB-a\fR, \fB--audio-output\fR \fI<driver>[=<device>]\fR
 Set audio output driver (and device). See section audio drivers for details.
-
+.PP
 .TP
-\fB\-\-verbose\fP 
-.br
+\fB--verbose\fR
 Print GStreamer pipeline used to play files
-
 .PP
 
-Besides filenames, playlist entries or command line args can be
-directories. In this case, gst123 recursively searches the directory and
-plays all files contained in it.
-.SH
-INTERRUPT
+Besides filenames, playlist entries or command line args can be directories. In this case, \fBgst123\fR recursively searches the directory and plays all files contained in it.
 
+.SH INTERRUPT
 
-.PP
-You can abort gst123 at any time by pressing Ctrl\-C. If you are
-playing multiple files, this will stop the current file and begin playing the
-next one. If you want to abort playing immediately instead of skipping to the
-next file, press Ctrl\-C within the first second of the playback of a new file.
-.SH
-KEYBOARD INPUT
+You can abort \fBgst123\fR at any time by pressing Ctrl-C. If you are playing multiple files, this will stop the current file and begin playing the next one. If you want to abort playing immediately
+instead of skipping to the next file, press Ctrl-C within the first second of the playback of a new file.
 
-
-.PP
-
-
-
-
+.SH KEYBOARD INPUT
 .TP
-\fBcursor left/right\fP 
-.br
+\fBcursor left/right\fR
 Seek 10 seconds backwards/forwards.
-
+.PP
 .TP
-\fBcursor down/up\fP 
-.br
+\fBcursor down/up\fR
 Seek 1 minute backwards/forwards.
-
+.PP
 .TP
-\fBpage down/up\fP 
-.br
+\fBpage down/up\fR
 Seek 10 minute backwards/forwards.
-
+.PP
 .TP
-\fBspace\fP 
-.br
+\fBspace\fR
 Toggle pause.
-
+.PP
 .TP
-\fBm\fP 
-.br
+\fBm\fR
 Toggle mute/unmute.
-
+.PP
 .TP
-\fBf\fP 
-.br
+\fBf\fR
 Toggle fullscreen display (only for videos).
-
+.PP
 .TP
-\fB1\fP 
-.br
+\fB1\fR
 Normal video size (only for videos).
-
+.PP
 .TP
-\fBq\fP 
-.br
-Quit gst123.
-
+\fBq\fR
+Quit \fBgst123\fR.
+.PP
 .TP
-\fB?\fP 
-.br
+\fB?\fR
 Show keyboard help.
-
 .PP
 
+.SH CONFIGURATION FILE
 
-.SH
-CONFIGURATION FILE
-
-
-.PP
-
-During start, gst123 will read ~/.gst123rc, if this file exists. Empty
-lines and lines starting with a # are ignored. The following commands are
-available:
-.br
-
-.br
-
-
-
+During start, gst123 will read ~/.gst123rc, if this file exists. Empty lines and lines starting with a # are ignored. The following commands are available:
 .TP
-\fBaudio_output\fP \fI<driver>[=<device>]\fP
-.br
-This sets the default audio driver and the default audio device.
-It has the same effect as the \-a / \-\-audio\-output command line option.
-When both are present, a config file entry and the command line option,
-the value from the command line option will be used. Read the section
-on audio drivers for details on the available drivers and syntax.
-
+\fBaudio_output\fR \fI<driver>[=<device>]\fR
+This sets the default audio driver and the default audio device. It has the same effect as the -a / --audio-output command line option. When both are present, a config file entry and the command line option, the value from the command line option will be used. Read the section on audio drivers for details on the available drivers and syntax.
 .PP
 
 
-.SH
-AUDIO DRIVERS
+.br
 
-
+.SH AUDIO DRIVERS
+.TP
+\fBalsa\fR=[\fI<device>\fR]
+The ALSA driver; when used without argument (as in -a alsa), the ALSA driver uses the default device. To select an ALSA device, its possible to use for example alsa=hw:1 (which will use the hw:1 ALSA device).
 .PP
-
-
-
-
 .TP
-\fBalsa=[<device>]\fP
-.br
-The ALSA driver; when used without argument (as in \-a alsa), the ALSA
-driver uses the default device. To select an ALSA device, its possible to
-use for example alsa=hw:1 (which will use the hw:1 ALSA device).
-
-.TP
-\fBjack\fP
-.br
+\fBjack\fR
 The JACK driver. Device selection is not supported in this case.
-
+.PP
 .TP
-\fBnone\fP
-.br
+\fBnone\fR
 Dummy output driver, will not output any audio.
-
+.PP
 .TP
-\fBoss=[<device>]\fP
-.br
-The OSS driver; when used without argument (as in \-a oss), the OSS
-driver uses the default device. The device can be specified using for
-example oss=/dev/dsp1 (which would use the OSS device /dev/dsp1).
-
+\fBoss\fR=[\fI<device>\fR]
+The OSS driver; when used without argument (as in -a oss), the OSS driver uses the default device. The device can be specified using for example oss=/dev/dsp1 (which would use the OSS device /dev/dsp1).
 .PP
 
+.SH SEE ALSO
 
-.SH
-SEE ALSO
+gst123 Website (http://space.twc.de/~stefan/gst123.php <http://space.twc.de/~stefan/gst123.php>)
 
-
-.PP
-gst123 Website (http://space.twc.de/~stefan/gst123.php)
