@@ -1,3 +1,8 @@
+Overview of changes in gst123-0.2.1:
+
+* Fixed minor memory leak.
+* Fix warnings due to wrong glib option parsing. [Nicholas Miell]
+
 Overview of changes in gst123-0.2.0:
 
 * Made --shuffle, --repeat and --random behave identical to ogg123 options.
