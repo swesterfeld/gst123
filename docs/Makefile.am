@@ -16,6 +16,5 @@ publish-docs:
 	mkdir -p $(DOCS_DIR)
 	for i in $(dist_man_MANS); do \
 	  cp $$i.html $(DOCS_DIR); \
-          rm $$i.html ; \
         done
 	cd $(DOCS_DIR) && find . -type f -print0 | xargs -0 git add
