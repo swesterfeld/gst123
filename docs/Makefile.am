@@ -1,5 +1,3 @@
-EXTRA_DIST = gst123.1.doxi gst123defs.doxi
-
 dist_man_MANS = gst123.1
 
 DOCS_DIR = ~/public_html/gst123/docs-$(VERSION)
@@ -17,7 +15,6 @@ rebuild-manpage:
 publish-docs:
 	mkdir -p $(DOCS_DIR)
 	for i in $(dist_man_MANS); do \
-	  $(DOXER) doxi2html $$i.doxi; \
 	  cp $$i.html $(DOCS_DIR); \
           rm $$i.html ; \
         done
