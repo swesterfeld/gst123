@@ -768,14 +768,19 @@ main (gint   argc,
           return -1;
         }
 
-      string playlist_dirname = g_path_get_dirname (pi->c_str());
+      char *playlist_dirname = g_path_get_dirname (pi->c_str());
       for (unsigned int i = 0; i < pls.size(); i++)
         {
           if ((pls[i].find (":") == string::npos) && !g_path_is_absolute (pls[i].c_str()))
-            player.add_uri_or_directory (g_build_filename (playlist_dirname.c_str(), pls[i].c_str(), NULL));
+            {
+              char *filename = g_build_filename (playlist_dirname, pls[i].c_str(), NULL);
+              player.add_uri_or_directory (filename);
+              g_free (filename);
+            }
           else
             player.add_uri_or_directory (pls[i].c_str());
         }
+      g_free (playlist_dirname);
     }
   /* make sure we have a URI */
   if (player.uris.empty())
