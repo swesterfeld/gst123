@@ -1,0 +1,32 @@
+Description: Fix hyphen-used-as-minus-sign
+Forwarded: yes
+Author: أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
+--- a/docs/gst123.1
++++ b/docs/gst123.1
+@@ -106,7 +106,7 @@
+ During start, gst123 will read ~/.gst123rc, if this file exists. Empty lines and lines starting with a # are ignored. The following commands are available:
+ .TP
+ \fBaudio_output\fR \fI<driver>[=<device>]\fR
+-This sets the default audio driver and the default audio device. It has the same effect as the -a / --audio-output command line option. When both are present, a config file entry and the command line option, the value from the command line option will be used. Read the section on audio drivers for details on the available drivers and syntax.
++This sets the default audio driver and the default audio device. It has the same effect as the \-a / \-\-audio-output command line option. When both are present, a config file entry and the command line option, the value from the command line option will be used. Read the section on audio drivers for details on the available drivers and syntax.
+ .PP
+ 
+ 
+@@ -115,7 +115,7 @@
+ .SH AUDIO DRIVERS
+ .TP
+ \fBalsa\fR=[\fI<device>\fR]
+-The ALSA driver; when used without argument (as in -a alsa), the ALSA driver uses the default device. To select an ALSA device, its possible to use for example alsa=hw:1 (which will use the hw:1 ALSA device).
++The ALSA driver; when used without argument (as in \-a alsa), the ALSA driver uses the default device. To select an ALSA device, its possible to use for example alsa=hw:1 (which will use the hw:1 ALSA device).
+ .PP
+ .TP
+ \fBjack\fR
+@@ -127,7 +127,7 @@
+ .PP
+ .TP
+ \fBoss\fR=[\fI<device>\fR]
+-The OSS driver; when used without argument (as in -a oss), the OSS driver uses the default device. The device can be specified using for example oss=/dev/dsp1 (which would use the OSS device /dev/dsp1).
++The OSS driver; when used without argument (as in \-a oss), the OSS driver uses the default device. The device can be specified using for example oss=/dev/dsp1 (which would use the OSS device /dev/dsp1).
+ .PP
+ 
+ .SH SEE ALSO
