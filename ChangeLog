@@ -1,3 +1,67 @@
+2011-07-30 19:52:23 +0200  Stefan Westerfeld 	# 7677b3c
+
+	NEWS++
+
+2011-07-30 19:51:24 +0200  Stefan Westerfeld 	# 52c732c
+
+	DOCS: update publish docs rule
+
+2011-07-30 19:48:18 +0200  Stefan Westerfeld 	# f5449ee
+
+	gitignore
+
+2011-07-30 19:47:45 +0200  Stefan Westerfeld 	# 603f33b
+
+	DOCS: add unmodified mediawiki manpage
+
+2011-07-30 19:46:27 +0200  Stefan Westerfeld 	# a932527
+
+	DOCS: remove doxer based manpage; wikihtml2man is used now
+
+2011-07-30 12:20:19 +0200  Stefan Westerfeld 	# b6cb76a
+
+	use wikihtml2man for manpage
+
+2011-07-30 12:19:48 +0200  Stefan Westerfeld 	# 1cb1ed2
+
+	use wikihtml2man for man page
+
+2011-07-30 11:28:57 +0200  Stefan Westerfeld 	# 5624fe1
+
+	Updated NEWS.
+
+2011-07-30 11:25:23 +0200  Stefan Westerfeld 	# 08d5ab7
+
+	fix memory leak in filename handling
+
+2011-07-30 11:25:12 +0200  Stefan Westerfeld 	# 70c6a51
+
+	bump version to 0.2.1
+
+2011-06-12 13:35:38 -0700  Nicholas Miell 	# 9f78a09
+
+	Fix invalid GOptionEntry type and flag combinations
+
+	The G_OPTION_FLAG_NO_ARG and G_OPTION_FLAG_FILENAME flags only apply to
+	the G_OPTION_ARG_CALLBACK type.
+
+	This elinates the following warnings at every gst123 invocation:
+	(process:7939): GLib-WARNING **: goption.c:2132: ignoring no-arg,
+	optional-arg or filename flags (8) on option of type 0
+
+	(process:7939): GLib-WARNING **: goption.c:2132: ignoring no-arg,
+	optional-arg or filename flags (8) on option of type 0
+
+	(process:7939): GLib-WARNING **: goption.c:2132: ignoring no-arg,
+	optional-arg or filename flags (8) on option of type 0
+
+	(process:7939): GLib-WARNING **: goption.c:2132: ignoring no-arg,
+	optional-arg or filename flags (16) on option of type 6
+
+2011-07-20 18:42:09 +0200  Stefan Westerfeld 	# dfddf2d
+
+	TODO++
+
 2011-04-12 11:43:06 +0200  Stefan Westerfeld 	# 8154a56
 
 	dovumentation updates

@@ -1,4 +1,4 @@
-AC_INIT([gst123], [0.2.0])
+AC_INIT([gst123], [0.2.1])
 AC_CONFIG_SRCDIR([src/gst123.cc])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -46,6 +46,8 @@ MC_PROG_CC_SUPPORTS_OPTION([-O2], [
 
 AC_PROG_CXX
 AC_PROG_CC
+# disable automatic maintainer mode
+AM_MAINTAINER_MODE
 
 dnl
 dnl Define package requirements.
@@ -103,6 +105,31 @@ Debian users: aptitude install libncurses-dev
     AC_SUBST(NCURSES_LIBS)
 ])
 
+dnl
+dnl Manpage from wiki (required for --enable-maintainer-mode)
+dnl
+AC_DEFUN([AC_MAN_REQUIREMENTS],
+[
+  AC_PATH_PROGS(WIKIHTML2MAN, wikihtml2man wikihtml2man.py, false)
+  AC_PATH_PROG(GROFF, groff, false)
+  IFMAN=
+  IFAGING=
+  if test x"$enable_maintainer_mode" = xyes ; then
+    test x"$WIKIHTML2MAN" = xfalse && {
+      AC_MSG_ERROR(This package requires the wikihtml2man.py tool for maintainer builds)
+    }
+    echo "" | $GROFF -mandoc -Thtml 2>/dev/null | grep -Fq HTML || {
+      AC_MSG_ERROR(Failed to test-build HTML manual page via groff)
+    }
+  else
+    IFMAN="#"
+    IFAGING="#"
+  fi
+  AC_SUBST(IFMAN)
+  AC_SUBST(IFAGING)
+])
+
+
 # Less cluttered build output
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
@@ -111,6 +138,7 @@ AC_GSTREAMER_REQUIREMENTS
 AC_GSTREAMER_GTK_REQUIREMENTS
 AC_X11_REQUIREMENTS
 AC_NCURSES_REQUIREMENTS
+AC_MAN_REQUIREMENTS
 
 MC_PROG_CC_SUPPORTS_OPTION([-Wall], [
   CFLAGS="$CFLAGS -Wall"
