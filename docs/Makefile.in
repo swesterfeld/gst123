@@ -97,11 +97,14 @@ ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EXEEXT = @EXEEXT@
+GROFF = @GROFF@
 GSTREAMER_CFLAGS = @GSTREAMER_CFLAGS@
 GSTREAMER_GTKLIBS = @GSTREAMER_GTKLIBS@
 GSTREAMER_GTK_CFLAGS = @GSTREAMER_GTK_CFLAGS@
 GSTREAMER_GTK_LIBS = @GSTREAMER_GTK_LIBS@
 GSTREAMER_LIBS = @GSTREAMER_LIBS@
+IFAGING = @IFAGING@
+IFMAN = @IFMAN@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -111,6 +114,7 @@ LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
+MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 NCURSES5_CONFIG = @NCURSES5_CONFIG@
@@ -126,10 +130,13 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+WIKIHTML2MAN = @WIKIHTML2MAN@
 X11_LIBS = @X11_LIBS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
@@ -174,14 +181,13 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = gst123.1.doxi gst123defs.doxi
 dist_man_MANS = gst123.1
 DOCS_DIR = ~/public_html/gst123/docs-$(VERSION)
 DOXER = ~/src/beast/doxer/doxer.py -D GST123_VERSION $(VERSION)
 all: all-am
 
 .SUFFIXES:
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -206,9 +212,9 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-$(top_srcdir)/configure:  $(am__configure_deps)
+$(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
+$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
 install-man1: $(dist_man_MANS)
@@ -414,14 +420,18 @@ uninstall-man: uninstall-man1
 
 
 rebuild-manpage:
-	$(DOXER) doxi2man gst123.1.doxi
+	for p in $(dist_man_MANS); do \
+          curl -sfS http://testbit.eu/$$p?action=render >$$p.web; \
+	  curl -sfS "http://testbit.eu/index.php?title=$$p&action=raw" > $$p.wiki; \
+	  $(WIKIHTML2MAN) $$p.web >$$p; \
+	  groff -mandoc -Thtml < $$p >$$p.html; \
+	  rm $$p.web; \
+	done
 
 publish-docs:
 	mkdir -p $(DOCS_DIR)
 	for i in $(dist_man_MANS); do \
-	  $(DOXER) doxi2html $$i.doxi; \
 	  cp $$i.html $(DOCS_DIR); \
-          rm $$i.html ; \
         done
 	cd $(DOCS_DIR) && find . -type f -print0 | xargs -0 git add
 
