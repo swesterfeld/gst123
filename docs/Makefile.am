@@ -17,7 +17,6 @@ rebuild-manpage:
 publish-docs:
 	mkdir -p $(DOCS_DIR)
 	for i in $(dist_man_MANS); do \
-	  $(DOXER) doxi2html $$i.doxi; \
 	  cp $$i.html $(DOCS_DIR); \
           rm $$i.html ; \
         done
