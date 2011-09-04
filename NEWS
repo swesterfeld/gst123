@@ -2,7 +2,7 @@ Overview of changes in gst123-0.2.1:
 
 * Fixed minor memory leak.
 * Fix warnings due to wrong glib option parsing. [Nicholas Miell]
-* Use wikihtml2man for man page (gst123.1 is now on testbit.eu).
+* Use wikihtml2man for documentation (replaces old doxer based manpage).
 
 Overview of changes in gst123-0.2.0:
 
