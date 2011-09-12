@@ -124,7 +124,8 @@ GtkInterface::toggle_fullscreen()
 {
   if (gtk_window != NULL && gtk_window_visible)
     {
-      gboolean isFullscreen = (gdk_window_get_state (GDK_WINDOW (gtk_window->window)) == GDK_WINDOW_STATE_FULLSCREEN);
+      GdkWindowState state = gdk_window_get_state (GDK_WINDOW (gtk_window->window));
+      gboolean isFullscreen = ((state & GDK_WINDOW_STATE_FULLSCREEN) == GDK_WINDOW_STATE_FULLSCREEN);
       if (isFullscreen)
         gtk_window_unfullscreen (GTK_WINDOW (gtk_window));
       else
