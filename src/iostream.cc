@@ -22,6 +22,7 @@
 #include <errno.h>
 #include <glib.h>
 #include <cstring>
+#include <unistd.h>
 
 #include <iostream>
 #include <sstream>
