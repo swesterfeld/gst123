@@ -262,13 +262,14 @@ GtkInterface::handle_close()
 void
 GtkInterface::screen_saver (ScreenSaverSetting setting)
 {
-  if (gtk_window != NULL)
+  GdkWindow *window = GTK_WIDGET (gtk_window)->window;
+  if (gtk_window != NULL && window)
     {
-      guint64 wid = GDK_WINDOW_XWINDOW (GTK_WIDGET (gtk_window)->window);
+      guint64 wid = GDK_WINDOW_XWINDOW (window);
 
       const char *setting_str = (setting == SUSPEND) ? "suspend" : "resume";
 
-      char *cmd = g_strdup_printf ("xdg-screensaver %s %" G_GUINT64_FORMAT ">/dev/null 2>&1", setting_str, wid);
+      char *cmd = g_strdup_printf ("xdg-screensaver %s %" G_GUINT64_FORMAT " >/dev/null 2>&1", setting_str, wid);
       int rc = system (cmd);   // don't complain if xdg-screensaver is not installed
       (void) rc;
       g_free (cmd);
