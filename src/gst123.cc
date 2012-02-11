@@ -78,15 +78,20 @@ get_time()
 static int
 get_columns()
 {
+  int   result = 80; /* default */
+
   FILE *cols = popen ("tput cols", "r");
-  char col_buffer[50];
-  fgets (col_buffer, 50, cols);
-  int c = atoi (col_buffer);
-  if (c > 30)
-    return c;
-  else
-    return 80;	/* default */
+  char  col_buffer[50];
+  char *line = fgets (col_buffer, 50, cols);
+  if (line)
+    {
+      int c = atoi (col_buffer);
+      if (c > 30)
+        result = c;
+    }
   fclose (cols);
+
+  return result;
 }
 
 void
