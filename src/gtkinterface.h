@@ -35,8 +35,11 @@ class GtkInterface
 
   std::map<int,int>   key_map;
 
+  enum ScreenSaverSetting { SUSPEND, RESUME };
+  void screen_saver (ScreenSaverSetting setting);
 public:
   void init (int *argc, char ***argv, class KeyHandler *key_handler);
+  void end();
   void show();
   void hide();
   bool init_ok();

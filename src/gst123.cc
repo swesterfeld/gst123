@@ -834,6 +834,7 @@ main (gint   argc,
   terminal.init (player.loop, &player);
   g_main_loop_run (player.loop);
   terminal.end();
+  gtk_interface.end();
 
   /* also clean up */
   gst_element_set_state (player.playbin, GST_STATE_NULL);
