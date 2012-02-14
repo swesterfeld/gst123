@@ -21,6 +21,7 @@
 #include <glib.h>
 #include <cstring>
 #include <errno.h>
+#include <unistd.h>
 
 #include <iostream>
 

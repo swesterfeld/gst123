@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <cstring>
 #include <glib.h>
+#include <unistd.h>
 
 #include <iostream>
 
