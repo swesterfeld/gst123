@@ -3,18 +3,19 @@ Upstream-Name: gst123
 Upstream-Contact: Stefan Westerfeld <stefan@space.twc.de>
 Source: http://space.twc.de/~stefan/gst123.php
 
+Files: *
 Copyright: 2006-2010 Stefan Westerfeld <stefan@space.twc.de>
            2010 Siddhesh Poyarekar
 License: LGPL-2+
 
-Files: src/*stream.*,
-       src/*parser.*,
-       src/uri.*,
-       src/playlist.*,
+Files: src/*stream.*
+       src/*parser.*
+       src/uri.*
+       src/playlist.*
 Copyright: 2010 Siddhesh Poyarekar
 License: LGPL-2+
 
-Files: src/options.cc,
+Files: src/options.cc
        src/gst123.cc
 Copyright: 2006-2010 Stefan Westerfeld <stefan@space.twc.de>
            2010 أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
