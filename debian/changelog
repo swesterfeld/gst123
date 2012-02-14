@@ -1,3 +1,11 @@
+gst123 (0.2.2-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/copyright: Updated copyright format & content
+  * Bumped compat level to 9
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Tue, 14 Feb 2012 10:55:46 +0200
+
 gst123 (0.2.1-1) unstable; urgency=low
 
   * New upstream release.
