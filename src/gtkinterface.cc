@@ -22,6 +22,8 @@
 #include <gtk/gtk.h>
 #include <X11/Xlib.h>
 #include <gdk/gdkkeysyms.h>
+#include <gdk/gdkx.h>
+#include <stdlib.h>
 
 using std::string;
 
@@ -124,7 +126,8 @@ GtkInterface::toggle_fullscreen()
 {
   if (gtk_window != NULL && gtk_window_visible)
     {
-      gboolean isFullscreen = (gdk_window_get_state (GDK_WINDOW (gtk_window->window)) == GDK_WINDOW_STATE_FULLSCREEN);
+      GdkWindowState state = gdk_window_get_state (GDK_WINDOW (gtk_window->window));
+      gboolean isFullscreen = ((state & GDK_WINDOW_STATE_FULLSCREEN) == GDK_WINDOW_STATE_FULLSCREEN);
       if (isFullscreen)
         gtk_window_unfullscreen (GTK_WINDOW (gtk_window));
       else
@@ -158,6 +161,7 @@ GtkInterface::show()
       // sync, to make the window really visible before we return
       gdk_display_sync (gdk_display_get_default());
 
+      screen_saver (SUSPEND);
       gtk_window_visible = true;
     }
 }
@@ -168,9 +172,20 @@ GtkInterface::hide()
   if (gtk_window != NULL && gtk_window_visible)
     {
       gtk_widget_hide_all (gtk_window);
+      screen_saver (RESUME);
       gtk_window_visible = false;
     }
 }
+
+void
+GtkInterface::end()
+{
+  if (gtk_window != NULL)
+    {
+      screen_saver (RESUME);
+    }
+}
+
 
 void
 GtkInterface::resize (int x, int y)
@@ -242,4 +257,21 @@ GtkInterface::handle_close()
   key_handler->process_input ('q');
 
   return true;
+}
+
+void
+GtkInterface::screen_saver (ScreenSaverSetting setting)
+{
+  GdkWindow *window = GTK_WIDGET (gtk_window)->window;
+  if (gtk_window != NULL && window)
+    {
+      guint64 wid = GDK_WINDOW_XWINDOW (window);
+
+      const char *setting_str = (setting == SUSPEND) ? "suspend" : "resume";
+
+      char *cmd = g_strdup_printf ("xdg-screensaver %s %" G_GUINT64_FORMAT " >/dev/null 2>&1", setting_str, wid);
+      int rc = system (cmd);   // don't complain if xdg-screensaver is not installed
+      (void) rc;
+      g_free (cmd);
+    }
 }

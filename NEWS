@@ -1,3 +1,9 @@
+Overview of changes in gst123-0.2.2:
+
+* Disable screensaver during video playback (via xdg-screensaver).
+* Fixed includes to compile with gcc-4.7. [Siddhesh Poyarekar]
+* Fixed a problem with fullscreen/unfullscreen.
+
 Overview of changes in gst123-0.2.1:
 
 * Fixed minor memory leak.

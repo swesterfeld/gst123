@@ -1,3 +1,50 @@
+2012-02-11 14:38:17 +0100  Stefan Westerfeld 	# 99f4a75
+
+	NEWS updates.
+
+2012-02-11 14:35:13 +0100  Stefan Westerfeld 	# 54e38b0
+
+	bump version to 0.2.2
+
+2012-02-11 14:34:54 +0100  Stefan Westerfeld 	# 7383bb7
+
+	rewrote column detection code => fixed a compiler warning
+
+2012-02-11 14:27:37 +0100  Stefan Westerfeld 	# 1269845
+
+	Fix screensaver disable code: don't disable it if we have no window at all.
+
+2012-02-11 13:22:30 +0100  Stefan Westerfeld 	# 5e152c5
+
+	Disable screensaver during video playback via xdg-screensaver.
+
+2012-01-17 15:21:48 +0530  Siddhesh Poyarekar 	# 944b36a
+
+	Don't depend on someone else to include unistd.h.
+
+	Fixes build failure with gcc-4.7
+
+	Signed-off-by: Siddhesh Poyarekar <siddhesh.poyarekar@gmail.com>
+
+2011-09-12 09:51:41 +0200  Stefan Westerfeld 	# 9fd4095
+
+	Fix window fullscreen check in gtk interface.
+
+2011-09-04 20:46:23 +0200  Stefan Westerfeld 	# 8903d18
+
+	Merge branch 'master' of space.twc.de:/public/git/gst123
+
+	Conflicts:
+		NEWS
+
+2011-09-04 20:45:00 +0200  Stefan Westerfeld 	# c934f2c
+
+	docs: doxer removed
+
+2011-09-04 20:44:09 +0200  Stefan Westerfeld 	# 6b09c2b
+
+	NEWS update
+
 2011-07-30 19:52:23 +0200  Stefan Westerfeld 	# 7677b3c
 
 	NEWS++

@@ -25,6 +25,7 @@
 #include <cstring>
 #include <glib.h>
 #include <errno.h>
+#include <unistd.h>
 
 #include <iostream>
 
