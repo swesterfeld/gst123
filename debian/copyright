@@ -1,26 +1,34 @@
-Format-Specification: http://dep.debian.net/deps/dep5
-Name: gst123
-Maintainer: Stefan Westerfeld <stefan@space.twc.de>
+Format: http://anonscm.debian.org/viewvc/dep/web/deps/dep5.mdwn?view=co&pathrev=174
+Upstream-Name: gst123
+Upstream-Contact: Stefan Westerfeld <stefan@space.twc.de>
 Source: http://space.twc.de/~stefan/gst123.php
 
-Copyright: 2006-2010, Stefan Westerfeld
+Copyright: 2006-2010 Stefan Westerfeld <stefan@space.twc.de>
+           2010 Siddhesh Poyarekar
+License: LGPL-2+
+
+Files: src/*stream.*,
+       src/*parser.*,
+       src/uri.*,
+       src/playlist.*,
+Copyright: 2010 Siddhesh Poyarekar
 License: LGPL-2+
 
 Files: src/options.cc,
        src/gst123.cc
-Copyright: 2006-2010, Stefan Westerfeld
-           2010, أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
+Copyright: 2006-2010 Stefan Westerfeld <stefan@space.twc.de>
+           2010 أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
 License: LGPL-2+
 
 Files: src/glib-extra.*
-Copyright: 1997-2002, Tim Janik
+Copyright: 1997-2002 Tim Janik
 License: LGPL-2+
 
 Files: debian/*
-Copyright: 2010-2012, أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
+Copyright: 2010-2012 أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
 License: LGPL-2+
 
-License: LGPL-2.1
+License: LGPL-2+
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
  License as published by the Free Software Foundation; either
