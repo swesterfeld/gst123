@@ -47,9 +47,13 @@ Options::Options ()
   print_visualization_list = FALSE;
   visualization = NULL;
 
-  string default_audio_output = ConfigFile::the()->audio_output();
+  string default_audio_output = ConfigFile::the().audio_output();
   if (default_audio_output != "")
-    audio_output = g_strdup (default_audio_output.c_str());   // leak copy
+    audio_output = g_strdup (default_audio_output.c_str());    // leak copy
+
+  string default_visualization = ConfigFile::the().visualization();
+  if (default_visualization != "")
+    visualization = g_strdup (default_visualization.c_str()); // leak copy
 }
 
 void

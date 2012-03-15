@@ -21,11 +21,13 @@
 class ConfigFile
 {
   std::string m_audio_output;
+  std::string m_visualization;
 
 public:
-  static ConfigFile *the();       // Singleton
+  static ConfigFile& the();       // Singleton
 
   ConfigFile();
 
   std::string audio_output() const;
+  std::string visualization() const;
 };
