@@ -19,7 +19,7 @@ gst123 - A GStreamer based command line media player
 ; '''-h''', '''--help'''
 : Shows a brief help message.
 
-; '''-v''', '''--version'''
+; '''--version'''
 : Prints out gst123 version.
 
 ; '''--full-version'''
@@ -42,6 +42,12 @@ gst123 - A GStreamer based command line media player
 
 ; '''-a''', '''--audio-output''' ''<driver>[=<device>]''
 : Set audio output driver (and device). See section audio drivers for details.
+
+; '''-v''', '''--visualization''' ''<plugin_name>''
+: Use a plugin for visualization during audio playback.
+
+; '''-V''', '''--visualization-list'''
+: Show a list of available audio visualization plugins which can be used with the -v option.
 
 ; '''--verbose'''
 : Print GStreamer pipeline used to play files
@@ -88,6 +94,8 @@ During start, gst123 will read ~/.gst123rc, if this file exists. Empty lines and
 ; '''audio_output''' ''<driver>[=<device>]''
 : This sets the default audio driver and the default audio device.  It has the same effect as the -a / --audio-output command line option.  When both are present, a config file  entry  and  the command line option, the value from the command line option will be used. Read the section on audio drivers for details on the available drivers and syntax.
 
+; '''visualization''' ''<visualization_plugin>''
+: Set default visualization plugin for audio files. This setting has the same effect as the -v / --visualization command line option. When both are present, the value from the command line option will be used.
 
 ==AUDIO DRIVERS==
 ; '''alsa'''=[''<device>'']
