@@ -26,6 +26,7 @@
 #include "options.h"
 #include "gtkinterface.h"
 #include "configfile.h"
+#include "visualization.h"
 
 using std::string;
 
@@ -43,6 +44,8 @@ Options::Options ()
   novideo = FALSE;
   uris = NULL;
   audio_output = NULL;
+  print_visualization_list = FALSE;
+  visualization = NULL;
 
   string default_audio_output = ConfigFile::the()->audio_output();
   if (default_audio_output != "")
@@ -74,6 +77,10 @@ Options::parse (int argc, char **argv)
       "do not play the video stream", NULL},
     {"audio-output", 'a', 0, G_OPTION_ARG_STRING, &instance->audio_output,
       "set audio output driver and device", "<driver>[=<dev>]"},
+    {"visualization", 'v', 0, G_OPTION_ARG_STRING, &instance->visualization,
+      "set visualization plugin to use for audio playback", "<plugin_name>"},
+    {"visualization-list", 'V', 0, G_OPTION_ARG_NONE, &instance->print_visualization_list,
+      "show available visualization plugins", NULL },
     {G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &instance->uris, "Movies to play", NULL},
     {NULL} /* end the list */
   };
@@ -124,4 +131,12 @@ void
 Options::add_playlist (const gchar *option_name, const gchar *value)
 {
   instance->playlists.push_back (value);
+}
+
+Options&
+Options::the()
+{
+  assert (instance);
+
+  return *instance;
 }
