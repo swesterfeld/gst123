@@ -34,6 +34,7 @@
 #include "options.h"
 #include "playlist.h"
 #include "visualization.h"
+#include "msg.h"
 #include <vector>
 #include <string>
 #include <list>
@@ -173,21 +174,21 @@ struct Player : public KeyHandler
       if (get_time() - tags.timestamp > 0.5) /* allows us to wait a bit for more tags */
 	{
 	  overwrite_time_display();
-	  printf ("\n");
+	  Msg::print ("\n");
 	  if (tags.title != "" || tags.artist != "")
-	    printf ("%s %s\n",	  make_n_char_string ("Title   : " + tags.title, cols / 2 - 1).c_str(),
-	                          make_n_char_string ("Artist  : " + tags.artist, cols / 2 - 1).c_str());
+	    Msg::print ("%s %s\n",	  make_n_char_string ("Title   : " + tags.title, cols / 2 - 1).c_str(),
+	                                  make_n_char_string ("Artist  : " + tags.artist, cols / 2 - 1).c_str());
 	  if (tags.album != "" || tags.genre != "")
-	    printf ("%s %s\n",	  make_n_char_string ("Album   : " + tags.album, cols / 2 - 1).c_str(),
-	                          make_n_char_string ("Genre   : " + tags.genre, cols / 2 - 1).c_str());
+	    Msg::print ("%s %s\n",	  make_n_char_string ("Album   : " + tags.album, cols / 2 - 1).c_str(),
+	                                  make_n_char_string ("Genre   : " + tags.genre, cols / 2 - 1).c_str());
 	  if (tags.comment != "" || tags.date != "")
-	    printf ("%s %s\n",	  make_n_char_string ("Comment : " + tags.comment, cols / 2 - 1).c_str(),
-	                          make_n_char_string ("Date    : " + tags.date, cols / 2 - 1).c_str());
+	    Msg::print ("%s %s\n",	  make_n_char_string ("Comment : " + tags.comment, cols / 2 - 1).c_str(),
+	                                  make_n_char_string ("Date    : " + tags.date, cols / 2 - 1).c_str());
 	  if (tags.codec != "" || tags.vcodec != "" || tags.bitrate != 0)
-	    printf ("%s %s%.1f kbit/s\n",
-	                          make_n_char_string ("Codec   : " + tags.codec + " (audio) " + ((tags.vcodec != "") ? tags.vcodec + " (video)":""), cols / 2 - 1).c_str(),
-	                                             ("Bitrate : "), tags.bitrate / 1000.0);
-	  printf ("\n");
+	    Msg::print ("%s %s%.1f kbit/s\n",
+	                                  make_n_char_string ("Codec   : " + tags.codec + " (audio) " + ((tags.vcodec != "") ? tags.vcodec + " (video)":""), cols / 2 - 1).c_str(),
+	                                                     ("Bitrate : "), tags.bitrate / 1000.0);
+	  Msg::print ("\n");
 	  reset_tags (KEEP_CODEC_TAGS);
 	}
   }
@@ -196,8 +197,8 @@ struct Player : public KeyHandler
   overwrite_time_display()
   {
     for (int i = 0; i < cols; i++)
-      printf (" ");
-    printf ("\r");
+      Msg::print (" ");
+    Msg::print ("\r");
   }
 
   void
@@ -225,7 +226,7 @@ struct Player : public KeyHandler
       {
         if (uris.empty())
           {
-            printf ("No files remaining in playlist.\n");
+            Msg::print ("No files remaining in playlist.\n");
             quit();
           }
         play_position = 0;
@@ -244,7 +245,7 @@ struct Player : public KeyHandler
 	string uri = uris[play_position++];
 
 	overwrite_time_display();
-	printf ("\nPlaying %s\n", uri.c_str());
+	Msg::print ("\nPlaying %s\n", uri.c_str());
 
         gtk_interface.set_title (g_basename (uri.c_str()));
 
@@ -318,7 +319,7 @@ struct Player : public KeyHandler
     cur_volume += volume_change;
 
     overwrite_time_display();
-    printf ("Volume: %4.1f%% \n", cur_volume*100);
+    Msg::print ("Volume: %4.1f%% \n", cur_volume*100);
 
     if ((cur_volume >= 0) && (cur_volume <= 10))
       g_object_set (G_OBJECT (playbin), "volume", cur_volume, NULL);
@@ -492,7 +493,7 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
 	    gst_iterator_foreach (iterator, collect_element, &elements);
 	    string print_elements = collect_print_elements (GST_ELEMENT (player.playbin), elements);
 	    player.overwrite_time_display();
-	    printf ("\ngstreamer pipeline contains: %s\n", print_elements.c_str());
+	    Msg::print ("\ngstreamer pipeline contains: %s\n", print_elements.c_str());
 	  }
 	player.last_state = state;
       }
@@ -583,9 +584,9 @@ cb_print_position (gpointer *data)
 
       glong pos_min = tv_pos.tv_sec / 60;
       glong len_min = tv_len.tv_sec / 60;
-      g_print ("\rTime: %01lu:%02lu:%02lu.%02lu", pos_min / 60, pos_min % 60, tv_pos.tv_sec % 60, tv_pos.tv_usec / 10000);
+      Msg::print ("\rTime: %01lu:%02lu:%02lu.%02lu", pos_min / 60, pos_min % 60, tv_pos.tv_sec % 60, tv_pos.tv_usec / 10000);
       if (len > 0)   /* streams (i.e. http) have len == -1 */
-	g_print (" of %01lu:%02lu:%02lu.%02lu", len_min / 60, len_min % 60, tv_len.tv_sec % 60, tv_len.tv_usec / 10000);
+	Msg::print (" of %01lu:%02lu:%02lu.%02lu", len_min / 60, len_min % 60, tv_len.tv_sec % 60, tv_len.tv_usec / 10000);
 
       string status, blanks;
       // Print [MUTED] if sound is muted:
@@ -604,7 +605,7 @@ cb_print_position (gpointer *data)
         status += " [PAUSED]";
       else
         blanks += "         ";
-      g_print ("%s%s\r", status.c_str(), blanks.c_str());
+      Msg::print ("%s%s\r", status.c_str(), blanks.c_str());
     }
 
   /* call me again */

@@ -42,6 +42,7 @@ Options::Options ()
   shuffle = FALSE;
   verbose = FALSE;
   novideo = FALSE;
+  quiet   = FALSE;
   uris = NULL;
   audio_output = NULL;
   print_visualization_list = FALSE;
@@ -85,6 +86,8 @@ Options::parse (int argc, char **argv)
       "set visualization plugin to use for audio playback", "<plugin_name>"},
     {"visualization-list", 'V', 0, G_OPTION_ARG_NONE, &instance->print_visualization_list,
       "show available visualization plugins", NULL },
+    {"quiet", 'q', 0, G_OPTION_ARG_NONE, &instance->quiet,
+      "don't display any messages", NULL},
     {G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &instance->uris, "Movies to play", NULL},
     {NULL} /* end the list */
   };
