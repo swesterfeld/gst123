@@ -1,3 +1,13 @@
+gst123 (0.3.0-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/control:
+    + Added DMUA (after consent of Sebastian Dröge)
+    + Bumped Standards-Version to 3.9.3
+  * Refreshed manpage-fixes.diff patch
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Mon, 26 Mar 2012 18:57:53 +0200
+
 gst123 (0.2.2-1) unstable; urgency=low
 
   * New upstream release.
