@@ -1,5 +1,5 @@
 /* GST123 - GStreamer based command line media player
- * Copyright (C) 2010 Stefan Westerfeld
+ * Copyright (C) 2012 Stefan Westerfeld
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,18 +16,17 @@
  * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-#include <string>
 
-class ConfigFile
-{
-  std::string m_audio_output;
-  std::string m_visualization;
+#ifndef GST123_VISUALIZATION_H
+#define GST123_VISUALIZATION_H
 
-public:
-  static ConfigFile& the();       // Singleton
+#include <gst/gst.h>
 
-  ConfigFile();
+namespace Visualization {
 
-  std::string audio_output() const;
-  std::string visualization() const;
-};
+void print_visualization_list();
+bool setup (GstElement *element);
+
+}
+
+#endif

@@ -1,3 +1,8 @@
+Overview of changes in gst123-0.3.0:
+
+* Support visualization plugins during audio playback (Issue 3).
+* Fix compilation for GNU/Hurd (Issue 7).
+
 Overview of changes in gst123-0.2.2:
 
 * Disable screensaver during video playback (via xdg-screensaver).

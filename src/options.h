@@ -40,12 +40,16 @@ public:
   gboolean      shuffle;
   gboolean      repeat;
   gboolean      novideo;
+  gboolean      print_visualization_list;
   char        **uris;
   std::list<std::string>  playlists;
   char         *audio_output;
+  char         *visualization;
 
   Options ();
   void parse (int argc, char **argv);
+
+  static Options& the();
 };
 
 #endif

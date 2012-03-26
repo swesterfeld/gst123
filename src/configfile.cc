@@ -25,19 +25,25 @@ using std::string;
 
 static ConfigFile *instance = 0;
 
-ConfigFile*
+ConfigFile&
 ConfigFile::the()
 {
   if (!instance)
     instance = new ConfigFile();
 
-  return instance;
+  return *instance;
 }
 
 string
 ConfigFile::audio_output() const
 {
   return m_audio_output;
+}
+
+string
+ConfigFile::visualization() const
+{
+  return m_visualization;
 }
 
 ConfigFile::ConfigFile()
@@ -61,6 +67,10 @@ ConfigFile::ConfigFile()
       if (cfg.command ("audio_output", str))
         {
           m_audio_output = str;
+        }
+      else if (cfg.command ("visualization", str))
+        {
+          m_visualization = str;
         }
       else
         {

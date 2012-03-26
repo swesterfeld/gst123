@@ -112,7 +112,7 @@ protected:
   bool lookup_error;
 
   void open_stream();
-  std::string net_error (int errno);
+  std::string net_error (int error);
 
 private:
 };

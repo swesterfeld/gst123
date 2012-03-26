@@ -33,6 +33,7 @@
 #include "gtkinterface.h"
 #include "options.h"
 #include "playlist.h"
+#include "visualization.h"
 #include <vector>
 #include <string>
 #include <list>
@@ -754,6 +755,12 @@ main (gint   argc,
   gst_init (&argc, &argv);
   gtk_interface.init (&argc, &argv, &player);
 
+  if (options.print_visualization_list)
+    {
+      Visualization::print_visualization_list();
+      return 0;
+    }
+
   player.loop = g_main_loop_new (NULL, FALSE);
 
   /* set up */
@@ -800,6 +807,14 @@ main (gint   argc,
     {
       GstElement *fakesink = gst_element_factory_make ("fakesink", "novid");
       g_object_set (G_OBJECT (player.playbin), "video-sink", fakesink, NULL);
+    }
+  if (options.visualization)
+    {
+      if (!Visualization::setup (player.playbin))
+        {
+          printf ("visualization plugin %s not found\n", options.visualization);
+          return -1;
+        }
     }
   if (options.audio_output)
     {
