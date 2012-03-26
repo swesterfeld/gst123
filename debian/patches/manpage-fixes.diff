@@ -3,16 +3,28 @@ Forwarded: yes
 Author: أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
 --- a/docs/gst123.1
 +++ b/docs/gst123.1
-@@ -106,7 +106,7 @@
+@@ -57,7 +57,7 @@
+ .PP
+ .TP
+ \fB-V\fR, \fB--visualization-list\fR
+-Show a list of available audio visualization plugins which can be used with the -v option.
++Show a list of available audio visualization plugins which can be used with the \-v option.
+ .PP
+ .TP
+ \fB--verbose\fR
+@@ -114,17 +114,17 @@
  During start, gst123 will read ~/.gst123rc, if this file exists. Empty lines and lines starting with a # are ignored. The following commands are available:
  .TP
  \fBaudio_output\fR \fI<driver>[=<device>]\fR
 -This sets the default audio driver and the default audio device. It has the same effect as the -a / --audio-output command line option. When both are present, a config file entry and the command line option, the value from the command line option will be used. Read the section on audio drivers for details on the available drivers and syntax.
 +This sets the default audio driver and the default audio device. It has the same effect as the \-a / \-\-audio-output command line option. When both are present, a config file entry and the command line option, the value from the command line option will be used. Read the section on audio drivers for details on the available drivers and syntax.
  .PP
+ .TP
+ \fBvisualization\fR \fI<visualization_plugin>\fR
+-Set default visualization plugin for audio files. This setting has the same effect as the -v / --visualization command line option. When both are present, the value from the command line option will be used.
++Set default visualization plugin for audio files. This setting has the same effect as the \-v / \-\-visualization command line option. When both are present, the value from the command line option will be used.
+ .PP
  
- 
-@@ -115,7 +115,7 @@
  .SH AUDIO DRIVERS
  .TP
  \fBalsa\fR=[\fI<device>\fR]
@@ -21,7 +33,7 @@ Author: أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
  .PP
  .TP
  \fBjack\fR
-@@ -127,7 +127,7 @@
+@@ -136,7 +136,7 @@
  .PP
  .TP
  \fBoss\fR=[\fI<device>\fR]
