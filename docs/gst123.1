@@ -1,4 +1,4 @@
-.TH "GST123" "1" "2011\-07\-30" "Revision 595" "gst123 Manual Page"
+.TH "GST123" "1" "2012\-03\-15" "Revision 688" "gst123 Manual Page"
 
 .SH NAME
 
@@ -20,7 +20,7 @@ gst123 - A GStreamer based command line media player
 Shows a brief help message.
 .PP
 .TP
-\fB-v\fR, \fB--version\fR
+\fB--version\fR
 Prints out gst123 version.
 .PP
 .TP
@@ -50,6 +50,14 @@ Load files to play from the playlist file.
 .TP
 \fB-a\fR, \fB--audio-output\fR \fI<driver>[=<device>]\fR
 Set audio output driver (and device). See section audio drivers for details.
+.PP
+.TP
+\fB-v\fR, \fB--visualization\fR \fI<plugin_name>\fR
+Use a plugin for visualization during audio playback.
+.PP
+.TP
+\fB-V\fR, \fB--visualization-list\fR
+Show a list of available audio visualization plugins which can be used with the -v option.
 .PP
 .TP
 \fB--verbose\fR
@@ -108,9 +116,10 @@ During start, gst123 will read ~/.gst123rc, if this file exists. Empty lines and
 \fBaudio_output\fR \fI<driver>[=<device>]\fR
 This sets the default audio driver and the default audio device. It has the same effect as the -a / --audio-output command line option. When both are present, a config file entry and the command line option, the value from the command line option will be used. Read the section on audio drivers for details on the available drivers and syntax.
 .PP
-
-
-.br
+.TP
+\fBvisualization\fR \fI<visualization_plugin>\fR
+Set default visualization plugin for audio files. This setting has the same effect as the -v / --visualization command line option. When both are present, the value from the command line option will be used.
+.PP
 
 .SH AUDIO DRIVERS
 .TP

@@ -1,3 +1,27 @@
+2012-03-22 18:49:34 +0100  Stefan Westerfeld 	# f4443bd
+
+	NEWS: added NEWS entries for 0.3.0.
+
+2012-03-15 17:05:18 +0100  Stefan Westerfeld 	# f002ebf
+
+	added documentation for new -v / -V options
+
+2012-03-15 16:57:32 +0100  Stefan Westerfeld 	# 3b20c85
+
+	Added "visualization" option for config file.
+
+2012-03-15 16:46:23 +0100  Stefan Westerfeld 	# 46df7eb
+
+	bump version to 0.3.0
+
+2012-03-15 16:44:00 +0100  Stefan Westerfeld 	# 4473fb9
+
+	added support for visualization plugins for audio playback
+
+2012-02-14 18:17:44 +0100  Stefan Westerfeld 	# ad2d01f
+
+	Applied patch from issue 7: Compile fix for GNU/Hurd.
+
 2012-02-11 14:38:17 +0100  Stefan Westerfeld 	# 99f4a75
 
 	NEWS updates.
