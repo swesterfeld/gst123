@@ -35,6 +35,7 @@
 #include "playlist.h"
 #include "visualization.h"
 #include "msg.h"
+#include "typefinder.h"
 #include <vector>
 #include <string>
 #include <list>
@@ -210,6 +211,24 @@ struct Player : public KeyHandler
     uris.erase (uris.begin() + play_position);
   }
 
+  bool
+  is_image_file (const string& uri)
+  {
+    if (uri.substr (0, 5) == "file:")
+      {
+        /* convert uri "file:///foo/bar" to path "/foo/bar" */
+        string filename = uri.substr (5);
+        while (filename.substr (0, 2) == "//")
+          filename = filename.substr (1);
+
+        TypeFinder tf (filename);
+        if (tf.type() == "image")
+          return true;
+      }
+    return false;
+  }
+
+
   void
   play_next()
   {
@@ -222,44 +241,59 @@ struct Player : public KeyHandler
      */
     gtk_interface.hide();
 
-    if (play_position == uris.size() && options.repeat)
+    for (;;)
       {
-        if (uris.empty())
+        if (play_position == uris.size() && options.repeat)
           {
-            Msg::print ("No files remaining in playlist.\n");
+            if (uris.empty())
+              {
+                Msg::print ("No files remaining in playlist.\n");
+                quit();
+              }
+            play_position = 0;
+          }
+        if (options.shuffle && play_position == 0)
+          {
+            // Fisher–Yates shuffle
+            for (guint i = 0; i < uris.size(); i++)
+              {
+                guint j = g_random_int_range (i, uris.size());
+                swap (uris[i], uris[j]);
+              }
+          }
+        if (play_position < uris.size())
+          {
+            string uri = uris[play_position++];
+
+            overwrite_time_display();
+
+            if (is_image_file (uri))
+              {
+                Msg::print ("\nSkipping image %s\n", uri.c_str());
+
+                remove_current_uri();
+              }
+            else
+              {
+                Msg::print ("\nPlaying %s\n", uri.c_str());
+
+                gtk_interface.set_title (g_basename (uri.c_str()));
+
+                video_size_width = 0;
+                video_size_height = 0;
+
+                gst_element_set_state (playbin, GST_STATE_NULL);
+                g_object_set (G_OBJECT (playbin), "uri", uri.c_str(), NULL);
+                gst_element_set_state (playbin, GST_STATE_PLAYING);
+
+                return; // -> done
+              }
+          }
+        else
+          {
             quit();
+            return; // -> done
           }
-        play_position = 0;
-      }
-    if (options.shuffle && play_position == 0)
-      {
-        // Fisher–Yates shuffle
-        for (guint i = 0; i < uris.size(); i++)
-          {
-            guint j = g_random_int_range (i, uris.size());
-            swap (uris[i], uris[j]);
-          }
-      }
-    if (play_position < uris.size())
-      {
-	string uri = uris[play_position++];
-
-	overwrite_time_display();
-	Msg::print ("\nPlaying %s\n", uri.c_str());
-
-        gtk_interface.set_title (g_basename (uri.c_str()));
-
-        video_size_width = 0;
-        video_size_height = 0;
-
-	gst_element_set_state (playbin, GST_STATE_NULL);
-	g_object_set (G_OBJECT (playbin), "uri", uri.c_str(), NULL);
-	gst_element_set_state (playbin, GST_STATE_PLAYING);
-      }
-    else
-      {
-	/* done */
-	quit();
       }
   }
 
