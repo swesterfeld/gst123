@@ -75,6 +75,9 @@ instead of skipping to the next file, press Ctrl-C within the first second of th
 ; '''space'''
 : Toggle pause.
 
+; '''+/-'''
+: Increase/decrease volume by 10%.
+
 ; '''m'''
 : Toggle mute/unmute.
 
@@ -83,6 +86,9 @@ instead of skipping to the next file, press Ctrl-C within the first second of th
 
 ; '''1'''
 : Normal video size (only for videos).
+
+; '''n'''
+: Play next file.
 
 ; '''q'''
 : Quit '''gst123'''.
