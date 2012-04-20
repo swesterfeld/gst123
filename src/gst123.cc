@@ -729,6 +729,10 @@ Player::process_input (int key)
       case 'f':
         toggle_fullscreen();
         break;
+      case 'N':
+      case 'n':
+        play_next();
+        break;
       case '1':
         normal_size();
         break;
@@ -753,6 +757,7 @@ Player::print_keyboard_help()
   printf ("   m                    -     toggle mute/unmute\n");
   printf ("   f                    -     toggle fullscreen (only for videos)\n");
   printf ("   1                    -     normal video size (only for videos)\n");
+  printf ("   n                    -     play next file\n");
   printf ("   q                    -     quit gst123\n");
   printf ("   ?                    -     this help\n");
   printf ("=====================================================================\n");
