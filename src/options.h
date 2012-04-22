@@ -41,6 +41,7 @@ public:
   gboolean      repeat;
   gboolean      novideo;
   gboolean      print_visualization_list;
+  gboolean      quiet;
   char        **uris;
   std::list<std::string>  playlists;
   char         *audio_output;

@@ -1,3 +1,35 @@
+2012-04-21 01:06:42 +0200  Stefan Westerfeld 	# 4b67b85
+
+	Updated news for 0.3.1.
+
+2012-04-21 01:06:27 +0200  Stefan Westerfeld 	# 12e3e27
+
+	Updated manpage.
+
+2012-04-21 00:18:49 +0200  Stefan Westerfeld 	# c7d99d7
+
+	Added keybinding 'n' for 'play next file' (in addition to Ctrl+C).
+
+2012-04-14 23:54:30 +0200  Stefan Westerfeld 	# 04615cc
+
+	Bump version to 0.3.1.
+
+2012-04-14 23:52:57 +0200  Stefan Westerfeld 	# a6f69f9
+
+	Ignore files that have image/<foo> mime type (fix Issue 1).
+
+2012-04-14 23:48:38 +0200  Stefan Westerfeld 	# 5a24cca
+
+	Added code for mime type detection.
+
+2012-03-25 20:44:06 +0200  Stefan Westerfeld 	# a97af2d
+
+	manpage: documented -q / --quiet
+
+2012-03-25 20:29:13 +0200  Stefan Westerfeld 	# 34ca427
+
+	gst123 -q: implemented quiet mode (Issue 9)
+
 2012-03-22 18:49:34 +0100  Stefan Westerfeld 	# f4443bd
 
 	NEWS: added NEWS entries for 0.3.0.
