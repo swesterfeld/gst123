@@ -1,3 +1,10 @@
+gst123 (0.3.1-1) unstable; urgency=low
+
+  * New upstream release.
+  * Refreshed manpage-fixes.diff patch
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Sun, 22 Apr 2012 15:05:40 +0200
+
 gst123 (0.3.0-1) unstable; urgency=low
 
   * New upstream release.
