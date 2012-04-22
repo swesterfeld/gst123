@@ -11,8 +11,8 @@ Author: أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
 +Show a list of available audio visualization plugins which can be used with the \-v option.
  .PP
  .TP
- \fB--verbose\fR
-@@ -114,17 +114,17 @@
+ \fB-q\fR, \fB--quiet\fR
+@@ -126,17 +126,17 @@
  During start, gst123 will read ~/.gst123rc, if this file exists. Empty lines and lines starting with a # are ignored. The following commands are available:
  .TP
  \fBaudio_output\fR \fI<driver>[=<device>]\fR
@@ -33,7 +33,7 @@ Author: أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
  .PP
  .TP
  \fBjack\fR
-@@ -136,7 +136,7 @@
+@@ -148,7 +148,7 @@
  .PP
  .TP
  \fBoss\fR=[\fI<device>\fR]
