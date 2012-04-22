@@ -1,3 +1,9 @@
+Overview of changes in gst123-0.3.1:
+
+* Added quiet mode (Issue 9).
+* Ignore image files during playback (Issue 1).
+* Added keybinding 'n' for 'play next file'.
+
 Overview of changes in gst123-0.3.0:
 
 * Support visualization plugins during audio playback (Issue 3).
