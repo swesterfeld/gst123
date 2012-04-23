@@ -27,6 +27,7 @@ namespace Msg
 {
 
 void print (const char *format, ...);
+void flush();
 
 }
 

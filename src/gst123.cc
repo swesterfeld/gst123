@@ -640,6 +640,7 @@ cb_print_position (gpointer *data)
       else
         blanks += "         ";
       Msg::print ("%s%s\r", status.c_str(), blanks.c_str());
+      Msg::flush();
     }
 
   /* call me again */
