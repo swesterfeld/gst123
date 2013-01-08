@@ -40,8 +40,8 @@ private:
   std::string   m_type;
   std::string   m_subtype;
   guint    m_probability;
-  GMutex  *mutex;
-  GCond   *cond;
+  GMutex   mutex;
+  GCond    cond;
   bool     done;
 
 public:
