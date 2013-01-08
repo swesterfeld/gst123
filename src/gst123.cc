@@ -657,6 +657,17 @@ cb_print_position (gpointer *data)
   return TRUE;
 }
 
+static gboolean
+idle_start_player (gpointer *data)
+{
+  Player& player = *(Player *)data;
+
+  player.play_next();
+
+  /* do not call me again */
+  return FALSE;
+}
+
 
 static inline bool
 is_directory (const string& path)
@@ -896,9 +907,9 @@ main (gint   argc,
     }
   gst_bus_add_watch (gst_pipeline_get_bus (GST_PIPELINE (player.playbin)), my_bus_callback, &player);
   g_timeout_add (130, (GSourceFunc) cb_print_position, &player);
+  g_idle_add ((GSourceFunc) idle_start_player, &player);
   signal (SIGINT, sigint_handler);
   g_usignal_add (SIGINT, sigint_usr_code, &player);
-  player.play_next();
 
   /* now run */
   terminal.init (player.loop, &player);
