@@ -97,6 +97,16 @@ get_columns()
   return result;
 }
 
+static string
+get_basename (const string& path)
+{
+  char *basename_c = g_path_get_basename (path.c_str());
+  string result = basename_c;
+  g_free (basename_c);
+
+  return result;
+}
+
 void
 force_aspect_ratio (gpointer element, gpointer userdata)
 {
@@ -277,7 +287,7 @@ struct Player : public KeyHandler
               {
                 Msg::print ("\nPlaying %s\n", uri.c_str());
 
-                gtk_interface.set_title (g_basename (uri.c_str()));
+                gtk_interface.set_title (get_basename (uri));
 
                 video_size_width = 0;
                 video_size_height = 0;
