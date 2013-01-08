@@ -94,12 +94,14 @@ TypeFinder::run (const string& filename)
   gst_element_set_state (GST_ELEMENT (pipeline), GST_STATE_PLAYING);
 
   g_mutex_lock (&mutex);
-  if (!done)
+  gint64 end_time = g_get_monotonic_time() + 500 * G_TIME_SPAN_MILLISECOND;
+  while (!done)
     {
-      GTimeVal timeout_time;
-      g_get_current_time (&timeout_time);
-      g_time_val_add (&timeout_time, 500 * 1000);
-      g_cond_timed_wait (&cond, &mutex, &timeout_time);
+      if (!g_cond_wait_until (&cond, &mutex, end_time))
+        {
+          // timeout occurred
+          break;
+        }
     }
   g_mutex_unlock (&mutex);
 
