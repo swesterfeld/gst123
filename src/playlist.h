@@ -41,6 +41,8 @@ struct PlaylistParser
   virtual bool identify (IOStream *stream) = 0;
   virtual std::string str_error (int error = 0) = 0;
 
+  virtual ~PlaylistParser();
+
 protected:
   int status;
 };
