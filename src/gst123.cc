@@ -797,9 +797,6 @@ main (gint   argc,
   Player player;
 
   /* Setup options */
-  if (!g_thread_supported())
-    g_thread_init (NULL);
-
   options.parse (argc, argv);
 
   /* init GStreamer */
