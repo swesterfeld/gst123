@@ -80,7 +80,7 @@ Compat::video_overlay_set_window_handle (GstMessage *msg, guintptr id)
 GstElement*
 Compat::create_playbin (const char *name)
 {
-  return gst_element_factory_make ("playbin2", name);
+  return gst_element_factory_make ("playbin", name);
 }
 
 bool
