@@ -30,6 +30,12 @@
 using namespace Gst123;
 using Compat::IteratorFunc;
 
+struct IteratorOp
+{
+  IteratorFunc  func;
+  void         *user_data;
+};
+
 #if GST_CHECK_VERSION(1,0,0)
 
 bool
@@ -68,9 +74,21 @@ Compat::video_get_size (GstPad *pad, int *width, int *height)
   return result;
 }
 
+static void
+call_op_func (const GValue *evalue, gpointer user_data)
+{
+  GstElement *element = GST_ELEMENT (g_value_get_object (evalue));
+  IteratorOp *op = (IteratorOp *) user_data;
+  op->func (element, op->user_data);
+}
+
 void
 Compat::iterator_foreach (GstIterator *iterator, IteratorFunc func, gpointer user_data)
 {
+  IteratorOp op;
+  op.func = func;
+  op.user_data = user_data;
+  gst_iterator_foreach (iterator, call_op_func, &op);
 }
 
 void
@@ -129,12 +147,6 @@ Compat::video_get_size (GstPad *pad, int *width, int *height)
 {
   return gst_video_get_size (GST_PAD (pad), width, height);
 }
-
-struct IteratorOp
-{
-  IteratorFunc  func;
-  void         *user_data;
-};
 
 static void
 call_op_func (gpointer eptr, gpointer user_data)
