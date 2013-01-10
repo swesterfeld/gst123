@@ -28,13 +28,15 @@ namespace Gst123
 namespace Compat
 {
 
+typedef void (*IteratorFunc) (GstElement *element, gpointer user_data);
+
 bool element_query_position (GstElement *element, GstFormat format, gint64 *cur_pos);
 bool element_query_duration (GstElement *element, GstFormat format, gint64 *cur_pos);
 bool video_get_size (GstPad *pad, int *width, int *height);
 bool is_video_overlay_prepare_window_handle_message (GstMessage *msg);
 bool is_stream_start_message (GstMessage *msg);
 
-void iterator_foreach (GstIterator *iterator, void (*func) (GstElement *element, gpointer user_data), gpointer user_data);
+void iterator_foreach (GstIterator *iterator, IteratorFunc func, gpointer user_data);
 void video_overlay_set_window_handle (GstMessage *msg, guintptr id);
 
 GstElement* create_playbin (const char *name);
