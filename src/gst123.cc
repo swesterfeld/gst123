@@ -18,7 +18,6 @@
  * Boston, MA 02111-1307, USA.
  */
 #include <gst/gst.h>
-#include <gst/interfaces/xoverlay.h>
 #include <gst/video/video.h>
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
@@ -36,6 +35,7 @@
 #include "visualization.h"
 #include "msg.h"
 #include "typefinder.h"
+#include "compat.h"
 #include <vector>
 #include <string>
 #include <list>
@@ -108,7 +108,7 @@ get_basename (const string& path)
 }
 
 void
-force_aspect_ratio (gpointer element, gpointer userdata)
+force_aspect_ratio (GstElement *element, gpointer userdata)
 {
   if (g_object_class_find_property (G_OBJECT_GET_CLASS (G_OBJECT (element)), "force-aspect-ratio"))
     g_object_set (G_OBJECT (element), "force-aspect-ratio", TRUE, NULL);
@@ -334,9 +334,8 @@ struct Player : public KeyHandler
   void
   relative_seek (double displacement)
   {
-    GstFormat fmt = GST_FORMAT_TIME;
-    gint64    cur_pos;
-    gst_element_query_position (playbin, &fmt, &cur_pos);
+    gint64 cur_pos;
+    Compat::element_query_position (playbin, GST_FORMAT_TIME, &cur_pos);
 
     double new_pos_sec = cur_pos * (1.0 / GST_SECOND) + displacement;
     seek (new_pos_sec * GST_SECOND);
@@ -450,27 +449,22 @@ collect_tags (const GstTagList *tag_list,
 static void
 caps_set_cb (GObject *pad, GParamSpec *pspec, class Player* player)
 {
-  if (GstCaps *caps = gst_pad_get_negotiated_caps (GST_PAD (pad)))
+  if (Compat::video_get_size (GST_PAD (pad), &player->video_size_width, &player->video_size_height))
     {
-      // get video size (if any)
-      gst_video_get_size (GST_PAD (pad), &player->video_size_width, &player->video_size_height);
-
       // resize window to match video size
       player->normal_size();
-
-      gst_caps_unref (caps);
     }
 }
 
 static void
-collect_element (gpointer element,
+collect_element (GstElement *element,
                  gpointer list_ptr)
 {
   /* seems that if we use push_front, the pipeline gets displayed in the
    * right order; but I don't know if thats a guarantee of an accident
    */
   list<GstElement *>& elements = *(list<GstElement*> *)list_ptr;
-  elements.push_front (GST_ELEMENT (element));
+  elements.push_front (element);
 }
 
 static string
@@ -534,7 +528,7 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
 	  {
 	    list<GstElement *> elements;
 	    GstIterator *iterator = gst_bin_iterate_recurse (GST_BIN (player.playbin));
-	    gst_iterator_foreach (iterator, collect_element, &elements);
+	    Compat::iterator_foreach (iterator, collect_element, &elements);
 	    string print_elements = collect_print_elements (GST_ELEMENT (player.playbin), elements);
 	    player.overwrite_time_display();
 	    Msg::print ("\ngstreamer pipeline contains: %s\n", print_elements.c_str());
@@ -544,44 +538,45 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
       break;
     case GST_MESSAGE_ELEMENT:
       {
-        if (gst_structure_has_name (message->structure, "prepare-xwindow-id") && gtk_interface.init_ok())
+        if (Compat::is_video_overlay_prepare_window_handle_message (message) && gtk_interface.init_ok())
           {
             // show gtk window to display video in
             gtk_interface.show();
-            gst_x_overlay_set_xwindow_id (GST_X_OVERLAY (GST_MESSAGE_SRC (message)),
-                                          GDK_WINDOW_XWINDOW (gtk_interface.window()->window));
-          }
-        else if (gst_structure_has_name (message->structure, "playbin2-stream-changed"))
-          {
-            // try to figure out the video size
-            GstElement *videosink = NULL;
-            g_object_get (G_OBJECT (player.playbin), "video-sink", &videosink, NULL);
-            if (videosink && !options.novideo)
-              {
-                // Find an sink element that has "force-aspect-ratio" property & set it
-                // to TRUE:
-                GstIterator *iterator = gst_bin_iterate_sinks (GST_BIN (videosink));
-                gst_iterator_foreach (iterator, force_aspect_ratio, NULL);
-
-                if (GstPad* pad = gst_element_get_static_pad (videosink, "sink"))
-                  {
-                    if (GstCaps *caps = gst_pad_get_negotiated_caps (pad))
-                      {
-                        caps_set_cb (G_OBJECT (pad), NULL, &player);
-                        gst_caps_unref (caps);
-                      }
-
-                    g_signal_connect (pad, "notify::caps", G_CALLBACK (caps_set_cb), &player);
-                    gst_object_unref (GST_OBJECT (pad));
-                  }
-                gst_object_unref (GST_OBJECT (videosink));
-              }
+            Compat::video_overlay_set_window_handle (message, GDK_WINDOW_XWINDOW (gtk_interface.window()->window));
           }
       }
+      break;
     default:
       /* unhandled message */
       break;
   }
+
+  if (Compat::is_stream_start_message (message))
+    {
+      // try to figure out the video size
+      GstElement *videosink = NULL;
+      g_object_get (G_OBJECT (player.playbin), "video-sink", &videosink, NULL);
+      if (videosink && !options.novideo)
+        {
+          // Find an sink element that has "force-aspect-ratio" property & set it
+          // to TRUE:
+          GstIterator *iterator = gst_bin_iterate_sinks (GST_BIN (videosink));
+          Compat::iterator_foreach (iterator, force_aspect_ratio, NULL);
+
+          if (GstPad* pad = gst_element_get_static_pad (videosink, "sink"))
+            {
+              if (GstCaps *caps = Compat::pad_get_current_caps (pad))
+                {
+                  caps_set_cb (G_OBJECT (pad), NULL, &player);
+                  gst_caps_unref (caps);
+                }
+
+              g_signal_connect (pad, "notify::caps", G_CALLBACK (caps_set_cb), &player);
+              gst_object_unref (GST_OBJECT (pad));
+            }
+          gst_object_unref (GST_OBJECT (videosink));
+        }
+    }
 
   /* remove message from the queue */
   return TRUE;
@@ -615,12 +610,12 @@ static gboolean
 cb_print_position (gpointer *data)
 {
   Player& player = *(Player *)data;
-  GstFormat fmt = GST_FORMAT_TIME;
   gint64 pos, len;
 
   player.display_tags();
 
-  if (gst_element_query_position (player.playbin, &fmt, &pos) && gst_element_query_duration (player.playbin, &fmt, &len))
+  if (Compat::element_query_position (player.playbin, GST_FORMAT_TIME, &pos) &&
+      Compat::element_query_duration (player.playbin, GST_FORMAT_TIME, &len))
     {
       GTimeVal tv_pos, tv_len;
       GST_TIME_TO_TIMEVAL (pos, tv_pos);
@@ -861,7 +856,7 @@ main (gint   argc,
         printf ("%s", options.usage.c_str());
       return -1;
     }
-  player.playbin = gst_element_factory_make ("playbin2", "play");
+  player.playbin = Compat::create_playbin ("play");
   if (options.novideo)
     {
       GstElement *fakesink = gst_element_factory_make ("fakesink", "novid");
