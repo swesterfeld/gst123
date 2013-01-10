@@ -464,6 +464,7 @@ collect_element (GstElement *element,
    * right order; but I don't know if thats a guarantee of an accident
    */
   list<GstElement *>& elements = *(list<GstElement*> *)list_ptr;
+  gst_object_ref (element);
   elements.push_front (element);
 }
 
@@ -527,11 +528,17 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
 	if (options.verbose && player.last_state != GST_STATE_PLAYING && state == GST_STATE_PLAYING)
 	  {
 	    list<GstElement *> elements;
+
 	    GstIterator *iterator = gst_bin_iterate_recurse (GST_BIN (player.playbin));
 	    Compat::iterator_foreach (iterator, collect_element, &elements);
+
 	    string print_elements = collect_print_elements (GST_ELEMENT (player.playbin), elements);
 	    player.overwrite_time_display();
 	    Msg::print ("\ngstreamer pipeline contains: %s\n", print_elements.c_str());
+
+            list<GstElement *>::iterator it;
+            for (it = elements.begin(); it != elements.end(); it++)
+              gst_object_unref (*it);
 	  }
 	player.last_state = state;
       }
