@@ -125,7 +125,7 @@ Compat::element_query_duration (GstElement *element, GstFormat format, gint64 *c
 bool
 Compat::video_get_size (GstPad *pad, int *width, int *height)
 {
-  return false;
+  return gst_video_get_size (GST_PAD (pad), width, height);
 }
 
 void
@@ -136,6 +136,7 @@ Compat::iterator_foreach (GstIterator *iterator, void (*func) (GstElement *eleme
 void
 Compat::video_overlay_set_window_handle (GstMessage *msg, guintptr id)
 {
+  gst_x_overlay_set_xwindow_id (GST_X_OVERLAY (GST_MESSAGE_SRC (msg)), id);
 }
 
 GstElement*
@@ -147,7 +148,8 @@ Compat::create_playbin (const char *name)
 bool
 Compat::is_stream_start_message (GstMessage *msg)
 {
-  return false;
+  return GST_MESSAGE_TYPE (msg) == GST_MESSAGE_ELEMENT &&
+         gst_structure_has_name (msg->structure, "playbin2-stream-changed");
 }
 
 GstCaps*
@@ -159,7 +161,8 @@ Compat::pad_get_current_caps (GstPad *pad)
 bool
 Compat::is_video_overlay_prepare_window_handle_message (GstMessage *msg)
 {
-  return false;
+  return GST_MESSAGE_TYPE (msg) == GST_MESSAGE_ELEMENT &&
+         gst_structure_has_name (msg->structure, "prepare-xwindow-id");
 }
 
 GstRegistry*
