@@ -110,14 +110,17 @@ During start, gst123 will read ~/.gst123rc, if this file exists. Empty lines and
 ; '''alsa'''=[''<device>'']
 : The  ALSA  driver; when used without argument (as in -a alsa), the ALSA driver uses the default device. To select an ALSA device, its possible to use for example alsa=hw:1 (which will use the hw:1 ALSA device).
 
+; '''oss'''=[''<device>'']
+: The OSS driver; when used without argument (as in -a oss), the OSS driver uses the default device. The device can be specified using for example oss=/dev/dsp1 (which would use the OSS  device /dev/dsp1).
+
+; '''pulse'''=[''<device>'']
+: The PulseAudio driver. This driver optionally accepts a device name using the pulse=<device> syntax.
+
 ; '''jack'''
 : The JACK driver. Device selection is not supported in this case.
 
 ; '''none'''
 : Dummy output driver, will not output any audio.
-
-; '''oss'''=[''<device>'']
-: The OSS driver; when used without argument (as in -a oss), the OSS driver uses the default device. The device can be specified using for example oss=/dev/dsp1 (which would use the OSS  device /dev/dsp1).
 
 ==SEE ALSO==
 gst123 Website (http://space.twc.de/~stefan/gst123.php)
