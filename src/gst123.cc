@@ -449,10 +449,14 @@ collect_tags (const GstTagList *tag_list,
 static void
 caps_set_cb (GObject *pad, GParamSpec *pspec, class Player* player)
 {
-  if (Compat::video_get_size (GST_PAD (pad), &player->video_size_width, &player->video_size_height))
+  if (GstCaps *caps = Compat::pad_get_current_caps (GST_PAD (pad)))
     {
-      // resize window to match video size
-      player->normal_size();
+      if (Compat::video_get_size (GST_PAD (pad), &player->video_size_width, &player->video_size_height))
+        {
+          // resize window to match video size
+          player->normal_size();
+        }
+      gst_caps_unref (caps);
     }
 }
 
