@@ -1,3 +1,87 @@
+2013-01-11 12:32:43 +0100  Stefan Westerfeld 	# f6bf398
+
+	gst123: fixed video size related warning (regression against 0.3.1)
+
+2013-01-11 12:03:10 +0100  Stefan Westerfeld 	# 6d28dbe
+
+	updated man page
+
+2013-01-11 11:54:54 +0100  Stefan Westerfeld 	# eb01ba9
+
+	Update NEWS.
+
+2013-01-11 11:50:18 +0100  Stefan Westerfeld 	# 0b72338
+
+	Bump version to 0.3.2.
+
+2013-01-10 17:40:55 +0100  Stefan Westerfeld 	# e6cdd92
+
+	gst123: keep ref count on elements in list for verbose iterator output
+
+2013-01-10 17:27:42 +0100  Stefan Westerfeld 	# 2a820ea
+
+	compat: improved foreach code for gstreamer 1.0
+
+2013-01-10 17:13:18 +0100  Stefan Westerfeld 	# 69b1e85
+
+	compat: improved foreach implementation for gstreamer 0.10
+
+2013-01-10 16:42:17 +0100  Stefan Westerfeld 	# 2437854
+
+	compat: improved video support for gstreamer 1.0
+
+2013-01-10 16:15:18 +0100  Stefan Westerfeld 	# cd86d43
+
+	compat: fix playbin creation for gstreamer 1.0
+
+2013-01-10 14:38:47 +0100  Stefan Westerfeld 	# 55d4c3e
+
+	compat: improved gstreamer-0.10 support
+
+2013-01-10 14:15:11 +0100  Stefan Westerfeld 	# 6a4ba61
+
+	compat: added compatibility code
+
+2013-01-10 14:10:12 +0100  Stefan Westerfeld 	# 496d2d6
+
+	compat: started to implement support for both: gstreamer 0.10 and gstreamer 1.0
+
+2013-01-08 14:49:51 +0100  Stefan Westerfeld 	# 04adff5
+
+	typefinder: replace deprecated function g_cond_timed_wait()
+
+2013-01-08 14:37:36 +0100  Stefan Westerfeld 	# 6c29274
+
+	gst123: properly quit player if none of the files in the playlist can be played
+
+2013-01-08 13:40:05 +0100  Stefan Westerfeld 	# 9bf7b49
+
+	get rid of deprecated g_mutex_new(),... functions
+
+2013-01-08 12:22:44 +0100  Stefan Westerfeld 	# 2cb1cc1
+
+	gst123: remove deprecated g_thread_init(), no longer necessary
+
+2013-01-08 12:14:27 +0100  Stefan Westerfeld 	# fe87870
+
+	gst123: don't use deprecated g_basename function
+
+2013-01-08 11:58:58 +0100  Stefan Westerfeld 	# d4cf7e4
+
+	playlist parser: added virtual destructor (fixes compile warning)
+
+2013-01-08 11:31:52 +0100  Stefan Westerfeld 	# 16cd28f
+
+	BUILD: extend configure check to allow gstreamer-0.10 and gstreamer-1.0
+
+2012-12-18 11:36:37 +0100  Stefan Westerfeld 	# 06e329a
+
+	gst123: added "-a pulse" PulseAudio output support
+
+2012-04-23 03:10:22 +0200  Stefan Westerfeld 	# 3e46d2e
+
+	Fix time display updates (broken by introduction of quiet mode).
+
 2012-04-21 01:06:42 +0200  Stefan Westerfeld 	# 4b67b85
 
 	Updated news for 0.3.1.

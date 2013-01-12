@@ -1,3 +1,11 @@
+Overview of changes in gst123-0.3.2:
+
+* Support building with gstreamer 1.0 or gstreamer 0.10 (Issue 11).
+* Added "-a pulse" PulseAudio output support.
+* Fix time display updates (broken by introduction of quiet mode).
+* Properly quit player if none of the files in the playlist can be played.
+* Cleanup code to avoid compiler warnings.
+
 Overview of changes in gst123-0.3.1:
 
 * Added quiet mode (Issue 9).

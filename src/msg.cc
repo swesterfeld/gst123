@@ -41,6 +41,13 @@ print (const char *format, ...)
     }
 }
 
+void
+flush()
+{
+  if (!Options::the().quiet)
+    fflush (stdout);
+}
+
 }
 
 }

@@ -26,6 +26,11 @@ using std::string;
 
 using namespace Gst123;
 
+PlaylistParser::~PlaylistParser()
+{
+  // virtual dtor
+}
+
 Playlist::Playlist (const string& uri_str)
 {
   string errorstr;
