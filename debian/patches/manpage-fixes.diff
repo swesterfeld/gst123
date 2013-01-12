@@ -12,7 +12,7 @@ Author: أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
  .PP
  .TP
  \fB-q\fR, \fB--quiet\fR
-@@ -126,17 +126,17 @@
+@@ -126,21 +126,21 @@
  During start, gst123 will read ~/.gst123rc, if this file exists. Empty lines and lines starting with a # are ignored. The following commands are available:
  .TP
  \fBaudio_output\fR \fI<driver>[=<device>]\fR
@@ -32,13 +32,9 @@ Author: أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
 +The ALSA driver; when used without argument (as in \-a alsa), the ALSA driver uses the default device. To select an ALSA device, its possible to use for example alsa=hw:1 (which will use the hw:1 ALSA device).
  .PP
  .TP
- \fBjack\fR
-@@ -148,7 +148,7 @@
- .PP
- .TP
  \fBoss\fR=[\fI<device>\fR]
 -The OSS driver; when used without argument (as in -a oss), the OSS driver uses the default device. The device can be specified using for example oss=/dev/dsp1 (which would use the OSS device /dev/dsp1).
 +The OSS driver; when used without argument (as in \-a oss), the OSS driver uses the default device. The device can be specified using for example oss=/dev/dsp1 (which would use the OSS device /dev/dsp1).
  .PP
- 
- .SH SEE ALSO
+ .TP
+ \fBpulse\fR=[\fI<device>\fR]
