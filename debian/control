@@ -6,6 +6,7 @@ Uploaders: أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org
 Build-Depends: debhelper (>= 9),
                libgstreamer1.0-dev,
                libgtk2.0-dev,
+               libgstreamer-plugins-base1.0-dev,
                libncurses5-dev
 Standards-Version: 3.9.4
 Homepage: http://space.twc.de/~stefan/gst123.php
