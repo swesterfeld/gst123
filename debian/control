@@ -4,9 +4,8 @@ Priority: extra
 Maintainer: Maintainers of GStreamer packages <pkg-gstreamer-maintainers@lists.alioth.debian.org>
 Uploaders: أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
 Build-Depends: debhelper (>= 9),
-               libgstreamer0.10-dev,
+               libgstreamer1.0-dev,
                libgtk2.0-dev,
-               libgstreamer-plugins-base0.10-dev,
                libncurses5-dev
 Standards-Version: 3.9.3
 DM-Upload-Allowed: yes
@@ -18,11 +17,11 @@ Package: gst123
 Architecture: any
 Depends: ${shlibs:Depends},
          ${misc:Depends},
-         gstreamer0.10-plugins-base,
-         gstreamer0.10-plugins-good
-Recommends: gstreamer0.10-plugins-bad,
-            gstreamer0.10-plugins-ugly,
-            gstreamer0.10-ffmpeg
+         gstreamer1.0-plugins-base,
+         gstreamer1.0-plugins-good
+Recommends: gstreamer1.0-plugins-bad,
+            gstreamer1.0-plugins-ugly,
+            gstreamer1.0-libav
 Description: GStreamer based command line media player
  The program gst123 is designed to be a more flexible command line player in
  the spirit of ogg123 and mpg123, based on GStreamer. It plays all file formats
