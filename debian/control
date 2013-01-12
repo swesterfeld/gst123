@@ -10,8 +10,8 @@ Build-Depends: debhelper (>= 9),
 Standards-Version: 3.9.4
 DM-Upload-Allowed: yes
 Homepage: http://space.twc.de/~stefan/gst123.php
-Vcs-Git: git://git.debian.org/git/collab-maint/gst123.git
-Vcs-Browser: http://git.debian.org/?p=collab-maint/gst123.git
+Vcs-Git: git://anonscm.debian.org/collab-maint/gst123.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/gst123.git
 
 Package: gst123
 Architecture: any
