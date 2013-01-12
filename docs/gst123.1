@@ -1,4 +1,4 @@
-.TH "GST123" "1" "2012\-04\-20" "Revision 716" "gst123 Manual Page"
+.TH "GST123" "1" "2013\-01\-11" "Revision 895" "gst123 Manual Page"
 
 .SH NAME
 
@@ -139,16 +139,20 @@ Set default visualization plugin for audio files. This setting has the same effe
 The ALSA driver; when used without argument (as in -a alsa), the ALSA driver uses the default device. To select an ALSA device, its possible to use for example alsa=hw:1 (which will use the hw:1 ALSA device).
 .PP
 .TP
+\fBoss\fR=[\fI<device>\fR]
+The OSS driver; when used without argument (as in -a oss), the OSS driver uses the default device. The device can be specified using for example oss=/dev/dsp1 (which would use the OSS device /dev/dsp1).
+.PP
+.TP
+\fBpulse\fR=[\fI<device>\fR]
+The PulseAudio driver. This driver optionally accepts a device name using the pulse=\fI<device>\fR syntax.
+.PP
+.TP
 \fBjack\fR
 The JACK driver. Device selection is not supported in this case.
 .PP
 .TP
 \fBnone\fR
 Dummy output driver, will not output any audio.
-.PP
-.TP
-\fBoss\fR=[\fI<device>\fR]
-The OSS driver; when used without argument (as in -a oss), the OSS driver uses the default device. The device can be specified using for example oss=/dev/dsp1 (which would use the OSS device /dev/dsp1).
 .PP
 
 .SH SEE ALSO

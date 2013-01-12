@@ -18,9 +18,13 @@
  */
 
 #include <gst/gst.h>
+#include <stdio.h>
 
+#include "compat.h"
 #include "options.h"
 #include "visualization.h"
+
+using namespace Gst123;
 
 namespace Visualization
 {
@@ -42,7 +46,7 @@ filter_features (GstPluginFeature * feature, gpointer data)
 static GList *
 get_visualization_features()
 {
-  return gst_registry_feature_filter (gst_registry_get_default(), filter_features, FALSE, NULL);
+  return gst_registry_feature_filter (Compat::registry_get(), filter_features, FALSE, NULL);
 }
 
 void

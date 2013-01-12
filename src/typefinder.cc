@@ -31,16 +31,16 @@ TypeFinder::TypeFinder (const string& filename)
   done = false;
 
   m_probability = 0;
-  mutex = g_mutex_new();
-  cond = g_cond_new();
+  g_mutex_init (&mutex);
+  g_cond_init (&cond);
 
   run (filename);
 }
 
 TypeFinder::~TypeFinder()
 {
-  g_cond_free (cond);
-  g_mutex_free (mutex);
+  g_cond_clear (&cond);
+  g_mutex_clear (&mutex);
 }
 
 void
@@ -54,10 +54,10 @@ TypeFinder::typefound (const string& type, guint probability)
       m_probability = probability;
     }
 
-  g_mutex_lock (mutex);
+  g_mutex_lock (&mutex);
   done = true;
-  g_cond_signal (cond);
-  g_mutex_unlock (mutex);
+  g_cond_signal (&cond);
+  g_mutex_unlock (&mutex);
 }
 
 void
@@ -93,15 +93,17 @@ TypeFinder::run (const string& filename)
   gst_element_link_many (filesrc, typefind, fakesink, NULL);
   gst_element_set_state (GST_ELEMENT (pipeline), GST_STATE_PLAYING);
 
-  g_mutex_lock (mutex);
-  if (!done)
+  g_mutex_lock (&mutex);
+  gint64 end_time = g_get_monotonic_time() + 500 * G_TIME_SPAN_MILLISECOND;
+  while (!done)
     {
-      GTimeVal timeout_time;
-      g_get_current_time (&timeout_time);
-      g_time_val_add (&timeout_time, 500 * 1000);
-      g_cond_timed_wait (cond, mutex, &timeout_time);
+      if (!g_cond_wait_until (&cond, &mutex, end_time))
+        {
+          // timeout occurred
+          break;
+        }
     }
-  g_mutex_unlock (mutex);
+  g_mutex_unlock (&mutex);
 
   /* unset */
   gst_element_set_state (GST_ELEMENT (pipeline), GST_STATE_NULL);

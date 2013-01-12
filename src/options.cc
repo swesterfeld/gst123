@@ -21,6 +21,7 @@
 #include <gst/gst.h>
 #include <gtk/gtk.h>
 #include <X11/Xlib.h>
+#include <stdlib.h>
 
 #include "config.h"
 #include "options.h"
