@@ -21,7 +21,9 @@ Depends: ${shlibs:Depends},
          gstreamer1.0-plugins-good
 Recommends: gstreamer1.0-plugins-bad,
             gstreamer1.0-plugins-ugly,
-            gstreamer1.0-libav
+            gstreamer1.0-libav,
+            gstreamer1.0-pulseaudio,
+            gstreamer1.0-x
 Description: GStreamer based command line media player
  The program gst123 is designed to be a more flexible command line player in
  the spirit of ogg123 and mpg123, based on GStreamer. It plays all file formats
