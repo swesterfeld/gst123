@@ -1,10 +1,10 @@
-Format: http://anonscm.debian.org/viewvc/dep/web/deps/dep5.mdwn?view=co&pathrev=174
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: gst123
 Upstream-Contact: Stefan Westerfeld <stefan@space.twc.de>
 Source: http://space.twc.de/~stefan/gst123.php
 
 Files: *
-Copyright: 2006-2010 Stefan Westerfeld <stefan@space.twc.de>
+Copyright: 2006-2013 Stefan Westerfeld <stefan@space.twc.de>
            2010 Siddhesh Poyarekar
 License: LGPL-2+
 
@@ -26,7 +26,7 @@ Copyright: 1997-2002 Tim Janik
 License: LGPL-2+
 
 Files: debian/*
-Copyright: 2010-2012 أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
+Copyright: 2010-2013 أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>
 License: LGPL-2+
 
 License: LGPL-2+
