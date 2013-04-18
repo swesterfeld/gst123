@@ -49,6 +49,9 @@ gst123 - A GStreamer based command line media player
 ; '''-V''', '''--visualization-list'''
 : Show a list of available audio visualization plugins which can be used with the -v option.
 
+; '''-k''' ''<n>'', '''--skip''' ''<n>''
+: Skip the first 'n' seconds of each file.
+
 ; '''-q''', '''--quiet'''
 : Don't display any messages (title, codec, ui feedback).
 
@@ -114,7 +117,7 @@ During start, gst123 will read ~/.gst123rc, if this file exists. Empty lines and
 : The OSS driver; when used without argument (as in -a oss), the OSS driver uses the default device. The device can be specified using for example oss=/dev/dsp1 (which would use the OSS  device /dev/dsp1).
 
 ; '''pulse'''=[''<device>'']
-: The PulseAudio driver. This driver optionally accepts a device name using the pulse=<device> syntax.
+: The PulseAudio driver. This driver optionally accepts a device name using the pulse=''<device>'' syntax.
 
 ; '''jack'''
 : The JACK driver. Device selection is not supported in this case.

@@ -296,6 +296,12 @@ struct Player : public KeyHandler
                 g_object_set (G_OBJECT (playbin), "uri", uri.c_str(), NULL);
                 gst_element_set_state (playbin, GST_STATE_PLAYING);
 
+                if (options.skip > 0)
+                  {
+                    // block until state changed and seek to skip position
+                    gst_element_get_state (playbin, NULL, NULL, GST_CLOCK_TIME_NONE);
+                    seek (options.skip * GST_SECOND);
+                  }
                 return; // -> done
               }
           }
