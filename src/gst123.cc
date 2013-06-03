@@ -114,6 +114,25 @@ force_aspect_ratio (GstElement *element, gpointer userdata)
     g_object_set (G_OBJECT (element), "force-aspect-ratio", TRUE, NULL);
 }
 
+static bool
+filename2uri (string& uri)
+{
+  GError *err = NULL;
+
+  char *xuri = g_filename_to_uri (uri.c_str(), NULL, &err);
+  uri = xuri;
+  g_free (xuri);
+
+  if (err != NULL)
+    {
+      g_critical ("Unable to convert to URI: %s", err->message);
+      g_error_free (err);
+
+      return false;
+    }
+  return true;
+}
+
 struct Options options;
 
 struct Player : public KeyHandler
@@ -153,11 +172,13 @@ struct Player : public KeyHandler
   void
   add_uri (string uri)
   {
-    if (uri.find (":/") == uri.npos)
+    if (!gst_uri_is_valid (uri.c_str()))
       {
 	if (!g_path_is_absolute (uri.c_str()))
 	  uri = g_get_current_dir() + string (G_DIR_SEPARATOR + uri);
-	uri = "file://" + uri;
+
+        if (!filename2uri (uri))
+          return;
       }
     uris.push_back (uri);
   }
