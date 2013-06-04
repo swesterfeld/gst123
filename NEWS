@@ -1,3 +1,8 @@
+Overview of changes is gst123-0.3.3:
+
+* Fix Issue 10: Local files not properly escaped when converted to URLs
+* Added "-k, --skip=<n>" option: skip first 'n' seconds [Tobias Bengfort]
+
 Overview of changes in gst123-0.3.2:
 
 * Support building with gstreamer 1.0 or gstreamer 0.10 (Issue 11).

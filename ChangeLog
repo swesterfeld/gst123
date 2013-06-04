@@ -1,3 +1,21 @@
+2013-06-03 12:38:38 +0200  Stefan Westerfeld 	# 3ee92d4
+
+	Updated NEWS for 0.3.3.
+
+2013-06-03 12:33:37 +0200  Stefan Westerfeld 	# e6716bc
+
+	bump version
+
+2013-06-03 12:27:21 +0200  Stefan Westerfeld 	# 8921a4f
+
+	gst123: use g_filename_to_uri for filename->uri conversions; fixes issue 10
+
+	Issue 10: Local files not properly escaped when converted to URLs
+
+2013-04-18 14:48:55 +0200  Stefan Westerfeld 	# e97b086
+
+	gst123: implemented --skip <n>, -k <n>; based on code by Tobias Bengfort
+
 2013-01-11 12:32:43 +0100  Stefan Westerfeld 	# f6bf398
 
 	gst123: fixed video size related warning (regression against 0.3.1)
