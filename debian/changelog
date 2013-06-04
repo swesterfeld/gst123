@@ -1,3 +1,11 @@
+gst123 (0.3.3-1) unstable; urgency=low
+
+  * New upstream release.
+    + Fix Issue: Local files not properly escaped when converted to URLs
+      (Closes: #689530)
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Tue, 04 Jun 2013 09:05:15 +0200
+
 gst123 (0.3.2-1) unstable; urgency=low
 
   * New upstream release.
