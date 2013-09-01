@@ -702,10 +702,23 @@ idle_start_player (gpointer *data)
 }
 
 
-static inline bool
-is_directory (const string& path)
+enum FileInfo { FI_DIR, FI_REG, FI_OTHER, FI_ERROR };
+
+static inline FileInfo
+file_info (const string& path)
 {
-  return g_file_test (path.c_str(), G_FILE_TEST_IS_DIR);
+  struct stat st;
+
+  if (lstat (path.c_str(), &st) == 0)
+    {
+      if (S_ISDIR (st.st_mode))
+        return FI_DIR;
+      else if (S_ISREG (st.st_mode))
+        return FI_REG;
+      else
+        return FI_OTHER;
+    }
+  return FI_ERROR;
 }
 
 static vector<string>
@@ -721,12 +734,14 @@ crawl (const string& path)
       while ((name = g_dir_read_name (dir)))
         {
           char *full_name = g_build_filename (path.c_str(), name, NULL);
-          if (is_directory (full_name))
+          FileInfo finfo = file_info (full_name);
+
+          if (finfo == FI_DIR)
             {
               vector<string> subdir_files = crawl (full_name);
               results.insert (results.end(), subdir_files.begin(), subdir_files.end());
             }
-          else
+          else if (finfo == FI_REG)
             {
               results.push_back (full_name);
             }
@@ -822,7 +837,7 @@ Player::print_keyboard_help()
 void
 Player::add_uri_or_directory (const string& name)
 {
-  if (is_directory (name))          // => play all files in this dir
+  if (file_info (name) == FI_DIR)          // => play all files in this dir
     {
       vector<string> uris = crawl (name);
       for (vector<string>::const_iterator ui = uris.begin(); ui != uris.end(); ui++)
