@@ -49,6 +49,7 @@ Options::Options ()
   print_visualization_list = FALSE;
   visualization = NULL;
   skip = 0;
+  initial_volume = -1; // don't touch volume setting when started
 
   string default_audio_output = ConfigFile::the().audio_output();
   if (default_audio_output != "")
@@ -90,6 +91,8 @@ Options::parse (int argc, char **argv)
       "show available visualization plugins", NULL },
     {"skip", 'k', 0, G_OPTION_ARG_DOUBLE, &instance->skip,
       "Skip the first 'n' seconds", "<n>"},
+    { "volume", '\0', 0, G_OPTION_ARG_DOUBLE, &instance->initial_volume,
+      "Set initial replay volume (in percent)", "<volume>" },
     {"quiet", 'q', 0, G_OPTION_ARG_NONE, &instance->quiet,
       "don't display any messages", NULL},
     {G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &instance->uris, "Movies to play", NULL},

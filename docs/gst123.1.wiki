@@ -52,6 +52,9 @@ gst123 - A GStreamer based command line media player
 ; '''-k''' ''<n>'', '''--skip''' ''<n>''
 : Skip the first 'n' seconds of each file.
 
+; '''--volume''' ''<volume>''
+: Set initial replay volume (in percent).
+
 ; '''-q''', '''--quiet'''
 : Don't display any messages (title, codec, ui feedback).
 

@@ -954,6 +954,10 @@ main (gint   argc,
           g_object_set (G_OBJECT (player.playbin), "audio-sink", audio_sink, NULL);
         }
     }
+  if (options.initial_volume >= 0)
+    {
+      g_object_set (G_OBJECT (player.playbin), "volume", options.initial_volume / 100, NULL);
+    }
   gst_bus_add_watch (gst_pipeline_get_bus (GST_PIPELINE (player.playbin)), my_bus_callback, &player);
   g_timeout_add (130, (GSourceFunc) cb_print_position, &player);
   g_idle_add ((GSourceFunc) idle_start_player, &player);

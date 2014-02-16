@@ -42,6 +42,7 @@ public:
   gboolean      novideo;
   gboolean      print_visualization_list;
   double        skip;
+  double        initial_volume;
   gboolean      quiet;
   char        **uris;
   std::list<std::string>  playlists;
