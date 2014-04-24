@@ -597,10 +597,17 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
       g_object_get (G_OBJECT (player.playbin), "video-sink", &videosink, NULL);
       if (videosink && !options.novideo)
         {
-          // Find an sink element that has "force-aspect-ratio" property & set it
-          // to TRUE:
-          GstIterator *iterator = gst_bin_iterate_sinks (GST_BIN (videosink));
-          Compat::iterator_foreach (iterator, force_aspect_ratio, NULL);
+          if (GST_IS_BIN (videosink))
+            {
+              // Find an sink element that has "force-aspect-ratio" property & set it
+              // to TRUE:
+              GstIterator *iterator = gst_bin_iterate_sinks (GST_BIN (videosink));
+              Compat::iterator_foreach (iterator, force_aspect_ratio, NULL);
+            }
+          else
+            {
+              force_aspect_ratio (videosink, NULL);
+            }
 
           if (GstPad* pad = gst_element_get_static_pad (videosink, "sink"))
             {
