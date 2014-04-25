@@ -134,6 +134,31 @@ filename2uri (string& uri)
   return true;
 }
 
+static string
+uri2filename (const string& uri)
+{
+  GError *err = NULL;
+  char *xfilename = g_filename_from_uri (uri.c_str(), NULL, &err);
+
+  if (err != NULL)
+    {
+      g_critical ("Unable to convert from URI: %s", err->message);
+      g_error_free (err);
+    }
+
+  if (xfilename)
+    {
+      string filename = xfilename;
+      g_free (xfilename);
+
+      return filename;
+    }
+  else
+    {
+      return ""; // fail
+    }
+}
+
 struct Options options;
 
 struct Player : public KeyHandler
@@ -249,13 +274,13 @@ struct Player : public KeyHandler
     if (uri.substr (0, 5) == "file:")
       {
         /* convert uri "file:///foo/bar" to path "/foo/bar" */
-        string filename = uri.substr (5);
-        while (filename.substr (0, 2) == "//")
-          filename = filename.substr (1);
-
-        TypeFinder tf (filename);
-        if (tf.type() == "image")
-          return true;
+        string filename = uri2filename (uri);
+        if (filename != "")
+          {
+            TypeFinder tf (filename);
+            if (tf.type() == "image")
+              return true;
+          }
       }
     return false;
   }
