@@ -291,13 +291,6 @@ struct Player : public KeyHandler
   {
     reset_tags (RESET_ALL_TAGS);
 
-    /*
-     * if we're playing an audio file, we don't need the GtkInterface, so we hide it here
-     * if we're playing a video file, it will be shown again once GStreamer gets to the
-     * point where it sends a "prepare-xwindow-id" message
-     */
-    gtk_interface.hide();
-
     for (;;)
       {
         if (play_position == uris.size() && options.repeat)
@@ -499,15 +492,51 @@ collect_tags (const GstTagList *tag_list,
     }
 }
 
+class IdleResizeWindow
+{
+  Player *player;
+  int     width, height;
+
+public:
+  IdleResizeWindow (Player *player, int width, int height) :
+    player (player),
+    width (width),
+    height (height)
+  {
+  }
+
+  static gboolean
+  callback (gpointer *data)
+  {
+    IdleResizeWindow *self = (IdleResizeWindow *) data;
+
+    self->player->video_size_width  = self->width;
+    self->player->video_size_height = self->height;
+
+    self->player->normal_size();
+
+    delete self;
+
+    /* do not call me again */
+    return FALSE;
+  }
+};
+
 static void
 caps_set_cb (GObject *pad, GParamSpec *pspec, class Player* player)
 {
+  // this callback doesn't occur in main thread
+
   if (GstCaps *caps = Compat::pad_get_current_caps (GST_PAD (pad)))
     {
-      if (Compat::video_get_size (GST_PAD (pad), &player->video_size_width, &player->video_size_height))
+      int width, height;
+
+      if (Compat::video_get_size (GST_PAD (pad), &width, &height))
         {
-          // resize window to match video size
-          player->normal_size();
+          // resize window to match video size (must run in main thread, so we use an idle handler)
+
+          g_idle_add ((GSourceFunc) IdleResizeWindow::callback,
+                      new IdleResizeWindow (player, width, height));
         }
       gst_caps_unref (caps);
     }
@@ -620,15 +649,6 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
 	player.last_state = state;
       }
       break;
-    case GST_MESSAGE_ELEMENT:
-      {
-        if (Compat::is_video_overlay_prepare_window_handle_message (message) && gtk_interface.init_ok())
-          {
-            // show gtk window to display video in
-            gtk_interface.show();
-          }
-      }
-      break;
     default:
       /* unhandled message */
       break;
@@ -665,6 +685,19 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
               gst_object_unref (GST_OBJECT (pad));
             }
           gst_object_unref (GST_OBJECT (videosink));
+        }
+      /* show window if necessary (number of video streams > 0 || visualization) */
+      int n_video = 0;
+      GstElement *vis_plugin = NULL;
+      g_object_get (player.playbin, "n-video", &n_video, NULL);
+      g_object_get (player.playbin, "vis-plugin", &vis_plugin, NULL);
+
+      if (gtk_interface.init_ok())
+        {
+          if (n_video || vis_plugin)
+            gtk_interface.show();
+          else
+            gtk_interface.hide();
         }
     }
 
