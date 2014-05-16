@@ -127,6 +127,14 @@ Compat::registry_get()
   return gst_registry_get();
 }
 
+void
+Compat::setup_bus_callbacks (GstPipeline *pipeline, GstBusSyncHandler sync_handler, GstBusFunc bus_func, void *user_data)
+{
+  GstBus *bus = gst_pipeline_get_bus (pipeline);
+  gst_bus_set_sync_handler (bus, sync_handler, user_data, NULL);
+  gst_bus_add_watch (bus, bus_func, user_data);
+  gst_object_unref (bus);
+}
 
 #else
 
@@ -203,5 +211,13 @@ Compat::registry_get()
   return gst_registry_get_default();
 }
 
+void
+Compat::setup_bus_callbacks (GstPipeline *pipeline, GstBusSyncHandler sync_handler, GstBusFunc bus_func, void *user_data)
+{
+  GstBus *bus = gst_pipeline_get_bus (pipeline);
+  gst_bus_set_sync_handler (bus, sync_handler, user_data);
+  gst_bus_add_watch (bus, bus_func, user_data);
+  gst_object_unref (bus);
+}
 
 #endif

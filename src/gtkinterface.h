@@ -28,6 +28,7 @@ class GtkInterface
 {
   GtkWidget   *gtk_window;
   bool         gtk_window_visible;
+  gulong       window_xid;
   KeyHandler  *key_handler;
   GdkCursor   *invisible_cursor;
   GdkCursor   *visible_cursor;
@@ -38,12 +39,14 @@ class GtkInterface
   enum ScreenSaverSetting { SUSPEND, RESUME };
   void screen_saver (ScreenSaverSetting setting);
 public:
+  GtkInterface();
+
   void init (int *argc, char ***argv, class KeyHandler *key_handler);
   void end();
   void show();
   void hide();
   bool init_ok();
-  GtkWidget *window();
+  gulong window_xid_nolock() const;
   void unfullscreen();
   void toggle_fullscreen();
   bool handle_keypress_event (GdkEventKey *event);

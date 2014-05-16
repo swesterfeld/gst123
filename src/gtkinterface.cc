@@ -72,6 +72,11 @@ GtkInterface::have_x11_display()
   return display != NULL;
 }
 
+GtkInterface::GtkInterface() :
+  window_xid (0)
+{
+}
+
 void
 GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
 {
@@ -85,6 +90,10 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
       g_signal_connect (G_OBJECT (gtk_window), "motion-notify-event", G_CALLBACK (motion_notify_event_cb), this);
       g_signal_connect (G_OBJECT (gtk_window), "delete-event", G_CALLBACK  (close_cb), this);
       g_object_set (G_OBJECT (gtk_window), "events", GDK_POINTER_MOTION_MASK, NULL);
+
+      gtk_widget_realize (gtk_window);
+
+      window_xid = GDK_WINDOW_XID (gtk_widget_get_window (gtk_window));
 
       // make background black
       GdkColor color;
@@ -141,10 +150,11 @@ GtkInterface::init_ok()
   return gtk_window != NULL;
 }
 
-GtkWidget*
-GtkInterface::window()
+// unlike other methods, this method may be called from any thread without lock
+gulong
+GtkInterface::window_xid_nolock() const
 {
-  return gtk_window;
+  return window_xid;
 }
 
 void

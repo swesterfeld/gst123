@@ -546,6 +546,26 @@ collect_print_elements (GstElement *parent, const list<GstElement*>& elements)
     return element_name;
 }
 
+static GstBusSyncReply
+my_sync_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
+{
+  switch (GST_MESSAGE_TYPE (message)) {
+    case GST_MESSAGE_ELEMENT:
+      {
+        if (Compat::is_video_overlay_prepare_window_handle_message (message) && gtk_interface.init_ok())
+          {
+            Compat::video_overlay_set_window_handle (message, gtk_interface.window_xid_nolock());
+          }
+      }
+      break;
+    default:
+      /* unhandled message */
+      break;
+  }
+
+  return GST_BUS_PASS;
+}
+
 static gboolean
 my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
 {
@@ -606,7 +626,6 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
           {
             // show gtk window to display video in
             gtk_interface.show();
-            Compat::video_overlay_set_window_handle (message, GDK_WINDOW_XWINDOW (gtk_interface.window()->window));
           }
       }
       break;
@@ -990,7 +1009,9 @@ main (gint   argc,
     {
       g_object_set (G_OBJECT (player.playbin), "volume", options.initial_volume / 100, NULL);
     }
-  gst_bus_add_watch (gst_pipeline_get_bus (GST_PIPELINE (player.playbin)), my_bus_callback, &player);
+
+  Compat::setup_bus_callbacks (GST_PIPELINE (player.playbin), my_sync_bus_callback, my_bus_callback, &player);
+
   g_timeout_add (130, (GSourceFunc) cb_print_position, &player);
   g_idle_add ((GSourceFunc) idle_start_player, &player);
   signal (SIGINT, sigint_handler);

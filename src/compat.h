@@ -42,6 +42,7 @@ void video_overlay_set_window_handle (GstMessage *msg, guintptr id);
 GstElement* create_playbin (const char *name);
 GstCaps *pad_get_current_caps (GstPad *pad);
 GstRegistry *registry_get();
+void setup_bus_callbacks (GstPipeline *pipeline, GstBusSyncHandler sync_handler, GstBusFunc bus_func, void *user_data);
 
 }
 
