@@ -680,8 +680,22 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
                   caps_set_cb (G_OBJECT (pad), NULL, &player);
                   gst_caps_unref (caps);
                 }
-
-              g_signal_connect (pad, "notify::caps", G_CALLBACK (caps_set_cb), &player);
+              /* connect videosink / videopad "notify::caps" signal
+               *
+               * if we did this before (while playing another video file), skip
+               * this step in order to avoid handling the same signal more than
+               * once
+               */
+              if (!g_signal_handler_find (pad,
+                       /* mask      */ GSignalMatchType (G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_DATA),
+                       /* signal_id */ 0,
+                       /* detail    */ 0,
+                       /* closure   */ 0,
+                       /* func      */ (void *) caps_set_cb,
+                       /* data      */ &player))
+                {
+                  g_signal_connect (pad, "notify::caps", G_CALLBACK (caps_set_cb), &player);
+                }
               gst_object_unref (GST_OBJECT (pad));
             }
           gst_object_unref (GST_OBJECT (videosink));
