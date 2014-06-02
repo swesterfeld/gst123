@@ -38,6 +38,7 @@ class GtkInterface
 
   enum ScreenSaverSetting { SUSPEND, RESUME };
   void screen_saver (ScreenSaverSetting setting);
+  void send_net_active_window_event();
 public:
   GtkInterface();
 

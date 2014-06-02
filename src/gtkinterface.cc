@@ -24,6 +24,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <gdk/gdkx.h>
 #include <stdlib.h>
+#include <string.h>
 
 using std::string;
 
@@ -172,8 +173,40 @@ GtkInterface::show()
       gdk_display_sync (gdk_display_get_default());
 
       screen_saver (SUSPEND);
+
+      // work around kwin window manager policy "focus stealing prevention"
+      // which would show our window behind active window in some cases, see
+      // https://bugs.kde.org/show_bug.cgi?id=335367
+      send_net_active_window_event();
+
       gtk_window_visible = true;
     }
+}
+
+void
+GtkInterface::send_net_active_window_event()
+{
+  g_return_if_fail (gtk_window != NULL);
+
+  GdkDisplay   *display = gtk_widget_get_display (GTK_WIDGET (gtk_window));
+  guint32       timestamp = gdk_x11_display_get_user_time (display);
+
+  XClientMessageEvent xclient;
+
+  memset (&xclient, 0, sizeof (xclient));
+  xclient.type = ClientMessage;
+  xclient.window = window_xid_nolock();
+  xclient.message_type = gdk_x11_get_xatom_by_name_for_display (display, "_NET_ACTIVE_WINDOW");
+  xclient.format = 32;
+  xclient.data.l[0] = 2;        /* source: NET::FromTool = 2 */
+  xclient.data.l[1] = timestamp;
+  xclient.data.l[2] = None;     /* currently active window */
+  xclient.data.l[3] = 0;
+  xclient.data.l[4] = 0;
+
+  XSendEvent (GDK_DISPLAY_XDISPLAY (display), GDK_ROOT_WINDOW(), False,
+              SubstructureRedirectMask | SubstructureNotifyMask,
+              (XEvent *) &xclient);
 }
 
 void
