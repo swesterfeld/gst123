@@ -188,9 +188,15 @@ GtkInterface::send_net_active_window_event()
 {
   g_return_if_fail (gtk_window != NULL);
 
+  // figure out root window
+  GdkScreen    *screen = gdk_window_get_screen (gtk_widget_get_window (gtk_window));
+  GdkWindow    *root_window = gdk_screen_get_root_window (screen);
+
+  // obtain timestamp
   GdkDisplay   *display = gtk_widget_get_display (GTK_WIDGET (gtk_window));
   guint32       timestamp = gdk_x11_display_get_user_time (display);
 
+  // send _NET_ACTIVE_WINDOW message to root window
   XClientMessageEvent xclient;
 
   memset (&xclient, 0, sizeof (xclient));
@@ -204,7 +210,7 @@ GtkInterface::send_net_active_window_event()
   xclient.data.l[3] = 0;
   xclient.data.l[4] = 0;
 
-  XSendEvent (GDK_DISPLAY_XDISPLAY (display), GDK_ROOT_WINDOW(), False,
+  XSendEvent (GDK_DISPLAY_XDISPLAY (display), GDK_WINDOW_XID (root_window), False,
               SubstructureRedirectMask | SubstructureNotifyMask,
               (XEvent *) &xclient);
 }
