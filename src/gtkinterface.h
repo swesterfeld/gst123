@@ -34,11 +34,21 @@ class GtkInterface
   GdkCursor   *visible_cursor;
   int          cursor_timeout;      // number of timeout events until we hide the cursor (-1 if already hidden)
 
+  int          video_width;
+  int          video_height;
+
+  bool         video_fullscreen;
+  bool         video_maximized;
+  bool         need_resize_window;
+
   std::map<int,int>   key_map;
 
   enum ScreenSaverSetting { SUSPEND, RESUME };
   void screen_saver (ScreenSaverSetting setting);
   void send_net_active_window_event();
+  bool is_fullscreen();
+  bool is_maximized();
+  void resize_window_if_needed();
 public:
   GtkInterface();
 
@@ -48,13 +58,14 @@ public:
   void hide();
   bool init_ok();
   gulong window_xid_nolock() const;
-  void unfullscreen();
   void toggle_fullscreen();
   bool handle_keypress_event (GdkEventKey *event);
   bool handle_motion_notify_event (GdkEventMotion *event);
+  bool handle_window_state_event (GdkEventWindowState *event);
   bool handle_timeout();
   bool handle_close();
-  void resize (int x, int y);
+  void resize (int width, int height);
+  void normal_size();
   void set_title (const std::string& title);
 
   static bool have_x11_display();

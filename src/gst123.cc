@@ -173,9 +173,6 @@ struct Player : public KeyHandler
   Tags           tags;
   GstState       last_state;
 
-  gint           video_size_width;
-  gint           video_size_height;
-
   enum
   {
     KEEP_CODEC_TAGS,
@@ -329,9 +326,6 @@ struct Player : public KeyHandler
 
                 gtk_interface.set_title (get_basename (uri));
 
-                video_size_width = 0;
-                video_size_height = 0;
-
                 gst_element_set_state (playbin, GST_STATE_NULL);
                 g_object_set (G_OBJECT (playbin), "uri", uri.c_str(), NULL);
                 gst_element_set_state (playbin, GST_STATE_PLAYING);
@@ -431,9 +425,7 @@ struct Player : public KeyHandler
   void
   normal_size()
   {
-    if (video_size_width > 0 && video_size_height > 0)
-      gtk_interface.resize (video_size_width, video_size_height);
-    gtk_interface.unfullscreen();
+    gtk_interface.normal_size();
   }
 
   void
@@ -494,12 +486,10 @@ collect_tags (const GstTagList *tag_list,
 
 class IdleResizeWindow
 {
-  Player *player;
   int     width, height;
 
 public:
-  IdleResizeWindow (Player *player, int width, int height) :
-    player (player),
+  IdleResizeWindow (int width, int height) :
     width (width),
     height (height)
   {
@@ -509,12 +499,7 @@ public:
   callback (gpointer *data)
   {
     IdleResizeWindow *self = (IdleResizeWindow *) data;
-
-    self->player->video_size_width  = self->width;
-    self->player->video_size_height = self->height;
-
-    self->player->normal_size();
-
+    gtk_interface.resize (self->width, self->height);
     delete self;
 
     /* do not call me again */
@@ -536,7 +521,7 @@ caps_set_cb (GObject *pad, GParamSpec *pspec, class Player* player)
           // resize window to match video size (must run in main thread, so we use an idle handler)
 
           g_idle_add ((GSourceFunc) IdleResizeWindow::callback,
-                      new IdleResizeWindow (player, width, height));
+                      new IdleResizeWindow (width, height));
         }
       gst_caps_unref (caps);
     }

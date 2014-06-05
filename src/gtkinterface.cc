@@ -62,6 +62,17 @@ close_cb (GtkWidget *widget,
   return gtk_interface->handle_close();
 }
 
+static gboolean
+window_state_event_cb (GtkWidget *widget,
+                       GdkEvent  *event,
+                       gpointer   data)
+{
+  GtkInterface *gtk_interface = static_cast<GtkInterface *> (data);
+  GdkEventWindowState *ws_event = reinterpret_cast<GdkEventWindowState *> (event);
+
+  return gtk_interface->handle_window_state_event (ws_event);
+}
+
 bool
 GtkInterface::have_x11_display()
 {
@@ -74,7 +85,12 @@ GtkInterface::have_x11_display()
 }
 
 GtkInterface::GtkInterface() :
-  window_xid (0)
+  window_xid (0),
+  video_width (0),
+  video_height (0),
+  video_fullscreen (false),
+  video_maximized (false),
+  need_resize_window (false)
 {
 }
 
@@ -89,7 +105,8 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
       gtk_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
       g_signal_connect (G_OBJECT (gtk_window), "key-press-event", G_CALLBACK (key_press_event_cb), this);
       g_signal_connect (G_OBJECT (gtk_window), "motion-notify-event", G_CALLBACK (motion_notify_event_cb), this);
-      g_signal_connect (G_OBJECT (gtk_window), "delete-event", G_CALLBACK  (close_cb), this);
+      g_signal_connect (G_OBJECT (gtk_window), "delete-event", G_CALLBACK (close_cb), this);
+      g_signal_connect (G_OBJECT (gtk_window), "window-state-event", G_CALLBACK (window_state_event_cb), this);
       g_object_set (G_OBJECT (gtk_window), "events", GDK_POINTER_MOTION_MASK, NULL);
 
       gtk_widget_realize (gtk_window);
@@ -124,11 +141,22 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
   key_map[GDK_KP_Subtract] = '-';
 }
 
-void
-GtkInterface::unfullscreen()
+bool
+GtkInterface::is_fullscreen()
 {
-  if (gtk_window != NULL && gtk_window_visible)
-    gtk_window_unfullscreen (GTK_WINDOW (gtk_window));
+  g_return_val_if_fail (gtk_window != NULL && gtk_window_visible, false);
+
+  GdkWindowState state = gdk_window_get_state (GDK_WINDOW (gtk_window->window));
+  return (state & GDK_WINDOW_STATE_FULLSCREEN);
+}
+
+bool
+GtkInterface::is_maximized()
+{
+  g_return_val_if_fail (gtk_window != NULL && gtk_window_visible, false);
+
+  GdkWindowState state = gdk_window_get_state (GDK_WINDOW (gtk_window->window));
+  return (state & GDK_WINDOW_STATE_MAXIMIZED);
 }
 
 void
@@ -136,9 +164,7 @@ GtkInterface::toggle_fullscreen()
 {
   if (gtk_window != NULL && gtk_window_visible)
     {
-      GdkWindowState state = gdk_window_get_state (GDK_WINDOW (gtk_window->window));
-      gboolean isFullscreen = ((state & GDK_WINDOW_STATE_FULLSCREEN) == GDK_WINDOW_STATE_FULLSCREEN);
-      if (isFullscreen)
+      if (is_fullscreen())
         gtk_window_unfullscreen (GTK_WINDOW (gtk_window));
       else
         gtk_window_fullscreen (GTK_WINDOW (gtk_window));
@@ -164,6 +190,13 @@ GtkInterface::show()
   if (gtk_window != NULL && !gtk_window_visible)
     {
       gtk_widget_show_all (gtk_window);
+
+      // restore fullscreen & maximized state
+      if (video_fullscreen)
+        gtk_window_fullscreen (GTK_WINDOW (gtk_window));
+
+      if (video_maximized)
+        gtk_window_maximize (GTK_WINDOW (gtk_window));
 
       // get cursor, so we can restore it after hiding it
       if (!visible_cursor)
@@ -220,7 +253,16 @@ GtkInterface::hide()
 {
   if (gtk_window != NULL && gtk_window_visible)
     {
+      video_fullscreen = is_fullscreen();
+      if (video_fullscreen)
+        gtk_window_unfullscreen (GTK_WINDOW (gtk_window));
+
+      video_maximized  = is_maximized();
+      if (video_maximized)
+        gtk_window_unmaximize (GTK_WINDOW (gtk_window));
+
       gtk_widget_hide_all (gtk_window);
+
       screen_saver (RESUME);
       gtk_window_visible = false;
     }
@@ -237,10 +279,50 @@ GtkInterface::end()
 
 
 void
-GtkInterface::resize (int x, int y)
+GtkInterface::resize (int width, int height)
 {
   if (gtk_window != NULL)
-    gtk_window_resize (GTK_WINDOW (gtk_window), x, y);
+    {
+      video_width = width;
+      video_height = height;
+
+      need_resize_window = true;
+
+      // there are some cases where resizing the window will not work right away (fullscreen)
+      // then need_resize_window remains true and the resize will be done once the window
+      // state changes
+      resize_window_if_needed();
+    }
+}
+
+void
+GtkInterface::resize_window_if_needed()
+{
+  if (gtk_window != NULL && gtk_window_visible && need_resize_window)
+    {
+      // when window is fullscreen or maximized, we cannot resize it to the
+      // video size
+
+      // in these cases we keep the need_resize_window flag true and resizing
+      // will be done later on, when exiting fullscreen and/or maximization
+      if (is_fullscreen() || is_maximized())
+        return;
+
+      gtk_window_resize (GTK_WINDOW (gtk_window), video_width, video_height);
+      need_resize_window = false;
+    }
+}
+
+void
+GtkInterface::normal_size()
+{
+  if (gtk_window != NULL && gtk_window_visible)
+    {
+      gtk_window_unfullscreen (GTK_WINDOW (gtk_window));
+      gtk_window_unmaximize (GTK_WINDOW (gtk_window));
+
+      gtk_window_resize (GTK_WINDOW (gtk_window), video_width, video_height);
+    }
 }
 
 bool
@@ -293,6 +375,28 @@ GtkInterface::handle_motion_notify_event (GdkEventMotion *event)
     {
       gdk_window_set_cursor (GDK_WINDOW (gtk_window->window), visible_cursor);
       cursor_timeout = 3;
+    }
+  return true;
+}
+
+bool
+GtkInterface::handle_window_state_event (GdkEventWindowState *event)
+{
+  if (gtk_window != NULL)
+    {
+      bool maximized_changed = (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED);
+      bool maximized = (event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED);
+
+      if (maximized_changed && !maximized)  // window unmaximized
+        resize_window_if_needed();
+
+      //----------------------------------------------------------------------------
+
+      bool fullscreen_changed = (event->changed_mask & GDK_WINDOW_STATE_FULLSCREEN);
+      bool fullscreen = (event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN);
+
+      if (fullscreen_changed && !fullscreen)  // window unfullscreened
+        resize_window_if_needed();
     }
   return true;
 }
