@@ -37,6 +37,9 @@ gst123 - A GStreamer based command line media player
 ; '''-x''', '''--novideo'''
 : Do not play the video stream.
 
+; '''-f''', '''--fullscreen'''
+: Use fullscreen video output.
+
 ; '''-@''' ''<playlist>'', '''--list''' ''<playlist>''
 : Load files to play from the playlist file.
 
