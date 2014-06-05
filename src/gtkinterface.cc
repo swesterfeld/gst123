@@ -18,6 +18,7 @@
  */
 
 #include "gtkinterface.h"
+#include "options.h"
 
 #include <gtk/gtk.h>
 #include <X11/Xlib.h>
@@ -112,6 +113,8 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
       gtk_widget_realize (gtk_window);
 
       window_xid = GDK_WINDOW_XID (gtk_widget_get_window (gtk_window));
+
+      video_fullscreen = Options::the().fullscreen;    // initially fullscreen?
 
       // make background black
       GdkColor color;

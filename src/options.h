@@ -44,6 +44,7 @@ public:
   double        skip;
   double        initial_volume;
   gboolean      quiet;
+  gboolean      fullscreen;
   char        **uris;
   std::list<std::string>  playlists;
   char         *audio_output;
@@ -52,7 +53,7 @@ public:
   Options ();
   void parse (int argc, char **argv);
 
-  static Options& the();
+  static const Options& the();
 };
 
 #endif

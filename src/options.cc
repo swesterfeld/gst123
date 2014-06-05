@@ -44,6 +44,7 @@ Options::Options ()
   verbose = FALSE;
   novideo = FALSE;
   quiet   = FALSE;
+  fullscreen = FALSE;
   uris = NULL;
   audio_output = NULL;
   print_visualization_list = FALSE;
@@ -83,6 +84,8 @@ Options::parse (int argc, char **argv)
       "Play files in random order forever", NULL},
     {"novideo", 'x', 0, G_OPTION_ARG_NONE, &instance->novideo,
       "Do not play the video stream", NULL},
+    {"fullscreen", 'f', 0, G_OPTION_ARG_NONE, &instance->fullscreen,
+      "Use fullscreen video output", NULL},
     {"audio-output", 'a', 0, G_OPTION_ARG_STRING, &instance->audio_output,
       "Set audio output driver and device", "<driver>[=<dev>]"},
     {"visualization", 'v', 0, G_OPTION_ARG_STRING, &instance->visualization,
@@ -147,7 +150,7 @@ Options::add_playlist (const gchar *option_name, const gchar *value)
   instance->playlists.push_back (value);
 }
 
-Options&
+const Options&
 Options::the()
 {
   assert (instance);
