@@ -192,6 +192,9 @@ GtkInterface::show()
 {
   if (gtk_window != NULL && !gtk_window_visible)
     {
+      // resize avoids showing big windows (avoids vertical or horizontal maximization)
+      gtk_window_resize (GTK_WINDOW (gtk_window), 100, 100);
+
       gtk_widget_show_all (gtk_window);
 
       // restore fullscreen & maximized state
