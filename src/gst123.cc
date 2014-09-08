@@ -409,6 +409,12 @@ struct Player : public KeyHandler
   }
 
   void
+  set_alpha (double alpha_change)
+  {
+    gtk_interface.set_opacity (alpha_change);
+  }
+
+  void
   mute_unmute()
   {
     gboolean mute;
@@ -875,6 +881,12 @@ Player::process_input (int key)
       case '-':
         set_volume (-0.1);
         break;
+      case 'A':
+        set_alpha (0.1);
+        break;
+      case 'a':
+        set_alpha (-0.1);
+        break;
       case 'M':
       case 'm':
         mute_unmute();
@@ -911,6 +923,7 @@ Player::print_keyboard_help()
   printf ("   m                    -     toggle mute/unmute\n");
   printf ("   f                    -     toggle fullscreen (only for videos)\n");
   printf ("   1                    -     normal video size (only for videos)\n");
+  printf ("   A/a                  -     increase/decrease opacity by 10%% (only for videos)\n");
   printf ("   n                    -     play next file\n");
   printf ("   q                    -     quit gst123\n");
   printf ("   ?                    -     this help\n");

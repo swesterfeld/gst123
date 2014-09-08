@@ -331,6 +331,19 @@ GtkInterface::normal_size()
     }
 }
 
+void
+GtkInterface::set_opacity (double alpha_change)
+{
+  if (gtk_window != NULL && gtk_window_visible)
+    {
+      double alpha;
+
+      alpha = gtk_window_get_opacity (GTK_WINDOW (gtk_window));
+      alpha = CLAMP (alpha + alpha_change, 0.0, 1.0);
+      gtk_window_set_opacity (GTK_WINDOW (gtk_window), alpha);
+    }
+}
+
 bool
 GtkInterface::handle_keypress_event (GdkEventKey *event)
 {
