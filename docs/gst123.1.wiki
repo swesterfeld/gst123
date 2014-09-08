@@ -96,6 +96,9 @@ instead of skipping to the next file, press Ctrl-C within the first second of th
 ; '''1'''
 : Normal video size (only for videos).
 
+; '''A/a'''
+: Increase/decrease opacity by 10% (only for videos).
+
 ; '''n'''
 : Play next file.
 
