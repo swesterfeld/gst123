@@ -58,6 +58,9 @@ gst123 - A GStreamer based command line media player
 ; '''--volume''' ''<volume>''
 : Set initial replay volume (in percent).
 
+; '''-s''', '''--subtitle''' ''<subtitle_file>''
+: Set subtitle file to use for video playback.
+
 ; '''-q''', '''--quiet'''
 : Don't display any messages (title, codec, ui feedback).
 
@@ -98,6 +101,9 @@ instead of skipping to the next file, press Ctrl-C within the first second of th
 
 ; '''A/a'''
 : Increase/decrease opacity by 10% (only for videos).
+
+; '''s'''
+: Toggle subtitles  (only for videos).
 
 ; '''n'''
 : Play next file.
