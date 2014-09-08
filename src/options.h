@@ -48,6 +48,7 @@ public:
   char        **uris;
   std::list<std::string>  playlists;
   char         *audio_output;
+  char         *subtitle;
   char         *visualization;
 
   Options ();

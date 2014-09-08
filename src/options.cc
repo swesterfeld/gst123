@@ -96,6 +96,8 @@ Options::parse (int argc, char **argv)
       "Skip the first 'n' seconds", "<n>"},
     { "volume", '\0', 0, G_OPTION_ARG_DOUBLE, &instance->initial_volume,
       "Set initial replay volume (in percent)", "<volume>" },
+    {"subtitle", 's', 0, G_OPTION_ARG_STRING, &instance->subtitle,
+      "Set subtitle file to use for video playback", "<subtitle_file>"},
     {"quiet", 'q', 0, G_OPTION_ARG_NONE, &instance->quiet,
       "Don't display any messages", NULL},
     {G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &instance->uris, "Movies to play", NULL},

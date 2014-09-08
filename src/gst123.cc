@@ -206,6 +206,20 @@ struct Player : public KeyHandler
     uris.push_back (uri);
   }
 
+  void
+  set_subtitle (string uri)
+  {
+    if (!gst_uri_is_valid (uri.c_str()))
+      {
+        if (!g_path_is_absolute (uri.c_str()))
+          uri = g_get_current_dir() + string (G_DIR_SEPARATOR + uri);
+
+        if (!filename2uri (uri))
+          return;
+      }
+    g_object_set (G_OBJECT (playbin), "suburi", uri.c_str(), NULL);
+  }
+
   string
   make_n_char_string (string s, guint n)
   {
@@ -328,6 +342,12 @@ struct Player : public KeyHandler
 
                 gst_element_set_state (playbin, GST_STATE_NULL);
                 g_object_set (G_OBJECT (playbin), "uri", uri.c_str(), NULL);
+                if (!options.subtitle)
+                  {
+                    string suburi = guess_subtitle (uri);
+                    if (!suburi.empty())
+                      g_object_set (G_OBJECT (playbin), "suburi", suburi.c_str(), NULL);
+                  }
                 gst_element_set_state (playbin, GST_STATE_PLAYING);
 
                 if (options.skip > 0)
@@ -345,6 +365,16 @@ struct Player : public KeyHandler
             return; // -> done
           }
       }
+  }
+
+  string
+  guess_subtitle (string uri)
+  {
+    string suburi = uri;
+    unsigned extpos = suburi.rfind ('.'); // File extension position
+
+    suburi.replace (extpos+1, suburi.npos, "srt");
+    return suburi;
   }
 
   void
@@ -426,6 +456,14 @@ struct Player : public KeyHandler
   toggle_fullscreen()
   {
     gtk_interface.toggle_fullscreen();
+  }
+
+  void
+  toggle_subtitle()
+  {
+    int flags;
+    g_object_get (G_OBJECT (playbin), "flags", &flags, NULL);
+    g_object_set (G_OBJECT (playbin), "flags", flags ^ 0x4, NULL);
   }
 
   void
@@ -895,6 +933,10 @@ Player::process_input (int key)
       case 'f':
         toggle_fullscreen();
         break;
+      case 'S':
+      case 's':
+        toggle_subtitle();
+        break;
       case 'N':
       case 'n':
         play_next();
@@ -924,6 +966,7 @@ Player::print_keyboard_help()
   printf ("   f                    -     toggle fullscreen (only for videos)\n");
   printf ("   1                    -     normal video size (only for videos)\n");
   printf ("   A/a                  -     increase/decrease opacity by 10%% (only for videos)\n");
+  printf ("   s                    -     toggle subtitles  (only for videos)\n");
   printf ("   n                    -     play next file\n");
   printf ("   q                    -     quit gst123\n");
   printf ("   ?                    -     this help\n");
@@ -1059,6 +1102,10 @@ main (gint   argc,
   if (options.initial_volume >= 0)
     {
       g_object_set (G_OBJECT (player.playbin), "volume", options.initial_volume / 100, NULL);
+    }
+  if (options.subtitle)
+    {
+      player.set_subtitle (options.subtitle);
     }
 
   Compat::setup_bus_callbacks (GST_PIPELINE (player.playbin), my_sync_bus_callback, my_bus_callback, &player);
