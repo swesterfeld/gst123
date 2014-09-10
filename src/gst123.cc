@@ -347,6 +347,8 @@ struct Player : public KeyHandler
                     string suburi = guess_subtitle (uri);
                     if (!suburi.empty())
                       g_object_set (G_OBJECT (playbin), "suburi", suburi.c_str(), NULL);
+                    else
+                      g_object_set (G_OBJECT (playbin), "suburi", NULL, NULL);
                   }
                 gst_element_set_state (playbin, GST_STATE_PLAYING);
 
@@ -373,7 +375,11 @@ struct Player : public KeyHandler
     string suburi = uri;
     unsigned extpos = suburi.rfind ('.'); // File extension position
 
-    suburi.replace (extpos+1, suburi.npos, "srt");
+    if (extpos < suburi.length() - 1)
+      suburi.replace (extpos+1, suburi.npos, "srt");
+    else
+      suburi = "";
+
     return suburi;
   }
 
