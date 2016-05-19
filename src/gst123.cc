@@ -172,6 +172,7 @@ struct Player : public KeyHandler
   int            cols;
   Tags           tags;
   GstState       last_state;
+  string         old_tag_str;
 
   enum
   {
@@ -181,14 +182,18 @@ struct Player : public KeyHandler
   void
   reset_tags (int which_tags)
   {
-    string old_codec = tags.codec;
-    guint old_bitrate = tags.bitrate;
+    Tags old_tags = tags;
     tags = Tags();
 
     if (which_tags == KEEP_CODEC_TAGS)		/* otherwise: RESET_ALL_TAGS */
       {
-	tags.codec = old_codec;
-	tags.bitrate = old_bitrate;
+	tags.codec    = old_tags.codec;
+	tags.vcodec   = old_tags.vcodec;
+	tags.bitrate  = old_tags.bitrate;
+      }
+    else
+      {
+        old_tag_str = "";
       }
   }
 
@@ -235,6 +240,28 @@ struct Player : public KeyHandler
 	*si = ' ';
     return s;
   }
+  string
+  format_tags()
+  {
+    string tag_str;
+
+    if (tags.title != "" || tags.artist != "")
+      tag_str += make_n_char_string ("Title   : " + tags.title, cols / 2 - 1) + " " +
+                 make_n_char_string ("Artist  : " + tags.artist, cols / 2 - 1) + "\n";
+
+    if (tags.album != "" || tags.genre != "")
+      tag_str += make_n_char_string ("Album   : " + tags.album, cols / 2 - 1) + " " +
+	         make_n_char_string ("Genre   : " + tags.genre, cols / 2 - 1) + "\n";
+
+    if (tags.comment != "" || tags.date != "")
+      tag_str += make_n_char_string ("Comment : " + tags.comment, cols / 2 - 1) + " " +
+	         make_n_char_string ("Date    : " + tags.date, cols / 2 - 1) + "\n";
+
+    if (tags.codec != "" || tags.vcodec != "")
+      tag_str += make_n_char_string ("Codec   : " + tags.codec + " (audio) " + ((tags.vcodec != "") ? tags.vcodec + " (video)":""), cols / 2 - 1) + "\n";
+
+    return tag_str;
+  }
 
   void
   display_tags()
@@ -242,22 +269,15 @@ struct Player : public KeyHandler
     if (tags.timestamp > 0)
       if (get_time() - tags.timestamp > 0.5) /* allows us to wait a bit for more tags */
 	{
-	  overwrite_time_display();
-	  Msg::print ("\n");
-	  if (tags.title != "" || tags.artist != "")
-	    Msg::print ("%s %s\n",	  make_n_char_string ("Title   : " + tags.title, cols / 2 - 1).c_str(),
-	                                  make_n_char_string ("Artist  : " + tags.artist, cols / 2 - 1).c_str());
-	  if (tags.album != "" || tags.genre != "")
-	    Msg::print ("%s %s\n",	  make_n_char_string ("Album   : " + tags.album, cols / 2 - 1).c_str(),
-	                                  make_n_char_string ("Genre   : " + tags.genre, cols / 2 - 1).c_str());
-	  if (tags.comment != "" || tags.date != "")
-	    Msg::print ("%s %s\n",	  make_n_char_string ("Comment : " + tags.comment, cols / 2 - 1).c_str(),
-	                                  make_n_char_string ("Date    : " + tags.date, cols / 2 - 1).c_str());
-	  if (tags.codec != "" || tags.vcodec != "" || tags.bitrate != 0)
-	    Msg::print ("%s %s%.1f kbit/s\n",
-	                                  make_n_char_string ("Codec   : " + tags.codec + " (audio) " + ((tags.vcodec != "") ? tags.vcodec + " (video)":""), cols / 2 - 1).c_str(),
-	                                                     ("Bitrate : "), tags.bitrate / 1000.0);
-	  Msg::print ("\n");
+          /* we only display new tags if any of the tags changed */
+          string tag_str = format_tags();
+          if (tag_str != old_tag_str)
+            {
+	      overwrite_time_display();
+	      Msg::print ("\n%s\n", tag_str.c_str());
+              old_tag_str = tag_str;
+            }
+
 	  reset_tags (KEEP_CODEC_TAGS);
 	}
   }
@@ -798,6 +818,8 @@ cb_print_position (gpointer *data)
       Msg::print ("\rTime: %01lu:%02lu:%02lu.%02lu", pos_min / 60, pos_min % 60, tv_pos.tv_sec % 60, tv_pos.tv_usec / 10000);
       if (len > 0)   /* streams (i.e. http) have len == -1 */
 	Msg::print (" of %01lu:%02lu:%02lu.%02lu", len_min / 60, len_min % 60, tv_len.tv_sec % 60, tv_len.tv_usec / 10000);
+      if (player.tags.bitrate > 0)
+        Msg::print (" | Bitrate: %.1f kbit/sec", player.tags.bitrate / 1000.);
 
       string status, blanks;
       // Print [MUTED] if sound is muted:
