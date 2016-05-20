@@ -68,12 +68,12 @@ Options::parse (int argc, char **argv)
   GOptionContext *context = g_option_context_new ("<URI>... - Play video and audio clips");
   const GOptionEntry all_options[] = {
     {"list", '@', G_OPTION_FLAG_FILENAME, G_OPTION_ARG_CALLBACK,
-      (GOptionParseFunc*) Options::add_playlist,
+      gpointer (static_cast<GOptionArgFunc> (Options::add_playlist)),
       "Read playlist of files and URIs from <filename>", "<filename>"},
     {"version", '\0', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK,
-      (GOptionParseFunc*) Options::print_version, "Print version", NULL },
+      gpointer (static_cast<GOptionArgFunc> (Options::print_version)), "Print version", NULL },
     {"full-version", '\0', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK,
-      (GOptionParseFunc*) Options::print_full_version, "Print full version", NULL },
+      gpointer (static_cast<GOptionArgFunc> (Options::print_full_version)), "Print full version", NULL },
     {"verbose", '\0', 0, G_OPTION_ARG_NONE, &instance->verbose,
       "Print GStreamer pipeline used to play files", NULL},
     {"repeat", 'r', 0, G_OPTION_ARG_NONE, &instance->repeat,
@@ -128,15 +128,15 @@ Options::parse (int argc, char **argv)
     }
 }
 
-void
-Options::print_version()
+gboolean
+Options::print_version (const gchar *option_name, const gchar *value, gpointer data, GError **error)
 {
   printf ("%s %s\n", instance->program_name.c_str(), VERSION);
   exit (0);
 }
 
-void
-Options::print_full_version()
+gboolean
+Options::print_full_version (const gchar *option_name, const gchar *value, gpointer data, GError **error)
 {
   printf ("%-10s %s\n", (instance->program_name + ":").c_str(), VERSION);
   printf ("%-10s %d.%d.%d-%d\n", "GStreamer:", GST_VERSION_MAJOR, GST_VERSION_MINOR, GST_VERSION_MICRO, GST_VERSION_NANO);
@@ -146,10 +146,12 @@ Options::print_full_version()
   exit (0);
 }
 
-void
-Options::add_playlist (const gchar *option_name, const gchar *value)
+gboolean
+Options::add_playlist (const gchar *option_name, const gchar *value, gpointer data, GError **error)
 {
   instance->playlists.push_back (value);
+
+  return TRUE;
 }
 
 const Options&
