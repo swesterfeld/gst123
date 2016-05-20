@@ -1,3 +1,18 @@
+Overview of changes in gst123-0.3.4:
+
+* Option parsing bug for "-@, --list" fixed.
+* Avoid annoying redundant tag updates.
+* Support video subtitles [Ahmed El-Mahmoudy].
+* Use A/a keys to set video opacity [Ahmed El-Mahmoudy].
+* Work around kwin window manager policy "focus stealing prevention".
+* Fix image filetype detection bug.
+* Fix Issue 14: Use sync bus handler to set window xid.
+* Fix Issue 13: In some cases playing videos leads to g_criticals().
+* Added "-f, --fullscreen" option to start playback in fullscreen mode.
+* Added "--volume" option to set initial playback volume.
+* Ignore symlinks when crawling directories.
+* Various bugfixes.
+
 Overview of changes is gst123-0.3.3:
 
 * Fix Issue 10: Local files not properly escaped when converted to URLs
