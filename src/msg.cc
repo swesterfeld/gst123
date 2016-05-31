@@ -19,9 +19,13 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <math.h>
 
 #include "msg.h"
 #include "options.h"
+#include "utils.h"
+
+using std::string;
 
 namespace Gst123
 {
@@ -46,6 +50,41 @@ flush()
 {
   if (!Options::the().quiet)
     fflush (stdout);
+}
+
+struct StatusMessage
+{
+  string message;
+  double timestamp;
+
+  StatusMessage() : timestamp (0)
+  {
+  }
+};
+
+static StatusMessage status_message;
+
+void
+update_status (const char *format, ...)
+{
+  va_list args;
+
+  va_start (args, format);
+  char *msg = g_strdup_vprintf (format, args);
+  va_end (args);
+
+  status_message.message = msg;
+  status_message.timestamp = get_time();
+  g_free (msg);
+}
+
+string
+status()
+{
+  if (fabs (status_message.timestamp - get_time()) < 5)
+    return status_message.message;
+  else
+    return "";
 }
 
 }

@@ -20,6 +20,8 @@
 #ifndef __GST123_MSG__
 #define __GST123_MSG__
 
+#include <string>
+
 namespace Gst123
 {
 
@@ -28,6 +30,9 @@ namespace Msg
 
 void print (const char *format, ...);
 void flush();
+
+void update_status (const char *format, ...);
+std::string status();
 
 }
 

@@ -37,6 +37,7 @@
 #include "msg.h"
 #include "typefinder.h"
 #include "compat.h"
+#include "utils.h"
 #include <vector>
 #include <string>
 #include <list>
@@ -69,15 +70,6 @@ struct Tags
   {
   }
 };
-
-static double
-get_time()
-{
-  timeval tv;
-  gettimeofday (&tv, 0);
-
-  return double (tv.tv_sec) + double (tv.tv_usec) * (1.0 / 1000000.0);
-}
 
 static int
 get_columns()
@@ -440,8 +432,6 @@ struct Player : public KeyHandler
   void
   toggle_pause()
   {
-//    overwrite_time_display();
-
     if (last_state == GST_STATE_PAUSED) {
       gst_element_set_state (playbin, GST_STATE_PLAYING);
     }
@@ -457,8 +447,7 @@ struct Player : public KeyHandler
     g_object_get (G_OBJECT (playbin), "volume", &cur_volume, NULL);
     cur_volume += volume_change;
 
-    overwrite_time_display();
-    Msg::print ("Volume: %4.1f%% \n", cur_volume*100);
+    Msg::update_status ("Volume: %4.1f%%", cur_volume * 100);
 
     if ((cur_volume >= 0) && (cur_volume <= 10))
       g_object_set (G_OBJECT (playbin), "volume", cur_volume, NULL);
@@ -818,8 +807,20 @@ cb_print_position (gpointer *data)
       Msg::print ("\rTime: %01lu:%02lu:%02lu.%02lu", pos_min / 60, pos_min % 60, tv_pos.tv_sec % 60, tv_pos.tv_usec / 10000);
       if (len > 0)   /* streams (i.e. http) have len == -1 */
 	Msg::print (" of %01lu:%02lu:%02lu.%02lu", len_min / 60, len_min % 60, tv_len.tv_sec % 60, tv_len.tv_usec / 10000);
-      if (player.tags.bitrate > 0)
-        Msg::print (" | Bitrate: %.1f kbit/sec", player.tags.bitrate / 1000.);
+
+      string message = Msg::status();
+      if (message != "")
+        {
+          Msg::print (" | %s", message.c_str());
+        }
+      else
+        {
+          /* only print bitrate if no status message needs to be shown, in
+           * order to avoid too long output lines
+           */
+          if (player.tags.bitrate > 0)
+            Msg::print (" | Bitrate: %.1f kbit/sec", player.tags.bitrate / 1000.);
+        }
 
       string status, blanks;
       // Print [MUTED] if sound is muted:
