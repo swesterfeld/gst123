@@ -19,6 +19,7 @@
 
 #include "gtkinterface.h"
 #include "options.h"
+#include "msg.h"
 
 #include <gtk/gtk.h>
 #include <X11/Xlib.h>
@@ -28,6 +29,7 @@
 #include <string.h>
 
 using std::string;
+using namespace Gst123;
 
 static gboolean
 key_press_event_cb (GtkWidget *widget, GdkEventKey *event, gpointer data)
@@ -340,6 +342,7 @@ GtkInterface::set_opacity (double alpha_change)
 
       alpha = gtk_window_get_opacity (GTK_WINDOW (gtk_window));
       alpha = CLAMP (alpha + alpha_change, 0.0, 1.0);
+      Msg::update_status ("Opacity: %3.1f%%", alpha * 100);
       gtk_window_set_opacity (GTK_WINDOW (gtk_window), alpha);
     }
 }
