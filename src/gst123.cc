@@ -479,6 +479,8 @@ struct Player : public KeyHandler
     int flags;
     g_object_get (G_OBJECT (playbin), "flags", &flags, NULL);
     g_object_set (G_OBJECT (playbin), "flags", flags ^ 0x4, NULL);
+
+    Msg::update_status ("Subtitles: %s", (flags & 0x4) ? "off" : "on");
   }
 
   void
