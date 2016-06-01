@@ -21,6 +21,7 @@
 #define __GST123_MSG__
 
 #include <string>
+#include <glib.h>
 
 namespace Gst123
 {
@@ -28,10 +29,10 @@ namespace Gst123
 namespace Msg
 {
 
-void print (const char *format, ...);
+void print (const char *format, ...) G_GNUC_PRINTF (1, 2);
 void flush();
 
-void update_status (const char *format, ...);
+void update_status (const char *format, ...) G_GNUC_PRINTF (1, 2);
 std::string status();
 
 }
