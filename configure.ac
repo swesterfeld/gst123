@@ -102,7 +102,21 @@ dnl We need libncurses
 dnl
 AC_DEFUN([AC_NCURSES_REQUIREMENTS],
 [
-    PKG_CHECK_MODULES(NCURSES, [ncurses >= 5])
+    PKG_CHECK_MODULES(NCURSES, [ncurses >= 5], ncurses_has_pkgconfig=1, ncurses_has_pkgconfig=0)
+    if test x$ncurses_has_pkgconfig = x0; then
+      AC_PATH_PROG(NCURSES_CONFIG,ncurses6-config,false)
+      if test "$NCURSES_CONFIG" = false; then
+        AC_PATH_PROG(NCURSES_CONFIG,ncurses5-config,false)
+      fi
+      if test "$NCURSES_CONFIG" = false; then
+        AC_PATH_PROG(NCURSES_CONFIG,ncurses-config,false)
+      fi
+      if test "$NCURSES_CONFIG" = false; then
+        AC_MSG_ERROR([Neither pkgconfig(ncurses) nor ncurses-config was found.])
+      fi
+      NCURSES_CFLAGS="`$NCURSES_CONFIG --cflags`"
+      NCURSES_LIBS="`$NCURSES_CONFIG --libs`"
+    fi
     AC_SUBST(NCURSES_CFLAGS)
     AC_SUBST(NCURSES_LIBS)
 ])
