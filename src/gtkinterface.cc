@@ -142,6 +142,7 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
   key_map[GDK_Right]       = KEY_HANDLER_RIGHT;
   key_map[GDK_Up]          = KEY_HANDLER_UP;
   key_map[GDK_Down]        = KEY_HANDLER_DOWN;
+  key_map[GDK_BackSpace]   = KEY_HANDLER_BACKSPACE;
   key_map[GDK_KP_Add]      = '+';
   key_map[GDK_KP_Subtract] = '-';
 }

@@ -21,6 +21,7 @@
 
 /* key codes for process input ; everything < 256 is plain ascii */
 enum {
+  KEY_HANDLER_BACKSPACE = 0177, // ASCII backspace
   KEY_HANDLER_UP = 300,
   KEY_HANDLER_LEFT,
   KEY_HANDLER_RIGHT,

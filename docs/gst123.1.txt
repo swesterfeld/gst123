@@ -125,6 +125,18 @@ A/a::
 s::
     Toggle subtitles  (only for videos).
 
+r::
+    Toggle playback direction, forward or reverse.
+
+[ ]::
+    Change playback rate to 10% faster/slower.
+
+{ }::
+    Change playback rate to 2x faster/slower.
+
+Backspace::
+    Change playback rate to normal speed, 1x.
+
 n::
     Play next file.
 
