@@ -1,185 +1,241 @@
-.TH "GST123" "1" "2014\-09\-08" "Revision 1024" "gst123 Manual Page"
-
-.SH NAME
-
-gst123 - A GStreamer based command line media player
-
-.SH SYNOPSIS
-
-\fBgst123\fR [\fIOPTIONS\fR] [\fIURIS...\fR]
-
-.SH DESCRIPTION
-
-\fBgst123\fR is a command line based media player released as free software under the GNU LGPL.
-
-.SH OPTIONS
-
-\fBgst123\fR follows the usual GNU command line syntax, with long options starting with two dashes ('-').
-.TP
-\fB-h\fR, \fB--help\fR
-Shows a brief help message.
+'\" t
+.\"     Title: gst123
+.\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
+.\"      Date: 07/10/2017
+.\"    Manual: \ \&
+.\"    Source: \ \&
+.\"  Language: English
+.\"
+.TH "GST123" "1" "07/10/2017" "\ \&" "\ \&"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+gst123 \- A GStreamer based command line media player
+.SH "SYNOPSIS"
+.sp
+.nf
+\fIgst123\fR [\fIOPTIONS\fR] [\fI<URIS>\&...\fR]
+.fi
+.SH "DESCRIPTION"
+.sp
+\fBgst123\fR is a command line based media player released as free software under the GNU LGPL\&.
+.SH "OPTIONS"
 .PP
-.TP
-\fB--version\fR
-Prints out gst123 version.
+\-h, \-\-help
+.RS 4
+Shows a brief help message\&.
+.RE
 .PP
-.TP
-\fB--full-version\fR
-Prints out gst123 version and version of libraries used by gst123.
+\-\-version
+.RS 4
+Prints out gst123 version\&.
+.RE
 .PP
-.TP
-\fB-r\fR, \fB--repeat\fR
-Repeat playlist forever.
+\-\-full\-version
+.RS 4
+Prints out gst123 version and version of libraries used by gst123\&.
+.RE
 .PP
-.TP
-\fB-z\fR, \fB--shuffle\fR
-Shuffle playlist before playing.
+\-r, \-\-repeat
+.RS 4
+Repeat playlist forever\&.
+.RE
 .PP
-.TP
-\fB-Z\fR, \fB--random\fR
-Play files in random order forever.
+\-z, \-\-shuffle
+.RS 4
+Shuffle playlist before playing\&.
+.RE
 .PP
-.TP
-\fB-x\fR, \fB--novideo\fR
-Do not play the video stream.
+\-Z, \-\-random
+.RS 4
+Play files in random order forever\&.
+.RE
 .PP
-.TP
-\fB-f\fR, \fB--fullscreen\fR
-Use fullscreen video output.
+\-x, \-\-novideo
+.RS 4
+Do not play the video stream\&.
+.RE
 .PP
-.TP
-\fB-@\fR \fI<playlist>\fR, \fB--list\fR \fI<playlist>\fR
-Load files to play from the playlist file.
+\-f, \-\-fullscreen
+.RS 4
+Use fullscreen video output\&.
+.RE
 .PP
-.TP
-\fB-a\fR, \fB--audio-output\fR \fI<driver>[=<device>]\fR
-Set audio output driver (and device). See section audio drivers for details.
+\-@ <playlist>, \-\-list <playlist>
+.RS 4
+Load files to play from the playlist file\&.
+.RE
 .PP
-.TP
-\fB-v\fR, \fB--visualization\fR \fI<plugin_name>\fR
-Use a plugin for visualization during audio playback.
+\-a <driver>[=<device>], \-\-audio\-output <driver>[=<device>]
+.RS 4
+Set audio output driver (and device)\&. See section audio drivers for details\&.
+.RE
 .PP
-.TP
-\fB-V\fR, \fB--visualization-list\fR
-Show a list of available audio visualization plugins which can be used with the -v option.
+\-v <plugin>, \-\-visualization <plugin>
+.RS 4
+Use a plugin for visualization during audio playback\&.
+.RE
 .PP
-.TP
-\fB-k\fR \fI<n>\fR, \fB--skip\fR \fI<n>\fR
-Skip the first 'n' seconds of each file.
+\-V, \-\-visualization\-list
+.RS 4
+Show a list of available audio visualization plugins which can be used with the \-v option\&.
+.RE
 .PP
-.TP
-\fB--volume\fR \fI<volume>\fR
-Set initial replay volume (in percent).
+\-k <n>, \-\-skip <n>
+.RS 4
+Skip the first
+\fIn\fR
+seconds of each file\&.
+.RE
 .PP
-.TP
-\fB-s\fR, \fB--subtitle\fR \fI<subtitle_file>\fR
-Set subtitle file to use for video playback.
+\-\-volume <volume>
+.RS 4
+Set initial replay volume (in percent)\&.
+.RE
 .PP
-.TP
-\fB-q\fR, \fB--quiet\fR
-Don't display any messages (title, codec, ui feedback).
+\-s <subtitle_file>, \-\-subtitle <subtitle_file>
+.RS 4
+Set subtitle file to use for video playback\&.
+.RE
 .PP
-.TP
-\fB--verbose\fR
-Print GStreamer pipeline used to play files
+\-q, \-\-quiet
+.RS 4
+Don\(cqt display any messages (title, codec, ui feedback)\&.
+.RE
 .PP
-
-Besides filenames, playlist entries or command line args can be directories. In this case, \fBgst123\fR recursively searches the directory and plays all files contained in it.
-
-.SH INTERRUPT
-
-You can abort \fBgst123\fR at any time by pressing Ctrl-C. If you are playing multiple files, this will stop the current file and begin playing the next one. If you want to abort playing immediately
-instead of skipping to the next file, press Ctrl-C within the first second of the playback of a new file.
-
-.SH KEYBOARD INPUT
-.TP
-\fBcursor left/right\fR
-Seek 10 seconds backwards/forwards.
+\-\-verbose
+.RS 4
+Print GStreamer pipeline used to play files\&.
+.RE
+.sp
+Besides filenames, playlist entries or command line args can be directories\&. In this case, \fBgst123\fR recursively searches the directory and plays all files contained in it\&.
+.SH "INTERRUPT"
+.sp
+You can abort \fBgst123\fR at any time by pressing Ctrl\-C\&. If you are playing multiple files, this will stop the current file and begin playing the next one\&. If you want to abort playing immediately instead of skipping to the next file, press Ctrl\-C within the first second of the playback of a new file\&.
+.SH "KEYBOARD INPUT"
 .PP
-.TP
-\fBcursor down/up\fR
-Seek 1 minute backwards/forwards.
+cursor left/right
+.RS 4
+Seek 10 seconds backwards/forwards\&.
+.RE
 .PP
-.TP
-\fBpage down/up\fR
-Seek 10 minute backwards/forwards.
+cursor down/up
+.RS 4
+Seek 1 minute backwards/forwards\&.
+.RE
 .PP
-.TP
-\fBspace\fR
-Toggle pause.
+page down/up
+.RS 4
+Seek 10 minute backwards/forwards\&.
+.RE
 .PP
-.TP
-\fB+/-\fR
-Increase/decrease volume by 10%.
+space
+.RS 4
+Toggle pause\&.
+.RE
 .PP
-.TP
-\fBm\fR
-Toggle mute/unmute.
++/\-
+.RS 4
+Increase/decrease volume by 10%\&.
+.RE
 .PP
-.TP
-\fBf\fR
-Toggle fullscreen display (only for videos).
+m
+.RS 4
+Toggle mute/unmute\&.
+.RE
 .PP
-.TP
-\fB1\fR
-Normal video size (only for videos).
+f
+.RS 4
+Toggle fullscreen display (only for videos)\&.
+.RE
 .PP
-.TP
-\fBA/a\fR
-Increase/decrease opacity by 10% (only for videos).
+1
+.RS 4
+Normal video size (only for videos)\&.
+.RE
 .PP
-.TP
-\fBs\fR
-Toggle subtitles (only for videos).
+A/a
+.RS 4
+Increase/decrease opacity by 10% (only for videos)\&.
+.RE
 .PP
-.TP
-\fBn\fR
-Play next file.
+s
+.RS 4
+Toggle subtitles (only for videos)\&.
+.RE
 .PP
-.TP
-\fBq\fR
-Quit \fBgst123\fR.
+n
+.RS 4
+Play next file\&.
+.RE
 .PP
-.TP
-\fB?\fR
-Show keyboard help.
+q
+.RS 4
+Quit
+\fBgst123\fR
+.RE
 .PP
-
-.SH CONFIGURATION FILE
-
-During start, gst123 will read ~/.gst123rc, if this file exists. Empty lines and lines starting with a # are ignored. The following commands are available:
-.TP
-\fBaudio_output\fR \fI<driver>[=<device>]\fR
-This sets the default audio driver and the default audio device. It has the same effect as the -a / --audio-output command line option. When both are present, a config file entry and the command line option, the value from the command line option will be used. Read the section on audio drivers for details on the available drivers and syntax.
+?
+.RS 4
+Show keyboard help\&.
+.RE
+.SH "CONFIGURATION FILE"
+.sp
+During start, gst123 will read ~/\&.gst123rc, if this file exists\&. Empty lines and lines starting with a # are ignored\&. The following commands are available:
 .PP
-.TP
-\fBvisualization\fR \fI<visualization_plugin>\fR
-Set default visualization plugin for audio files. This setting has the same effect as the -v / --visualization command line option. When both are present, the value from the command line option will be used.
+audio_output <driver>[=<device>]
+.RS 4
+This sets the default audio driver and the default audio device\&. It has the same effect as the \-a / \-\-audio\-output command line option\&. When both are present, a config file entry and the command line option, the value from the command line option will be used\&. Read the section on audio drivers for details on the available drivers and syntax\&.
+.RE
 .PP
-
-.SH AUDIO DRIVERS
-.TP
-\fBalsa\fR=[\fI<device>\fR]
-The ALSA driver; when used without argument (as in -a alsa), the ALSA driver uses the default device. To select an ALSA device, its possible to use for example alsa=hw:1 (which will use the hw:1 ALSA device).
+visualization <visualization_plugin>
+.RS 4
+Set default visualization plugin for audio files\&. This setting has the same effect as the \-v / \-\-visualization command line option\&. When both are present, the value from the command line option will be used\&.
+.RE
+.SH "AUDIO DRIVERS"
 .PP
-.TP
-\fBoss\fR=[\fI<device>\fR]
-The OSS driver; when used without argument (as in -a oss), the OSS driver uses the default device. The device can be specified using for example oss=/dev/dsp1 (which would use the OSS device /dev/dsp1).
+alsa=<device>
+.RS 4
+The ALSA driver; when used without argument (as in \-a alsa), the ALSA driver uses the default device\&. To select an ALSA device, its possible to use for example alsa=hw:1 (which will use the hw:1 ALSA device)\&.
+.RE
 .PP
-.TP
-\fBpulse\fR=[\fI<device>\fR]
-The PulseAudio driver. This driver optionally accepts a device name using the pulse=\fI<device>\fR syntax.
+oss=<device>
+.RS 4
+The OSS driver; when used without argument (as in \-a oss), the OSS driver uses the default device\&. The device can be specified using for example oss=/dev/dsp1 (which would use the OSS device /dev/dsp1)\&.
+.RE
 .PP
-.TP
-\fBjack\fR
-The JACK driver. Device selection is not supported in this case.
+pulse=<device>
+.RS 4
+The PulseAudio driver\&. This driver optionally accepts a device name using the pulse=<device> syntax\&.
+.RE
 .PP
-.TP
-\fBnone\fR
-Dummy output driver, will not output any audio.
+jack
+.RS 4
+The JACK driver\&. Device selection is not supported in this case\&.
+.RE
 .PP
-
-.SH SEE ALSO
-
-gst123 Website (http://space.twc.de/~stefan/gst123.php <http://space.twc.de/~stefan/gst123.php>)
-
+none
+.RS 4
+Dummy output driver, will not output any audio\&.
+.RE
+.SH "SEE ALSO"
+.sp
+gst123 Website (http://space\&.twc\&.de/~stefan/gst123\&.php)
