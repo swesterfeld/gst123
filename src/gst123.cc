@@ -519,7 +519,9 @@ struct Player : public KeyHandler
   void
   quit()
   {
-    overwrite_time_display();
+    // End with a newline to preserve the time so the user knows where they
+    // left off.
+    Msg::print ("\n");
 
     gst_element_set_state (playbin, GST_STATE_NULL);
     if (loop)
