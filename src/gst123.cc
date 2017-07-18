@@ -523,7 +523,7 @@ struct Player : public KeyHandler
   {
     // End with a newline to preserve the time so the user knows where they
     // left off.
-    Msg::print ("\n");
+    Msg::print ("\n\n");
 
     gst_element_set_state (playbin, GST_STATE_NULL);
     if (loop)
