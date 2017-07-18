@@ -839,6 +839,8 @@ cb_print_position (gpointer *data)
 
       glong pos_min = tv_pos.tv_sec / 60;
       glong len_min = tv_len.tv_sec / 60;
+
+      player.overwrite_time_display();
       Msg::print ("\rTime: %01lu:%02lu:%02lu.%02lu", pos_min / 60, pos_min % 60, tv_pos.tv_sec % 60, tv_pos.tv_usec / 10000);
       if (len > 0)   /* streams (i.e. http) have len == -1 */
 	Msg::print (" of %01lu:%02lu:%02lu.%02lu", len_min / 60, len_min % 60, tv_len.tv_sec % 60, tv_len.tv_usec / 10000);
