@@ -27,6 +27,7 @@
 #include <time.h>
 #include <string.h>
 #include <assert.h>
+#include <math.h>
 #include "glib-extra.h"
 #include "config.h"
 #include "terminal.h"
@@ -157,16 +158,17 @@ struct Player : public KeyHandler
 {
   vector<string> uris;
 
-  GstElement    *playbin;
-  GMainLoop     *loop;
+  GstElement   *playbin;
+  GMainLoop    *loop;
 
-  guint          play_position;
-  int            cols;
-  Tags           tags;
-  GstState       last_state;
-  string         old_tag_str;
+  guint         play_position;
+  int           cols;
+  Tags          tags;
+  GstState      last_state;
+  string        old_tag_str;
 
   double        playback_rate;
+  double        playback_rate_step;
 
   enum
   {
@@ -451,7 +453,7 @@ struct Player : public KeyHandler
   set_playback_rate (double rate)
   {
     playback_rate = rate;
-    Msg::update_status ("playback_rate %g", playback_rate);
+    Msg::update_status ("Playback Rate: %.2fx", playback_rate);
 
     relative_seek (0);
   }
@@ -535,6 +537,7 @@ struct Player : public KeyHandler
   Player() : playbin (0), loop(0), play_position (0)
   {
     playback_rate = 1.0;
+    playback_rate_step = pow (2, 1.0 / 7); // approximately 10%, but 7 steps will make playback rate double
     cols = get_columns();
   }
 };
@@ -1012,10 +1015,10 @@ Player::process_input (int key)
         set_playback_rate (1);
         break;
       case '[':
-        set_playback_rate (playback_rate * .90);
+        set_playback_rate (playback_rate / playback_rate_step);
         break;
       case ']':
-        set_playback_rate (playback_rate * 1.10);
+        set_playback_rate (playback_rate * playback_rate_step);
         break;
       case '{':
         set_playback_rate (playback_rate / 2);
