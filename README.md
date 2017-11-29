@@ -1,7 +1,7 @@
 gst123
 ======
 
-[![License LGPL2]](https://github.com/swesterfeld/gst123/blob/master/COPYING)
+[License LGPL2](https://github.com/swesterfeld/gst123/blob/master/COPYING)
 
 # DESCRIPTION
 
