@@ -1,8 +1,8 @@
 gst123
 ======
 
-gst123 is available under the [LGPL2](https://github.com/swesterfeld/gst123/blob/master/COPYING) license
-and implemented in C++.
+gst123 is a command line media player for linux/unix, implemented in C++.
+It is distributed under the [LGPL2](https://github.com/swesterfeld/gst123/blob/master/COPYING) license.
 
 # DESCRIPTION
 
