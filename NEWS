@@ -1,3 +1,9 @@
+Overview of changes in gst123-0.3.5:
+
+* Support faster/slower playback [David Fries].
+* Better status bar notification (on the same line as time).
+* Minor bugfixes.
+
 Overview of changes in gst123-0.3.4:
 
 * Option parsing bug for "-@, --list" fixed.
