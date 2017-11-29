@@ -1,8 +1,8 @@
-AC_INIT([gst123], [0.3.4])
+AC_INIT([gst123], [0.3.5])
 AC_CONFIG_SRCDIR([src/gst123.cc])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR([build-aux])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([foreign])
 
 dnl ----------------------------- from acbirnet.m4 -------------------------------
 dnl Check whether cc accepts a certain option
