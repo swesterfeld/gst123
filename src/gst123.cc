@@ -1204,9 +1204,11 @@ main (gint   argc,
   g_usignal_add (SIGINT, sigint_usr_code, &player);
 
   /* now run */
-  terminal.init (player.loop, &player);
+  if (isatty(0))
+    terminal.init (player.loop, &player);
   g_main_loop_run (player.loop);
-  terminal.end();
+  if (isatty(0))
+    terminal.end();
   gtk_interface.end();
 
   /* also clean up */
