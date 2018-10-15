@@ -106,6 +106,7 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
     {
       gtk_init (argc, argv);
       gtk_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+      gtk_window_set_icon_name (GTK_WINDOW (gtk_window), "multimedia-player");
       g_signal_connect (G_OBJECT (gtk_window), "key-press-event", G_CALLBACK (key_press_event_cb), this);
       g_signal_connect (G_OBJECT (gtk_window), "motion-notify-event", G_CALLBACK (motion_notify_event_cb), this);
       g_signal_connect (G_OBJECT (gtk_window), "delete-event", G_CALLBACK (close_cb), this);
