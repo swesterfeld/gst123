@@ -40,6 +40,14 @@ key_press_event_cb (GtkWidget *widget, GdkEventKey *event, gpointer data)
 }
 
 static gboolean
+button_press_event_cb (GtkWidget *widget, GdkEventButton *event, gpointer data)
+{
+  GtkInterface *gtk_interface = static_cast<GtkInterface *> (data);
+
+  return gtk_interface->handle_buttonpress_event (event);
+}
+
+static gboolean
 motion_notify_event_cb (GtkWidget *widget, GdkEventMotion *event, gpointer data)
 {
   GtkInterface *gtk_interface = static_cast<GtkInterface *> (data);
@@ -108,6 +116,7 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
       gtk_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
       gtk_window_set_icon_name (GTK_WINDOW (gtk_window), "multimedia-player");
       g_signal_connect (G_OBJECT (gtk_window), "key-press-event", G_CALLBACK (key_press_event_cb), this);
+      g_signal_connect (G_OBJECT (gtk_window), "button-press-event", G_CALLBACK (button_press_event_cb), this);
       g_signal_connect (G_OBJECT (gtk_window), "motion-notify-event", G_CALLBACK (motion_notify_event_cb), this);
       g_signal_connect (G_OBJECT (gtk_window), "delete-event", G_CALLBACK (close_cb), this);
       g_signal_connect (G_OBJECT (gtk_window), "window-state-event", G_CALLBACK (window_state_event_cb), this);
@@ -366,6 +375,17 @@ GtkInterface::handle_keypress_event (GdkEventKey *event)
   if (ch != 0)
     {
       key_handler->process_input (ch);
+      return true;
+    }
+  return false;
+}
+
+bool
+GtkInterface::handle_buttonpress_event (GdkEventButton *event)
+{
+  if (event->button == 1 && event->state == 0)
+    {
+      key_handler->process_input (' ');
       return true;
     }
   return false;
