@@ -48,12 +48,22 @@ ConfigFile::visualization() const
 
 ConfigFile::ConfigFile()
 {
-  char *home = getenv ("HOME");
-  if (!home)
-    return;
+  char *home = getenv ("XDG_CONFIG_HOME");
+  string filename;
 
-  string filename = home;
-  filename += "/.gst123rc";
+  if (home)
+    {
+      filename = home;
+      filename += "/gst123rc";
+    }
+  else
+    {
+      home = getenv ("HOME");
+      if (!home)
+        return;
+      filename = home;
+      filename += "/.config/gst123rc";
+    }
 
   MicroConf cfg (filename);
   if (!cfg.open_ok())

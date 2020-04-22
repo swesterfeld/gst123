@@ -60,6 +60,7 @@ public:
   gulong window_xid_nolock() const;
   void toggle_fullscreen();
   bool handle_keypress_event (GdkEventKey *event);
+  bool handle_buttonpress_event (GdkEventButton *event);
   bool handle_motion_notify_event (GdkEventMotion *event);
   bool handle_window_state_event (GdkEventWindowState *event);
   bool handle_timeout();

@@ -60,7 +60,7 @@ AC_DEFUN([AC_GSTREAMER_REQUIREMENTS],
     if test x$GST_1_0 = x1; then
       AC_MSG_NOTICE([Building gst123 using gstreamer version 1.0])
 
-      PKG_CHECK_MODULES(GSTREAMER, gstreamer-1.0 gstreamer-base-1.0 gstreamer-video-1.0)
+      PKG_CHECK_MODULES(GSTREAMER, gstreamer-1.0 gstreamer-base-1.0 gstreamer-video-1.0 gstreamer-audio-1.0 gstreamer-tag-1.0)
     else
       dnl gstreamer-0.10 development package installed?
       PKG_CHECK_MODULES(GSTREAMER_0_10, gstreamer-0.10, GST_0_10=1, GST_0_10=0)
@@ -82,7 +82,7 @@ dnl
 AC_DEFUN([AC_GSTREAMER_GTK_REQUIREMENTS],
 [
     dnl We need GLib with friends
-    PKG_CHECK_MODULES(GSTREAMER_GTK, gtk+-2.0)
+    PKG_CHECK_MODULES(GSTREAMER_GTK, gtk+-3.0)
     AC_SUBST(GSTREAMER_GTK_CFLAGS)
     AC_SUBST(GSTREAMER_GTKLIBS)
 ])

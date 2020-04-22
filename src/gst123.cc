@@ -18,10 +18,11 @@
  * Boston, MA 02111-1307, USA.
  */
 #include <gst/gst.h>
+#include <gst/audio/audio.h>
 #include <gst/video/video.h>
+#include <gst/tag/tag.h>
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
-#include <signal.h>
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <time.h>
@@ -469,17 +470,23 @@ struct Player : public KeyHandler
     }
   }
 
+#define VOLUME_STEPS 20
+
   void
   set_volume (gdouble volume_change)
   {
     gdouble cur_volume;
-    g_object_get (G_OBJECT (playbin), "volume", &cur_volume, NULL);
-    cur_volume += volume_change;
+
+    cur_volume = gst_stream_volume_get_volume (GST_STREAM_VOLUME (playbin),
+        GST_STREAM_VOLUME_FORMAT_CUBIC);
+
+    cur_volume = round ((cur_volume + volume_change) * VOLUME_STEPS) / VOLUME_STEPS;
+    cur_volume = CLAMP (cur_volume, 0.0, 10.0);
+
+    gst_stream_volume_set_volume (GST_STREAM_VOLUME (playbin),
+      GST_STREAM_VOLUME_FORMAT_CUBIC, cur_volume);
 
     Msg::update_status ("Volume: %4.1f%%", cur_volume * 100);
-
-    if ((cur_volume >= 0) && (cur_volume <= 10))
-      g_object_set (G_OBJECT (playbin), "volume", cur_volume, NULL);
   }
 
   void
@@ -1204,9 +1211,11 @@ main (gint   argc,
   g_usignal_add (SIGINT, sigint_usr_code, &player);
 
   /* now run */
-  terminal.init (player.loop, &player);
+  if (isatty(0))
+    terminal.init (player.loop, &player);
   g_main_loop_run (player.loop);
-  terminal.end();
+  if (isatty(0))
+    terminal.end();
   gtk_interface.end();
 
   /* also clean up */
