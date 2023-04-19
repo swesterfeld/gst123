@@ -119,9 +119,9 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
       video_fullscreen = Options::the().fullscreen;    // initially fullscreen?
 
       // make background black
-      GdkColor color;
-      gdk_color_parse ("black", &color);
-      gtk_widget_modify_bg (gtk_window, GTK_STATE_NORMAL, &color);
+      GdkRGBA color;
+      gdk_rgba_parse (&color, "black");
+      gtk_widget_override_background_color (gtk_window, GTK_STATE_FLAG_NORMAL, &color);
 
       visible_cursor = NULL;
       invisible_cursor = gdk_cursor_new (GDK_BLANK_CURSOR);
@@ -136,15 +136,15 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
   gtk_window_visible = false;
 
   /* initialize map from Gdk keysyms to KeyHandler codes */
-  key_map[GDK_Page_Up]     = KEY_HANDLER_PAGE_UP;
-  key_map[GDK_Page_Down]   = KEY_HANDLER_PAGE_DOWN;
-  key_map[GDK_Left]        = KEY_HANDLER_LEFT;
-  key_map[GDK_Right]       = KEY_HANDLER_RIGHT;
-  key_map[GDK_Up]          = KEY_HANDLER_UP;
-  key_map[GDK_Down]        = KEY_HANDLER_DOWN;
-  key_map[GDK_BackSpace]   = KEY_HANDLER_BACKSPACE;
-  key_map[GDK_KP_Add]      = '+';
-  key_map[GDK_KP_Subtract] = '-';
+  key_map[XK_Page_Up]     = KEY_HANDLER_PAGE_UP;
+  key_map[XK_Page_Down]   = KEY_HANDLER_PAGE_DOWN;
+  key_map[XK_Left]        = KEY_HANDLER_LEFT;
+  key_map[XK_Right]       = KEY_HANDLER_RIGHT;
+  key_map[XK_Up]          = KEY_HANDLER_UP;
+  key_map[XK_Down]        = KEY_HANDLER_DOWN;
+  key_map[XK_BackSpace]   = KEY_HANDLER_BACKSPACE;
+  key_map[XK_KP_Add]      = '+';
+  key_map[XK_KP_Subtract] = '-';
 }
 
 bool
@@ -152,7 +152,7 @@ GtkInterface::is_fullscreen()
 {
   g_return_val_if_fail (gtk_window != NULL && gtk_window_visible, false);
 
-  GdkWindowState state = gdk_window_get_state (GDK_WINDOW (gtk_window->window));
+  GdkWindowState state = gdk_window_get_state (gtk_widget_get_window(gtk_window));
   return (state & GDK_WINDOW_STATE_FULLSCREEN);
 }
 
@@ -161,7 +161,7 @@ GtkInterface::is_maximized()
 {
   g_return_val_if_fail (gtk_window != NULL && gtk_window_visible, false);
 
-  GdkWindowState state = gdk_window_get_state (GDK_WINDOW (gtk_window->window));
+  GdkWindowState state = gdk_window_get_state (gtk_widget_get_window(gtk_window));
   return (state & GDK_WINDOW_STATE_MAXIMIZED);
 }
 
@@ -209,7 +209,7 @@ GtkInterface::show()
 
       // get cursor, so we can restore it after hiding it
       if (!visible_cursor)
-        visible_cursor = gdk_window_get_cursor (GDK_WINDOW (gtk_window->window));
+        visible_cursor = gdk_window_get_cursor (gtk_widget_get_window(gtk_window));
 
       // sync, to make the window really visible before we return
       gdk_display_sync (gdk_display_get_default());
@@ -270,7 +270,7 @@ GtkInterface::hide()
       if (video_maximized)
         gtk_window_unmaximize (GTK_WINDOW (gtk_window));
 
-      gtk_widget_hide_all (gtk_window);
+      gtk_widget_hide (gtk_window);
 
       screen_saver (RESUME);
       gtk_window_visible = false;
@@ -341,10 +341,10 @@ GtkInterface::set_opacity (double alpha_change)
     {
       double alpha;
 
-      alpha = gtk_window_get_opacity (GTK_WINDOW (gtk_window));
+      alpha = gtk_widget_get_opacity (GTK_WIDGET (gtk_window));
       alpha = CLAMP (alpha + alpha_change, 0.0, 1.0);
       Msg::update_status ("Opacity: %3.1f%%", alpha * 100);
-      gtk_window_set_opacity (GTK_WINDOW (gtk_window), alpha);
+      gtk_widget_set_opacity (GTK_WIDGET (gtk_window), alpha);
     }
 }
 
@@ -380,7 +380,7 @@ GtkInterface::handle_timeout()
     {
       if (cursor_timeout == 0)
         {
-          gdk_window_set_cursor (GDK_WINDOW (gtk_window->window), invisible_cursor);
+          gdk_window_set_cursor (gtk_widget_get_window (gtk_window), invisible_cursor);
           cursor_timeout = -1;
         }
       else if (cursor_timeout > 0)
@@ -396,7 +396,7 @@ GtkInterface::handle_motion_notify_event (GdkEventMotion *event)
 {
   if (gtk_window != NULL && gtk_window_visible)
     {
-      gdk_window_set_cursor (GDK_WINDOW (gtk_window->window), visible_cursor);
+      gdk_window_set_cursor (gtk_widget_get_window (gtk_window), visible_cursor);
       cursor_timeout = 3;
     }
   return true;
@@ -438,10 +438,10 @@ GtkInterface::handle_close()
 void
 GtkInterface::screen_saver (ScreenSaverSetting setting)
 {
-  GdkWindow *window = GTK_WIDGET (gtk_window)->window;
+  GdkWindow *window = gtk_widget_get_window (gtk_window);
   if (gtk_window != NULL && window)
     {
-      guint64 wid = GDK_WINDOW_XWINDOW (window);
+      guint64 wid = GDK_WINDOW_XID (window);
 
       const char *setting_str = (setting == SUSPEND) ? "suspend" : "resume";
 
