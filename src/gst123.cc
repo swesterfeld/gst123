@@ -152,7 +152,7 @@ uri2filename (const string& uri)
     }
 }
 
-struct Options options;
+Options options;
 
 struct Player : public KeyHandler
 {
@@ -602,7 +602,7 @@ public:
 };
 
 static void
-caps_set_cb (GObject *pad, GParamSpec *pspec, class Player* player)
+caps_set_cb (GObject *pad, GParamSpec *pspec, Player* player)
 {
   // this callback doesn't occur in main thread
 
