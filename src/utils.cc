@@ -20,6 +20,8 @@
 #include <sys/time.h>
 #include "utils.h"
 
+using std::string;
+
 namespace Gst123
 {
 
@@ -30,6 +32,21 @@ get_time()
   gettimeofday (&tv, 0);
 
   return double (tv.tv_sec) + double (tv.tv_usec) * (1.0 / 1000000.0);
+}
+
+string
+string_printf (const char *format, ...)
+{
+  va_list args;
+
+  va_start (args, format);
+  char *c_str = g_strdup_vprintf (format, args);
+  va_end (args);
+
+  string str = c_str;
+  g_free (c_str);
+
+  return str;
 }
 
 }

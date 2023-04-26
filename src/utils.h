@@ -20,10 +20,14 @@
 #ifndef GST123_UTILS_H
 #define GST123_UTILS_H
 
+#include <string>
+#include <glib.h>
+
 namespace Gst123
 {
 
 double get_time();
+std::string string_printf (const char *format, ...) G_GNUC_PRINTF (1, 2);
 
 }
 
