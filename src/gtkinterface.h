@@ -20,6 +20,7 @@
 #define GST123_GTK_INTERFACE_H
 
 #include <gtk/gtk.h>
+#include <gdk/gdk.h>
 #include "keyhandler.h"
 #include <map>
 #include <string>
