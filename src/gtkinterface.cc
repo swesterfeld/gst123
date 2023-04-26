@@ -136,15 +136,15 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
   gtk_window_visible = false;
 
   /* initialize map from Gdk keysyms to KeyHandler codes */
-  key_map[XK_Page_Up]     = KEY_HANDLER_PAGE_UP;
-  key_map[XK_Page_Down]   = KEY_HANDLER_PAGE_DOWN;
-  key_map[XK_Left]        = KEY_HANDLER_LEFT;
-  key_map[XK_Right]       = KEY_HANDLER_RIGHT;
-  key_map[XK_Up]          = KEY_HANDLER_UP;
-  key_map[XK_Down]        = KEY_HANDLER_DOWN;
-  key_map[XK_BackSpace]   = KEY_HANDLER_BACKSPACE;
-  key_map[XK_KP_Add]      = '+';
-  key_map[XK_KP_Subtract] = '-';
+  key_map[GDK_KEY_Page_Up]     = KEY_HANDLER_PAGE_UP;
+  key_map[GDK_KEY_Page_Down]   = KEY_HANDLER_PAGE_DOWN;
+  key_map[GDK_KEY_Left]        = KEY_HANDLER_LEFT;
+  key_map[GDK_KEY_Right]       = KEY_HANDLER_RIGHT;
+  key_map[GDK_KEY_Up]          = KEY_HANDLER_UP;
+  key_map[GDK_KEY_Down]        = KEY_HANDLER_DOWN;
+  key_map[GDK_KEY_BackSpace]   = KEY_HANDLER_BACKSPACE;
+  key_map[GDK_KEY_KP_Add]      = '+';
+  key_map[GDK_KEY_KP_Subtract] = '-';
 }
 
 bool
@@ -152,7 +152,7 @@ GtkInterface::is_fullscreen()
 {
   g_return_val_if_fail (gtk_window != NULL && gtk_window_visible, false);
 
-  GdkWindowState state = gdk_window_get_state (gtk_widget_get_window(gtk_window));
+  GdkWindowState state = gdk_window_get_state (gtk_widget_get_window (gtk_window));
   return (state & GDK_WINDOW_STATE_FULLSCREEN);
 }
 
@@ -161,7 +161,7 @@ GtkInterface::is_maximized()
 {
   g_return_val_if_fail (gtk_window != NULL && gtk_window_visible, false);
 
-  GdkWindowState state = gdk_window_get_state (gtk_widget_get_window(gtk_window));
+  GdkWindowState state = gdk_window_get_state (gtk_widget_get_window (gtk_window));
   return (state & GDK_WINDOW_STATE_MAXIMIZED);
 }
 
@@ -209,7 +209,7 @@ GtkInterface::show()
 
       // get cursor, so we can restore it after hiding it
       if (!visible_cursor)
-        visible_cursor = gdk_window_get_cursor (gtk_widget_get_window(gtk_window));
+        visible_cursor = gdk_window_get_cursor (gtk_widget_get_window (gtk_window));
 
       // sync, to make the window really visible before we return
       gdk_display_sync (gdk_display_get_default());
