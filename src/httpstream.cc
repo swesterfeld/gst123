@@ -18,6 +18,7 @@
  */
 
 #include "iostream.h"
+#include "utils.h"
 #include <glib.h>
 #include <cstring>
 #include <errno.h>
@@ -155,6 +156,6 @@ HTTPStream::str_error (int error)
     case 302:
       return "HTTP: Content moved to another location";
     default:
-      return "HTTP: Error code " + error;
+      return string_printf ("HTTP: Error code %d", error);
     }
 }
