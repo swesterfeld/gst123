@@ -18,6 +18,7 @@
  */
 
 #include "iostream.h"
+#include "utils.h"
 #include <sys/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -53,7 +54,6 @@ NetworkStream::open_stream()
 {
   struct addrinfo hints;
   struct addrinfo *result = NULL, *rp = NULL;
-  char port_str[10];
   int ret = 0;
 
   memset (&hints, 0, sizeof (struct addrinfo));
@@ -61,9 +61,9 @@ NetworkStream::open_stream()
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
 
-  snprintf (port_str, sizeof (port), "%d", port);
+  string port_str = string_printf ("%d", port);
 
-  if ((ret = getaddrinfo (host.c_str(), port_str, &hints, &result)) < 0)
+  if ((ret = getaddrinfo (host.c_str(), port_str.c_str(), &hints, &result)) < 0)
     {
       status = ret;
       lookup_error = true;
@@ -112,8 +112,7 @@ NetworkStream::net_error (int error)
 
   if (lookup_error)
     {
-      str += "Failed to look up host " + host + ":";
-      str += port + " (" + string (gai_strerror (error)) + ")";
+      str += string_printf ("Failed to look up host %s:%d (%s)", host.c_str(), port, gai_strerror (error));
       return str;
     }
 
