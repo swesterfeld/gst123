@@ -1,0 +1,11 @@
+FROM archlinux
+
+RUN pacman -Sy --noconfirm archlinux-keyring && pacman-key --init && pacman-key --populate
+RUN pacman -Syu --noconfirm
+RUN pacman -S --noconfirm gcc clang make automake autoconf git \
+                          pkg-config gst-plugins-base-libs gtk3
+
+ADD . /gst123
+WORKDIR /gst123
+
+RUN misc/build.sh
