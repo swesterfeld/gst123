@@ -86,7 +86,7 @@ get_columns()
       if (c > 30)
         result = c;
     }
-  fclose (cols);
+  pclose (cols);
 
   return result;
 }
