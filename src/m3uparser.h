@@ -32,7 +32,6 @@ struct M3UParser : public PlaylistParser
   std::string str_error (int error);
 private:
   bool extended;
-  static const std::string type;
 };
 
 }

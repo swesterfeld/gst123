@@ -27,14 +27,12 @@ using std::vector;
 
 using namespace Gst123;
 
-const string M3UParser::type = "audio/x-mpegurl";
-
 // Identify if the playlist is M3U
 bool
 M3UParser::identify (IOStream *stream)
 {
   // Trust the content type first
-  if (stream->get_content_type() == M3UParser::type)
+  if (stream->get_content_type() == "audio/x-mpegurl" || stream->get_content_type() == "audio/mpegurl")
     return true;
   else if (stream->get_content_type() != "")
     return false;
@@ -46,7 +44,7 @@ M3UParser::identify (IOStream *stream)
 
   return true;
 }
-
+;
 // Parse the playlist
 // Currently we are only picking out the file to be played
 // and we don't really care about the playlist entry information
