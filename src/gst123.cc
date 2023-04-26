@@ -910,7 +910,12 @@ file_info (const string& path)
       else if (S_ISREG (st.st_mode))
         return FI_REG;
       else
-        return FI_OTHER;
+        {
+          if (stat (path.c_str(), &st) == 0 && S_ISREG (st.st_mode))
+            return FI_REG;
+          else
+            return FI_OTHER;
+        }
     }
   return FI_ERROR;
 }
