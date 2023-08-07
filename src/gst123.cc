@@ -316,6 +316,9 @@ struct Player : public KeyHandler
   string
   url_decode (const string& str)
   {
+    if (str.substr (0, 5) == "file:")
+      return uri2filename (str);
+
     string ret;
 
     for (size_t i = 0; i < str.length(); i++)
