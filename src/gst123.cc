@@ -312,6 +312,26 @@ struct Player : public KeyHandler
     return false;
   }
 
+  // decode filename from uri to normal string
+  string
+  url_decode (const string& str)
+  {
+    string ret;
+
+    for (size_t i = 0; i < str.length(); i++)
+      {
+        if (str[i] != '%')
+          {
+            ret += str[i];
+          }
+        else
+          {
+            ret += strtol (str.substr(i + 1, 2).c_str(), nullptr, 16); /* hex string -> char */
+            i += 2;
+        }
+      }
+    return ret;
+  }
 
   void
   play_next()
@@ -352,7 +372,7 @@ struct Player : public KeyHandler
               }
             else
               {
-                Msg::print ("\nPlaying %s\n", uri.c_str());
+                Msg::print ("\nPlaying %s\n", url_decode (uri).c_str());
 
                 gtk_interface.set_title (get_basename (uri));
 
