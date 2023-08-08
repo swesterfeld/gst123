@@ -26,7 +26,7 @@ All video file formats gstreamer can play are also available.
 
 # REQUIREMENTS
 
-You need a C++ compiler, gstreamer-0.10 or gstreamer-1.0, gtk2.0 and ncurses to
+You need a C++ compiler, gstreamer-0.10 or gstreamer-1.0, gtk3.0 and ncurses to
 build gst123.
 
 # INSTALLATION
