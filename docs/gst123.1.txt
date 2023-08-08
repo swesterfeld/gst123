@@ -149,8 +149,9 @@ q::
 CONFIGURATION FILE
 ------------------
 
-During start, gst123 will read ~/.gst123rc, if this file exists. Empty lines
-and lines starting with a # are ignored. The following commands are available:
+During start, gst123 will read ~/.config/gst123rc, if this file exists. Empty
+lines and lines starting with a # are ignored. The following commands are
+available:
 
 audio_output <driver>[=<device>]::
     This sets the default audio driver and the default audio device.  It has
