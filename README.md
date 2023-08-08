@@ -1,4 +1,3 @@
-[![License][lgpl2.0-badge]][lgpl2.0-url]
 [![Test Build][testing-badge]][testing-url]
 [![Version][version-badge]][version-url]
 
@@ -38,8 +37,6 @@ In short, gst123 needs to be built and installed with:
 	make
 	make install
 
-[lgpl2.0-badge]: https://img.shields.io/github/license/swesterfeld/gst123?style=for-the-badge
-[lgpl2.0-url]: https://github.com/swesterfeld/gst123/blob/master/COPYING
 [testing-badge]: https://img.shields.io/github/actions/workflow/status/swesterfeld/gst123/testing.yml?style=for-the-badge
 [testing-url]: https://github.com/swesterfeld/gst123/actions/workflows/testing.yml
 [version-badge]: https://img.shields.io/github/v/release/swesterfeld/gst123?label=version&style=for-the-badge
