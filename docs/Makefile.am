@@ -4,7 +4,7 @@ DOCS_DIR = ~/public_html/gst123/docs-$(VERSION)
 
 rebuild-manpage:
 	a2x -f manpage gst123.1.txt
-	asciidoc -b xhtml11 -d manpage gst123.1.txt
+	groff -mandoc -Thtml < gst123.1 >gst123.1.html
 
 publish-docs:
 	mkdir -p $(DOCS_DIR)
