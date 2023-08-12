@@ -1,4 +1,4 @@
-AC_INIT([gst123],[0.4.0])
+AC_INIT([gst123],[0.4.1])
 AC_CONFIG_SRCDIR([src/gst123.cc])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([build-aux])
