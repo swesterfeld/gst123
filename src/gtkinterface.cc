@@ -99,6 +99,7 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
 {
   key_handler = handler;
 
+  gdk_set_allowed_backends ("x11");
   if (gtk_init_check (argc, argv))
     {
       gtk_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
