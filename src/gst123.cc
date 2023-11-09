@@ -365,6 +365,7 @@ struct Player : public KeyHandler
           {
             string uri = uris[play_position++];
 
+            cols = get_columns();
             overwrite_time_display();
 
             if (is_image_file (uri))
