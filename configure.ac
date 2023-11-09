@@ -92,7 +92,7 @@ dnl We need libX11
 dnl
 AC_DEFUN([AC_X11_REQUIREMENTS],
 [
-    AC_CHECK_LIB(X11, XOpenDisplay)
+    AC_CHECK_LIB(X11, XInitThreads)
     X11_LIBS='-lX11'
     AC_SUBST(X11_LIBS)
 ])
