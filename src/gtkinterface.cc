@@ -84,17 +84,6 @@ window_state_event_cb (GtkWidget *widget,
   return gtk_interface->handle_window_state_event (ws_event);
 }
 
-bool
-GtkInterface::have_x11_display()
-{
-  static Display *display = NULL;
-
-  if (!display)
-    display = XOpenDisplay (NULL);   // this should work if and only if we do have an X11 server we can use
-
-  return display != NULL;
-}
-
 GtkInterface::GtkInterface() :
   window_xid (0),
   video_width (0),
@@ -110,9 +99,8 @@ GtkInterface::init (int *argc, char ***argv, KeyHandler *handler)
 {
   key_handler = handler;
 
-  if (have_x11_display())
+  if (gtk_init_check (argc, argv))
     {
-      gtk_init (argc, argv);
       gtk_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
       gtk_window_set_icon_name (GTK_WINDOW (gtk_window), "multimedia-player");
       g_signal_connect (G_OBJECT (gtk_window), "key-press-event", G_CALLBACK (key_press_event_cb), this);
