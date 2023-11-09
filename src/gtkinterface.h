@@ -70,8 +70,6 @@ public:
   void normal_size();
   void set_opacity (double alpha_change);
   void set_title (const std::string& title);
-
-  static bool have_x11_display();
 };
 
 #endif

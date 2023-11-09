@@ -106,7 +106,8 @@ Options::parse (int argc, char **argv)
   g_option_context_add_main_entries (context, all_options, NULL);
   g_option_context_add_group (context, gst_init_get_option_group());
 
-  if (GtkInterface::have_x11_display())
+  gdk_set_allowed_backends("x11");
+  if (gtk_init_check (&argc, &argv))
     g_option_context_add_group (context, gtk_get_option_group (TRUE));
 
   GError *error = NULL;
