@@ -2,7 +2,6 @@
   * use MicroConf to parse config file
   * make it possible to have vim-like seek keys
     (configure hjkl keyboard shortcuts to arrow keys)
-- fix terminal settings after crash
 
 wishlist:
 - wav output with --wav foo.wav

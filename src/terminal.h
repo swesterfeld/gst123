@@ -28,7 +28,6 @@
 
 class Terminal
 {
-  struct termios             tio_orig;
   std::string                terminal_type;
   std::vector<int>           chars;
   std::map<std::string, int> keys;
@@ -39,7 +38,7 @@ class Terminal
   static void signal_sig_cont (int);
 
   void read_stdin();
-  int getch();
+  int getchar();
   void init_terminal();
   void bind_key (const char *key, int handler);
   void print_term (const char *key);
