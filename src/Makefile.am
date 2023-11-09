@@ -8,5 +8,5 @@ gst123_SOURCES = gst123.cc glib-extra.c glib-extra.h terminal.cc terminal.h gtki
 		 uri.cc playlist.cc m3uparser.cc plsparser.cc uri.h playlist.h m3uparser.h plsparser.h \
 		 iostream.cc iostream.h networkstream.cc filestream.cc consolestream.cc \
 		 httpstream.cc visualization.h visualization.cc msg.h msg.cc typefinder.h typefinder.cc \
-                 compat.h compat.cc utils.h utils.cc
+                 utils.h utils.cc
 gst123_LDADD = $(GSTREAMER_LIBS) $(GSTREAMER_GTK_LIBS) $(NCURSES_LIBS)

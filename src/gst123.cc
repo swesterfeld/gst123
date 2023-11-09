@@ -37,7 +37,6 @@
 #include "visualization.h"
 #include "msg.h"
 #include "typefinder.h"
-#include "compat.h"
 #include "utils.h"
 #include <vector>
 #include <string>
@@ -102,10 +101,17 @@ get_basename (const string& path)
 }
 
 void
-force_aspect_ratio (GstElement *element, gpointer userdata)
+force_aspect_ratio (GstElement *element)
 {
   if (g_object_class_find_property (G_OBJECT_GET_CLASS (G_OBJECT (element)), "force-aspect-ratio"))
     g_object_set (G_OBJECT (element), "force-aspect-ratio", TRUE, NULL);
+}
+
+void
+aspect_iterfunc (const GValue *evalue, gpointer userdata)
+{
+  GstElement *element = GST_ELEMENT (g_value_get_object (evalue));
+  force_aspect_ratio (element);
 }
 
 static bool
@@ -466,7 +472,7 @@ struct Player : public KeyHandler
   relative_seek (double displacement)
   {
     gint64 cur_pos;
-    Compat::element_query_position (playbin, GST_FORMAT_TIME, &cur_pos);
+    gst_element_query_position (playbin, GST_FORMAT_TIME, &cur_pos);
 
     double new_pos_sec = cur_pos * (1.0 / GST_SECOND) + displacement;
     seek (new_pos_sec * GST_SECOND);
@@ -629,28 +635,28 @@ caps_set_cb (GObject *pad, GParamSpec *pspec, Player* player)
 {
   // this callback doesn't occur in main thread
 
-  if (GstCaps *caps = Compat::pad_get_current_caps (GST_PAD (pad)))
+  if (GstCaps *caps = gst_pad_get_current_caps (GST_PAD (pad)))
     {
-      int width, height;
+      GstVideoInfo info;
 
-      if (Compat::video_get_size (GST_PAD (pad), &width, &height))
+      gst_video_info_init(&info);
+      if (gst_video_info_from_caps (&info, caps))
         {
           // resize window to match video size (must run in main thread, so we use an idle handler)
-
           g_idle_add ((GSourceFunc) IdleResizeWindow::callback,
-                      new IdleResizeWindow (width, height));
+                      new IdleResizeWindow (info.width, info.height));
         }
       gst_caps_unref (caps);
     }
 }
 
 static void
-collect_element (GstElement *element,
-                 gpointer list_ptr)
+collect_element (const GValue *evalue, gpointer list_ptr)
 {
   /* seems that if we use push_front, the pipeline gets displayed in the
    * right order; but I don't know if thats a guarantee of an accident
    */
+  GstElement *element = GST_ELEMENT (g_value_get_object (evalue));
   list<GstElement *>& elements = *(list<GstElement*> *)list_ptr;
   gst_object_ref (element);
   elements.push_front (element);
@@ -683,9 +689,9 @@ my_sync_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
   switch (GST_MESSAGE_TYPE (message)) {
     case GST_MESSAGE_ELEMENT:
       {
-        if (Compat::is_video_overlay_prepare_window_handle_message (message) && gtk_interface.init_ok())
+        if (gst_is_video_overlay_prepare_window_handle_message (message) && gtk_interface.init_ok())
           {
-            Compat::video_overlay_set_window_handle (message, gtk_interface.window_xid_nolock());
+            gst_video_overlay_set_window_handle (GST_VIDEO_OVERLAY (GST_MESSAGE_SRC (message)), gtk_interface.window_xid_nolock());
           }
       }
       break;
@@ -738,7 +744,7 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
 	    list<GstElement *> elements;
 
 	    GstIterator *iterator = gst_bin_iterate_recurse (GST_BIN (player.playbin));
-	    Compat::iterator_foreach (iterator, collect_element, &elements);
+	    gst_iterator_foreach (iterator, collect_element, &elements);
 
 	    string print_elements = collect_print_elements (GST_ELEMENT (player.playbin), elements);
 	    player.overwrite_time_display();
@@ -756,7 +762,7 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
       break;
   }
 
-  if (Compat::is_stream_start_message (message))
+  if (GST_MESSAGE_TYPE (message) == GST_MESSAGE_STREAM_START)
     {
       // try to figure out the video size
       GstElement *videosink = NULL;
@@ -768,16 +774,16 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
               // Find an sink element that has "force-aspect-ratio" property & set it
               // to TRUE:
               GstIterator *iterator = gst_bin_iterate_sinks (GST_BIN (videosink));
-              Compat::iterator_foreach (iterator, force_aspect_ratio, NULL);
+              gst_iterator_foreach (iterator, aspect_iterfunc, NULL);
             }
           else
             {
-              force_aspect_ratio (videosink, NULL);
+              force_aspect_ratio (videosink);
             }
 
           if (GstPad* pad = gst_element_get_static_pad (videosink, "sink"))
             {
-              if (GstCaps *caps = Compat::pad_get_current_caps (pad))
+              if (GstCaps *caps = gst_pad_get_current_caps (pad))
                 {
                   caps_set_cb (G_OBJECT (pad), NULL, &player);
                   gst_caps_unref (caps);
@@ -853,8 +859,8 @@ cb_print_position (gpointer *data)
 
   player.display_tags();
 
-  if (Compat::element_query_position (player.playbin, GST_FORMAT_TIME, &pos) &&
-      Compat::element_query_duration (player.playbin, GST_FORMAT_TIME, &len))
+  if (gst_element_query_position (player.playbin, GST_FORMAT_TIME, &pos) &&
+      gst_element_query_duration (player.playbin, GST_FORMAT_TIME, &len))
     {
       guint pos_ms = (pos % GST_SECOND) / 1000000;
       guint len_ms = (len % GST_SECOND) / 1000000;
@@ -1171,7 +1177,7 @@ main (gint   argc,
         printf ("%s", options.usage.c_str());
       return -1;
     }
-  player.playbin = Compat::create_playbin ("play");
+  player.playbin = gst_element_factory_make("playbin", "play");
   if (options.novideo)
     {
       GstElement *fakesink = gst_element_factory_make ("fakesink", "novid");
@@ -1224,7 +1230,11 @@ main (gint   argc,
       player.set_subtitle (options.subtitle);
     }
 
-  Compat::setup_bus_callbacks (GST_PIPELINE (player.playbin), my_sync_bus_callback, my_bus_callback, &player);
+  /* Setup callbacks */
+  GstBus *bus = gst_pipeline_get_bus (GST_PIPELINE (player.playbin));
+  gst_bus_set_sync_handler (bus, my_sync_bus_callback, &player, NULL);
+  gst_bus_add_watch (bus, my_bus_callback, &player);
+  gst_object_unref (bus);
 
   g_timeout_add (130, (GSourceFunc) cb_print_position, &player);
   g_idle_add ((GSourceFunc) idle_start_player, &player);
