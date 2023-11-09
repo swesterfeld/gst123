@@ -228,47 +228,11 @@ GtkInterface::show()
       // sync, to make the window really visible before we return
       gdk_display_sync (gdk_display_get_default());
 
+      gtk_window_present (GTK_WINDOW (gtk_window));
       screen_saver (SUSPEND);
-
-      // work around kwin window manager policy "focus stealing prevention"
-      // which would show our window behind active window in some cases, see
-      // https://bugs.kde.org/show_bug.cgi?id=335367
-      send_net_active_window_event();
 
       gtk_window_visible = true;
     }
-}
-
-void
-GtkInterface::send_net_active_window_event()
-{
-  g_return_if_fail (gtk_window != NULL);
-
-  // figure out root window
-  GdkScreen    *screen = gdk_window_get_screen (gtk_widget_get_window (gtk_window));
-  GdkWindow    *root_window = gdk_screen_get_root_window (screen);
-
-  // obtain timestamp
-  GdkDisplay   *display = gtk_widget_get_display (GTK_WIDGET (gtk_window));
-  guint32       timestamp = gdk_x11_display_get_user_time (display);
-
-  // send _NET_ACTIVE_WINDOW message to root window
-  XClientMessageEvent xclient;
-
-  memset (&xclient, 0, sizeof (xclient));
-  xclient.type = ClientMessage;
-  xclient.window = window_xid_nolock();
-  xclient.message_type = gdk_x11_get_xatom_by_name_for_display (display, "_NET_ACTIVE_WINDOW");
-  xclient.format = 32;
-  xclient.data.l[0] = 2;        /* source: NET::FromTool = 2 */
-  xclient.data.l[1] = timestamp;
-  xclient.data.l[2] = None;     /* currently active window */
-  xclient.data.l[3] = 0;
-  xclient.data.l[4] = 0;
-
-  XSendEvent (GDK_DISPLAY_XDISPLAY (display), GDK_WINDOW_XID (root_window), False,
-              SubstructureRedirectMask | SubstructureNotifyMask,
-              (XEvent *) &xclient);
 }
 
 void
