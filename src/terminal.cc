@@ -27,10 +27,6 @@
 #include <vector>
 #include <map>
 
-#ifdef getch
-#undef getch
-#endif
-
 #include "terminal.h"
 
 using std::vector;
@@ -71,7 +67,7 @@ Terminal::stdin_dispatch (GSource    *source,
   int key;
   do
     {
-      key = terminal_instance->getch();
+      key = terminal_instance->getchar();
 
       if (key > 0)
         terminal_instance->key_handler->process_input (key);
@@ -177,7 +173,7 @@ Terminal::read_stdin()
 }
 
 int
-Terminal::getch()
+Terminal::getchar()
 {
   for (;;)
     {

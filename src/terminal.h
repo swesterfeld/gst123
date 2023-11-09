@@ -39,7 +39,7 @@ class Terminal
   static void signal_sig_cont (int);
 
   void read_stdin();
-  int getch();
+  int getchar();
   void init_terminal();
   void bind_key (const char *key, int handler);
   void print_term (const char *key);
