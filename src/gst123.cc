@@ -1126,6 +1126,7 @@ Player::process_input (int key)
         set_playback_rate (playback_rate * 2);
         break;
       case '?':
+      case 'h':
         print_keyboard_help();
         break;
     }
@@ -1155,7 +1156,7 @@ Player::print_keyboard_help()
   printf ("   n                    -     play next file\n");
   printf ("   p                    -     play prev file\n");
   printf ("   q                    -     quit gst123\n");
-  printf ("   ?                    -     this help\n");
+  printf ("   ?|h                  -     this help\n");
   printf ("=====================================================================\n");
   printf ("\n\n");
 }
