@@ -408,6 +408,71 @@ struct Player : public KeyHandler
       }
   }
 
+  void
+  play_prev()
+  {
+    reset_tags (RESET_ALL_TAGS);
+
+    for (;;)
+      {
+        if (uris.size())
+          {
+            if (play_position == 1)
+              --play_position;
+
+            if (!play_position)
+              {
+                if (options.repeat)
+                  play_position = uris.size() - 1;
+              }
+            else
+                play_position -= 2;
+
+            string uri = uris[play_position++];
+
+            overwrite_time_display();
+
+            if (is_image_file (uri))
+              {
+                Msg::print ("\nSkipping image %s\n", uri.c_str());
+
+                remove_current_uri();
+              }
+            else
+              {
+                Msg::print ("\nPlaying %s\n", url_decode (uri).c_str());
+
+                gtk_interface.set_title (get_basename (uri));
+
+                gst_element_set_state (playbin, GST_STATE_NULL);
+                g_object_set (G_OBJECT (playbin), "uri", uri.c_str(), NULL);
+                if (!options.subtitle)
+                  {
+                    string suburi = guess_subtitle (uri);
+                    if (!suburi.empty())
+                      g_object_set (G_OBJECT (playbin), "suburi", suburi.c_str(), NULL);
+                    else
+                      g_object_set (G_OBJECT (playbin), "suburi", NULL, NULL);
+                  }
+                gst_element_set_state (playbin, GST_STATE_PLAYING);
+
+                if (options.skip > 0)
+                  {
+                    // block until state changed and seek to skip position
+                    gst_element_get_state (playbin, NULL, NULL, GST_CLOCK_TIME_NONE);
+                    seek (options.skip * GST_SECOND);
+                  }
+                return; // -> done
+              }
+          }
+        else
+          {
+            quit();
+            return; // -> done
+          }
+      }
+  }
+
   string
   guess_subtitle (string uri)
   {
@@ -1035,6 +1100,10 @@ Player::process_input (int key)
       case 'n':
         play_next();
         break;
+      case 'P':
+      case 'p':
+        play_prev();
+        break;
       case '1':
         normal_size();
         break;
@@ -1084,6 +1153,7 @@ Player::print_keyboard_help()
   printf ("   { }                  -     playback rate 2x faster/slower\n");
   printf ("   Backspace            -     playback rate 1x\n");
   printf ("   n                    -     play next file\n");
+  printf ("   p                    -     play prev file\n");
   printf ("   q                    -     quit gst123\n");
   printf ("   ?                    -     this help\n");
   printf ("=====================================================================\n");
