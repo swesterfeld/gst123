@@ -163,6 +163,7 @@ struct Player : public KeyHandler
 
   guint         play_position;
   int           cols;
+  int           stop;
   Tags          tags;
   GstState      last_state;
   string        old_tag_str;
@@ -175,6 +176,7 @@ struct Player : public KeyHandler
     KEEP_CODEC_TAGS,
     RESET_ALL_TAGS
   };
+
   void
   reset_tags (int which_tags)
   {
@@ -337,7 +339,7 @@ struct Player : public KeyHandler
   }
 
   void
-  play_next()
+  play_next(bool force=false)
   {
     reset_tags (RESET_ALL_TAGS);
 
@@ -361,7 +363,7 @@ struct Player : public KeyHandler
                 swap (uris[i], uris[j]);
               }
           }
-        if (play_position < uris.size())
+        if (play_position < uris.size() && (force || !stop))
           {
             string uri = uris[play_position++];
 
@@ -585,6 +587,12 @@ struct Player : public KeyHandler
   }
 
   void
+  toggle_stop()
+  {
+    stop ^= 1;
+  }
+
+  void
   toggle_fullscreen()
   {
     gtk_interface.toggle_fullscreen();
@@ -622,7 +630,7 @@ struct Player : public KeyHandler
   void print_keyboard_help();
   void add_uri_or_directory (const string& name);
 
-  Player() : playbin (0), loop(0), play_position (0)
+  Player() : playbin (0), loop(0), play_position (0), stop(0)
   {
     playback_rate = 1.0;
     playback_rate_step = pow (2, 1.0 / 7); // approximately 10%, but 7 steps will make playback rate double
@@ -948,6 +956,11 @@ cb_print_position (gpointer *data)
         }
 
       string status, blanks;
+
+      // Print [STOP] if stop after current:
+      if (player.stop)
+        status += " [STOP]";
+
       // Print [MUTED] if sound is muted:
       gboolean mute;
       g_object_get (G_OBJECT (player.playbin), "mute", &mute, NULL);
@@ -964,6 +977,7 @@ cb_print_position (gpointer *data)
         status += " [PAUSED]";
       else
         blanks += "         ";
+
       Msg::print ("%s%s\r", status.c_str(), blanks.c_str());
       Msg::flush();
     }
@@ -1088,6 +1102,10 @@ Player::process_input (int key)
       case 'm':
         mute_unmute();
         break;
+      case 'T':
+      case 't':
+        toggle_stop();
+        break;
       case 'F':
       case 'f':
         toggle_fullscreen();
@@ -1098,7 +1116,7 @@ Player::process_input (int key)
         break;
       case 'N':
       case 'n':
-        play_next();
+        play_next(true);
         break;
       case 'P':
       case 'p':
@@ -1142,8 +1160,9 @@ Player::print_keyboard_help()
   printf ("   cursor left/right    -     seek 10 seconds backwards/forwards\n");
   printf ("   cursor down/up       -     seek 1  minute  backwards/forwards\n");
   printf ("   page down/up         -     seek 10 minute  backwards/forwards\n");
-  printf ("   space                -     toggle pause\n");
   printf ("   +/-                  -     increase/decrease volume by 10%%\n");
+  printf ("   space                -     toggle pause\n");
+  printf ("   t                    -     toggle stop after current\n");
   printf ("   m                    -     toggle mute/unmute\n");
   printf ("   f                    -     toggle fullscreen (only for videos)\n");
   printf ("   1                    -     normal video size (only for videos)\n");
