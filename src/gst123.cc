@@ -338,22 +338,37 @@ struct Player : public KeyHandler
     return ret;
   }
 
+/* jump: -1 forced play, 0 start of list, 1-9 add to current */
   void
-  play_next(bool force=false)
+  play_next(int jump=-2)
   {
     reset_tags (RESET_ALL_TAGS);
 
     for (;;)
       {
-        if (play_position == uris.size() && options.repeat)
+        if (jump > -1)
           {
-            if (uris.empty())
-              {
-                Msg::print ("No files remaining in playlist.\n");
-                quit();
-              }
-            play_position = 0;
+            if (!jump)
+              play_position = 0;
+            else
+              play_position += jump - 1;
           }
+
+        if (play_position >= uris.size())
+          {
+            if (options.repeat)
+              {
+                if (uris.empty())
+                  {
+                    Msg::print ("No files remaining in playlist.\n");
+                    quit();
+                  }
+                play_position = 0;
+              }
+            else
+              play_position = uris.size() - 1;
+          }
+
         if (options.shuffle && play_position == 0)
           {
             // Fisher–Yates shuffle
@@ -363,7 +378,8 @@ struct Player : public KeyHandler
                 swap (uris[i], uris[j]);
               }
           }
-        if (play_position < uris.size() && (force || !stop))
+
+        if (play_position < uris.size() && (jump > -2 || !stop))
           {
             string uri = uris[play_position++];
 
@@ -377,7 +393,7 @@ struct Player : public KeyHandler
               }
             else
               {
-                Msg::print ("\nPlaying %s\n", url_decode (uri).c_str());
+                Msg::print ("\nPlaying %d %s\n", play_position, url_decode (uri).c_str());
 
                 gtk_interface.set_title (get_basename (uri));
 
@@ -442,7 +458,7 @@ struct Player : public KeyHandler
               }
             else
               {
-                Msg::print ("\nPlaying %s\n", url_decode (uri).c_str());
+                Msg::print ("\nPlaying %d %s\n", play_position, url_decode (uri).c_str());
 
                 gtk_interface.set_title (get_basename (uri));
 
@@ -1140,11 +1156,23 @@ Player::process_input (int key)
         break;
       case 'N':
       case 'n':
-        play_next(true);
+        play_next(-1);
         break;
       case 'P':
       case 'p':
         play_prev();
+        break;
+      case '0':
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
+        play_next(key - '0');
         break;
       case 'L':
         show_list(true);
@@ -1152,7 +1180,7 @@ Player::process_input (int key)
       case 'l':
         show_list();
         break;
-      case '1':
+      case 'o':
         normal_size();
         break;
       case 'r':
@@ -1195,7 +1223,7 @@ Player::print_keyboard_help()
   printf ("   t                    -     toggle stop after current\n");
   printf ("   m                    -     toggle mute/unmute\n");
   printf ("   f                    -     toggle fullscreen (only for videos)\n");
-  printf ("   1                    -     normal video size (only for videos)\n");
+  printf ("   o                    -     normal video size (only for videos)\n");
   printf ("   A/a                  -     increase/decrease opacity by 10%% (only for videos)\n");
   printf ("   s                    -     toggle subtitles  (only for videos)\n");
   printf ("   r                    -     reverse playback\n");
@@ -1204,6 +1232,8 @@ Player::print_keyboard_help()
   printf ("   Backspace            -     playback rate 1x\n");
   printf ("   n                    -     play next file\n");
   printf ("   p                    -     play prev file\n");
+  printf ("   0                    -     play 1. file\n");
+  printf ("   1-9                  -     play current+n. file\n");
   printf ("   l                    -     list playlist\n");
   printf ("   L                    -     with full path\n");
   printf ("   q                    -     quit gst123\n");
