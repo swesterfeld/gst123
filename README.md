@@ -41,3 +41,13 @@ In short, gst123 needs to be built and installed with:
 [testing-url]: https://github.com/swesterfeld/gst123/actions/workflows/testing.yml
 [version-badge]: https://img.shields.io/github/v/release/swesterfeld/gst123?label=version&style=for-the-badge
 [version-url]: https://github.com/swesterfeld/gst123/releases
+
+-----
+
+# FORK
+
+I added some often used features.
+
+![Help Screen](pics/features.png)  
+
+
