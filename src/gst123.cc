@@ -475,6 +475,30 @@ struct Player : public KeyHandler
       }
   }
 
+  void
+  show_list(bool path=false)
+  {
+    if (uris.size())
+      {
+	overwrite_time_display();
+
+        for (guint i = 0; i < uris.size();)
+          {
+            string uri = uris[i++];
+                   uri = url_decode (uri);
+            char *puri = uri.data();
+
+            if (!path && strrchr(puri, '/'))
+              {
+                puri = strrchr(puri, '/') + 1;
+              }
+            printf ("%d%c %s\n", i, (i == play_position ? '*' : ' '), puri);
+          }
+        printf ("\n");
+      }
+    return;
+  }
+
   string
   guess_subtitle (string uri)
   {
@@ -1122,6 +1146,12 @@ Player::process_input (int key)
       case 'p':
         play_prev();
         break;
+      case 'L':
+        show_list(true);
+        break;
+      case 'l':
+        show_list();
+        break;
       case '1':
         normal_size();
         break;
@@ -1155,7 +1185,7 @@ Player::print_keyboard_help()
 {
   overwrite_time_display();
 
-  printf ("\n\n");
+  printf ("\n");
   printf ("==================== gst123 keyboard commands =======================\n");
   printf ("   cursor left/right    -     seek 10 seconds backwards/forwards\n");
   printf ("   cursor down/up       -     seek 1  minute  backwards/forwards\n");
@@ -1174,6 +1204,8 @@ Player::print_keyboard_help()
   printf ("   Backspace            -     playback rate 1x\n");
   printf ("   n                    -     play next file\n");
   printf ("   p                    -     play prev file\n");
+  printf ("   l                    -     list playlist\n");
+  printf ("   L                    -     with full path\n");
   printf ("   q                    -     quit gst123\n");
   printf ("   ?|h                  -     this help\n");
   printf ("=====================================================================\n");
