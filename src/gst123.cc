@@ -19,6 +19,7 @@
  */
 #include <gst/gst.h>
 #include <gst/video/video.h>
+#include <gst/gsttoc.h>
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #include <signal.h>
@@ -175,6 +176,7 @@ struct Player : public KeyHandler
     KEEP_CODEC_TAGS,
     RESET_ALL_TAGS
   };
+  GList *chapters;
   void
   reset_tags (int which_tags)
   {
@@ -276,6 +278,30 @@ struct Player : public KeyHandler
 
 	  reset_tags (KEEP_CODEC_TAGS);
 	}
+  }
+
+  void
+  display_chapters()
+  {
+    GList *l; int i;
+    gint64 start, stop;
+    gchar *title;
+    GstTagList *tag_list = NULL;
+    for (l = chapters, i = 0; l != NULL; l = l->next, i++) {
+      GstTocEntry *entry = (GstTocEntry *)(l->data);
+
+      if (gst_toc_entry_get_start_stop_times (entry, &start, &stop)) {
+        tag_list = gst_toc_entry_get_tags (entry);
+        gst_tag_list_get_string(tag_list, GST_TAG_TITLE, &title);
+        guint start_ms = (start % GST_SECOND) / 1000000;
+        guint start_sec = start / GST_SECOND;
+        guint start_min = start_sec / 60;
+
+        Msg::print ("\n%01u:%02u:%02u.%02u %s", start_min / 60, start_min % 60, start_sec % 60, start_ms / 10, title);
+        g_free(title);
+        gst_tag_list_free (tag_list);
+      }
+    }
   }
 
   void
@@ -751,6 +777,29 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
 	player.last_state = state;
       }
       break;
+    case GST_MESSAGE_TOC: {
+      GstToc *toc;
+      gst_message_parse_toc (message, &toc, NULL);
+      if (gst_toc_get_scope (toc) == GST_TOC_SCOPE_GLOBAL) {
+        GList *entries;
+        if (toc) {
+          entries = gst_toc_get_entries (toc);
+          while (entries &&
+            (gst_toc_entry_get_entry_type ((const GstTocEntry *)(entries->data)) != GST_TOC_ENTRY_TYPE_CHAPTER)) {
+            if (g_list_length (entries) == 1)
+              entries = gst_toc_entry_get_sub_entries ((const GstTocEntry *) (entries->data));
+          }
+          if (entries) {
+            if (player.chapters)
+              g_list_free_full (player.chapters, (GDestroyNotify) gst_mini_object_unref);
+            player.chapters = g_list_copy_deep (entries, (GCopyFunc) gst_mini_object_ref, NULL);
+
+          }
+        }
+      }
+      gst_toc_unref(toc);
+      break;
+    }
     default:
       /* unhandled message */
       break;
@@ -852,6 +901,7 @@ cb_print_position (gpointer *data)
   gint64 pos, len;
 
   player.display_tags();
+  //player.display_chapters();
 
   if (Compat::element_query_position (player.playbin, GST_FORMAT_TIME, &pos) &&
       Compat::element_query_duration (player.playbin, GST_FORMAT_TIME, &len))
@@ -1056,6 +1106,16 @@ Player::process_input (int key)
       case '}':
         set_playback_rate (playback_rate * 2);
         break;
+      case '>':
+        break;
+      case '<':
+        break;
+      case 'c':
+        // display curr chapter
+        break;
+      case 'C':
+        display_chapters();
+        break;
       case '?':
         print_keyboard_help();
         break;
@@ -1082,6 +1142,7 @@ Player::print_keyboard_help()
   printf ("   r                    -     reverse playback\n");
   printf ("   [ ]                  -     playback rate 10%% faster/slower\n");
   printf ("   { }                  -     playback rate 2x faster/slower\n");
+  printf ("   < >                  -     jump to next/previous chapter\n");
   printf ("   Backspace            -     playback rate 1x\n");
   printf ("   n                    -     play next file\n");
   printf ("   q                    -     quit gst123\n");
@@ -1131,6 +1192,7 @@ main (gint   argc,
     }
 
   player.loop = g_main_loop_new (NULL, FALSE);
+  player.chapters = NULL;
 
   /* set up */
   if (options.uris)
