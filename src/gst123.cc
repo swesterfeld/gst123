@@ -288,6 +288,7 @@ struct Player : public KeyHandler
     gint64 start, stop;
     gchar *title;
     GstTagList *tag_list = NULL;
+
     for (l = chapters, i = 0; l != NULL; l = l->next, i++) {
       GstTocEntry *entry = (GstTocEntry *)(l->data);
 
@@ -580,6 +581,38 @@ struct Player : public KeyHandler
     gst_element_set_state (playbin, GST_STATE_NULL);
     if (loop)
       g_main_loop_quit (loop);
+  }
+
+  guint query_chapter()
+  {
+    GList *l; guint i;
+    gint64 start, stop;
+    gint64 cur_pos;
+    Compat::element_query_position (playbin, GST_FORMAT_TIME, &cur_pos);
+
+    for (l = chapters, i = 0; l != NULL; l = l->next, i++) {
+      GstTocEntry *entry = (GstTocEntry *)(l->data);
+      if (gst_toc_entry_get_start_stop_times (entry, &start, &stop)) {
+        if(cur_pos < start) break;
+      }
+    }
+    if (i > 0) return(i-1);
+    else return(0);
+  }
+
+  void seek_chapter(guint n)
+  {
+    GList *l;
+    GstTocEntry *entry;
+    gint64 start, stop;
+
+    if(n >= g_list_length(chapters))
+      return;
+    l = g_list_nth(chapters, n);
+    entry = (GstTocEntry *)(l->data);
+    if (gst_toc_entry_get_start_stop_times (entry, &start, &stop)) {
+      seek(start);
+    }
   }
 
   void process_input (int key);
@@ -1108,12 +1141,16 @@ Player::process_input (int key)
       case '}':
         set_playback_rate (playback_rate * 2);
         break;
-      case '>':
+      case '>': {
+        guint cur_chapter = query_chapter();
+        seek_chapter(cur_chapter + 1);
+        }
         break;
-      case '<':
-        break;
-      case 'c':
-        // display curr chapter
+      case '<': {
+        guint cur_chapter = query_chapter();
+        if (cur_chapter > 0)
+          seek_chapter(cur_chapter - 1);
+        }
         break;
       case '?':
         print_keyboard_help();
