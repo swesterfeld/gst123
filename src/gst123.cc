@@ -273,6 +273,7 @@ struct Player : public KeyHandler
             {
 	      overwrite_time_display();
 	      Msg::print ("\n%s\n", tag_str.c_str());
+ 	      display_chapters();
               old_tag_str = tag_str;
             }
 
@@ -292,7 +293,9 @@ struct Player : public KeyHandler
 
       if (gst_toc_entry_get_start_stop_times (entry, &start, &stop)) {
         tag_list = gst_toc_entry_get_tags (entry);
-        gst_tag_list_get_string(tag_list, GST_TAG_TITLE, &title);
+        if(tag_list)
+          gst_tag_list_get_string(tag_list, GST_TAG_TITLE, &title);
+
         guint start_ms = (start % GST_SECOND) / 1000000;
         guint start_sec = start / GST_SECOND;
         guint start_min = start_sec / 60;
@@ -901,7 +904,6 @@ cb_print_position (gpointer *data)
   gint64 pos, len;
 
   player.display_tags();
-  //player.display_chapters();
 
   if (Compat::element_query_position (player.playbin, GST_FORMAT_TIME, &pos) &&
       Compat::element_query_duration (player.playbin, GST_FORMAT_TIME, &len))
@@ -1112,9 +1114,6 @@ Player::process_input (int key)
         break;
       case 'c':
         // display curr chapter
-        break;
-      case 'C':
-        display_chapters();
         break;
       case '?':
         print_keyboard_help();
