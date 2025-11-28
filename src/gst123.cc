@@ -172,7 +172,7 @@ struct Player : public KeyHandler
   int           cols;
   Tags          tags;
   GstState      last_state;
-  string        old_tag_str;
+  string        old_tag_chapter_str;
 
   double        playback_rate;
   double        playback_rate_step;
@@ -197,7 +197,7 @@ struct Player : public KeyHandler
       }
     else
       {
-        old_tag_str = "";
+        old_tag_chapter_str = "";
       }
   }
 
@@ -267,39 +267,41 @@ struct Player : public KeyHandler
     return tag_str;
   }
 
-  void
-  display_tags()
+  string
+  format_chapters()
   {
-    if (tags.timestamp > 0)
-      if (get_time() - tags.timestamp > 0.5) /* allows us to wait a bit for more tags */
-	{
-          /* we only display new tags if any of the tags changed */
-          string tag_str = format_tags();
-          if (tag_str != old_tag_str)
-            {
-	      overwrite_time_display();
-	      Msg::print ("\n%s\n", tag_str.c_str());
-        // FIXME: this probably isn't the right place for
-        // display_chapters() call, yet by experiment this gets
-        // chapters list displayed after the tags:
- 	      display_chapters();
-              old_tag_str = tag_str;
-            }
-
-	  reset_tags (KEEP_CODEC_TAGS);
-	}
-  }
-
-  void
-  display_chapters()
-  {
+    string chapter_str;
+    if (chapters.size())
+      chapter_str = "\n";
     for (vector<Chapter>::const_iterator chapter_it = chapters.begin(); chapter_it != chapters.end(); chapter_it++)
       {
         guint start_ms = (chapter_it->start_time % GST_SECOND) / 1000000;
         guint start_sec = chapter_it->start_time / GST_SECOND;
         guint start_min = start_sec / 60;
-        Msg::print ("\n%01u:%02u:%02u.%02u %s", start_min / 60, start_min % 60, start_sec % 60, start_ms / 10, chapter_it->title.c_str());
+        chapter_str += string_printf ("%01u:%02u:%02u.%02u %s\n", start_min / 60, start_min % 60, start_sec % 60, start_ms / 10, chapter_it->title.c_str());
       }
+    return chapter_str;
+  }
+
+  void
+  display_tags_and_chapters()
+  {
+    if (tags.timestamp > 0)
+      if (get_time() - tags.timestamp > 0.5) /* allows us to wait a bit for more tags */
+	{
+          /* we only display new tags/chapters if any of the tags or chapters changed */
+          string tag_chapter_str = format_tags() + format_chapters();
+          if (tag_chapter_str != old_tag_chapter_str)
+            {
+	      overwrite_time_display();
+	      Msg::print ("\n%s\n", tag_chapter_str.c_str());
+              old_tag_chapter_str = tag_chapter_str;
+            }
+
+          /* older gst123 versions use reset_tags (KEEP_CODEC_TAGS); here, but for some
+           * streams this results in duplicated tags output
+           */
+	}
   }
 
   void
@@ -959,7 +961,7 @@ cb_print_position (gpointer *data)
   Player& player = *(Player *)data;
   gint64 pos, len;
 
-  player.display_tags();
+  player.display_tags_and_chapters();
 
   if (Compat::element_query_position (player.playbin, GST_FORMAT_TIME, &pos) &&
       Compat::element_query_duration (player.playbin, GST_FORMAT_TIME, &len))
