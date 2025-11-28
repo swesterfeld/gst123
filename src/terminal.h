@@ -24,6 +24,8 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <unistd.h>
+#include <termios.h>
 #include "keyhandler.h"
 
 class Terminal
