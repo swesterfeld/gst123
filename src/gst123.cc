@@ -854,9 +854,11 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
       {
         GstToc *toc;
         gst_message_parse_toc (message, &toc, NULL);
-        if (toc && gst_toc_get_scope (toc) == GST_TOC_SCOPE_GLOBAL)
+        if (toc)
           {
-            player.update_chapters (toc);
+            if (gst_toc_get_scope (toc) == GST_TOC_SCOPE_GLOBAL)
+              player.update_chapters (toc);
+
             gst_toc_unref (toc);
           }
       }
