@@ -839,22 +839,14 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
                   gst_tag_list_get_string(tag_list, GST_TAG_TITLE, &title);
                   chapter.title = title;
                   g_free(title);
-                  gst_tag_list_free (tag_list);
                 }
 
                 player.chapters.push_back(chapter);
               }
             }
-            // FIXME: this causes the chapters list to get diplayed
-            // before the tags:
-            //player.display_chapters();
           }
         }
-        // FIXME: this causes the following error after changing
-        // players.chapters to vector<Chapter>:
-        // gst_mini_object_unref: assertion
-        // 'GST_MINI_OBJECT_REFCOUNT_VALUE (mini_object) > 0' failed
-        //gst_toc_unref(toc);
+        gst_toc_unref (toc);
       }
       break;
     }
