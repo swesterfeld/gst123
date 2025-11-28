@@ -19,6 +19,7 @@
  */
 #include <gst/gst.h>
 #include <gst/video/video.h>
+#include <gst/gsttoc.h>
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #include <signal.h>
@@ -154,6 +155,12 @@ uri2filename (const string& uri)
 
 Options options;
 
+struct Chapter
+{
+  gint64 start_time;
+  string title;
+};
+
 struct Player : public KeyHandler
 {
   vector<string> uris;
@@ -165,7 +172,7 @@ struct Player : public KeyHandler
   int           cols;
   Tags          tags;
   GstState      last_state;
-  string        old_tag_str;
+  string        old_tag_chapter_str;
 
   double        playback_rate;
   double        playback_rate_step;
@@ -175,6 +182,7 @@ struct Player : public KeyHandler
     KEEP_CODEC_TAGS,
     RESET_ALL_TAGS
   };
+  vector<Chapter> chapters;
   void
   reset_tags (int which_tags)
   {
@@ -189,7 +197,7 @@ struct Player : public KeyHandler
       }
     else
       {
-        old_tag_str = "";
+        old_tag_chapter_str = "";
       }
   }
 
@@ -259,22 +267,40 @@ struct Player : public KeyHandler
     return tag_str;
   }
 
+  string
+  format_chapters()
+  {
+    string chapter_str;
+    if (chapters.size())
+      chapter_str = "\n";
+    for (vector<Chapter>::const_iterator chapter_it = chapters.begin(); chapter_it != chapters.end(); chapter_it++)
+      {
+        guint start_ms = (chapter_it->start_time % GST_SECOND) / 1000000;
+        guint start_sec = chapter_it->start_time / GST_SECOND;
+        guint start_min = start_sec / 60;
+        chapter_str += string_printf ("%01u:%02u:%02u.%02u %s\n", start_min / 60, start_min % 60, start_sec % 60, start_ms / 10, chapter_it->title.c_str());
+      }
+    return chapter_str;
+  }
+
   void
-  display_tags()
+  display_tags_and_chapters()
   {
     if (tags.timestamp > 0)
       if (get_time() - tags.timestamp > 0.5) /* allows us to wait a bit for more tags */
 	{
-          /* we only display new tags if any of the tags changed */
-          string tag_str = format_tags();
-          if (tag_str != old_tag_str)
+          /* we only display new tags/chapters if any of the tags or chapters changed */
+          string tag_chapter_str = format_tags() + format_chapters();
+          if (tag_chapter_str != old_tag_chapter_str)
             {
 	      overwrite_time_display();
-	      Msg::print ("\n%s\n", tag_str.c_str());
-              old_tag_str = tag_str;
+	      Msg::print ("\n%s\n", tag_chapter_str.c_str());
+              old_tag_chapter_str = tag_chapter_str;
             }
 
-	  reset_tags (KEEP_CODEC_TAGS);
+          /* older gst123 versions use reset_tags (KEEP_CODEC_TAGS); here, but for some
+           * streams this results in duplicated tags output
+           */
 	}
   }
 
@@ -340,6 +366,7 @@ struct Player : public KeyHandler
   play_next()
   {
     reset_tags (RESET_ALL_TAGS);
+    chapters.clear();
 
     for (;;)
       {
@@ -553,6 +580,38 @@ struct Player : public KeyHandler
       g_main_loop_quit (loop);
   }
 
+  void update_chapters (GstToc *toc);
+
+  guint
+  query_chapter()
+  {
+    guint i;
+    vector<Chapter>::const_iterator chapter_it;
+    gint64 cur_pos;
+    Compat::element_query_position (playbin, GST_FORMAT_TIME, &cur_pos);
+
+    for (i = 0, chapter_it = chapters.begin(); chapter_it != chapters.end(); chapter_it++, i++)
+      {
+        if (cur_pos < chapter_it->start_time)
+          break;
+      }
+    if (i > 0)
+      return (i-1);
+    else
+      return (0);
+  }
+
+  void
+  seek_chapter (guint n)
+  {
+    Chapter chapter;
+
+    if (n >= chapters.size())
+      return;
+    chapter = chapters[n];
+    seek (chapter.start_time);
+  }
+
   void process_input (int key);
   void print_keyboard_help();
   void add_uri_or_directory (const string& name);
@@ -697,6 +756,46 @@ my_sync_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
   return GST_BUS_PASS;
 }
 
+void
+Player::update_chapters (GstToc *toc)
+{
+  chapters.clear();
+
+  GList *entries = gst_toc_get_entries (toc);
+  while (entries && (gst_toc_entry_get_entry_type ((const GstTocEntry *)(entries->data)) != GST_TOC_ENTRY_TYPE_CHAPTER))
+    {
+      if (g_list_length (entries) == 1)
+        entries = gst_toc_entry_get_sub_entries ((const GstTocEntry *) (entries->data));
+    }
+  if (entries)
+    {
+      for (GList *l = entries; l != NULL; l = l->next)
+        {
+          GstTocEntry *entry = (GstTocEntry *)(l->data);
+
+          if (gst_toc_entry_get_entry_type (entry) == GST_TOC_ENTRY_TYPE_CHAPTER)
+            {
+              gint64 start, stop;
+              if (gst_toc_entry_get_start_stop_times (entry, &start, &stop))
+                {
+                  Chapter chapter;
+                  chapter.start_time = start;
+
+                  GstTagList *tag_list = gst_toc_entry_get_tags (entry);
+                  if (tag_list)
+                    {
+                      gchar *title;
+                      gst_tag_list_get_string (tag_list, GST_TAG_TITLE, &title);
+                      chapter.title = title;
+                      g_free (title);
+                    }
+                  chapters.push_back (chapter);
+                }
+            }
+        }
+    }
+}
+
 static gboolean
 my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
 {
@@ -749,6 +848,17 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
               gst_object_unref (*it);
 	  }
 	player.last_state = state;
+      }
+      break;
+    case GST_MESSAGE_TOC:
+      {
+        GstToc *toc;
+        gst_message_parse_toc (message, &toc, NULL);
+        if (toc && gst_toc_get_scope (toc) == GST_TOC_SCOPE_GLOBAL)
+          {
+            player.update_chapters (toc);
+            gst_toc_unref (toc);
+          }
       }
       break;
     default:
@@ -851,7 +961,7 @@ cb_print_position (gpointer *data)
   Player& player = *(Player *)data;
   gint64 pos, len;
 
-  player.display_tags();
+  player.display_tags_and_chapters();
 
   if (Compat::element_query_position (player.playbin, GST_FORMAT_TIME, &pos) &&
       Compat::element_query_duration (player.playbin, GST_FORMAT_TIME, &len))
@@ -1056,6 +1166,19 @@ Player::process_input (int key)
       case '}':
         set_playback_rate (playback_rate * 2);
         break;
+      case '>':
+        {
+          guint cur_chapter = query_chapter();
+          seek_chapter (cur_chapter + 1);
+        }
+        break;
+      case '<':
+        {
+          guint cur_chapter = query_chapter();
+          if (cur_chapter > 0)
+            seek_chapter (cur_chapter - 1);
+        }
+        break;
       case '?':
         print_keyboard_help();
         break;
@@ -1082,6 +1205,7 @@ Player::print_keyboard_help()
   printf ("   r                    -     reverse playback\n");
   printf ("   [ ]                  -     playback rate 10%% faster/slower\n");
   printf ("   { }                  -     playback rate 2x faster/slower\n");
+  printf ("   < >                  -     jump to next/previous chapter\n");
   printf ("   Backspace            -     playback rate 1x\n");
   printf ("   n                    -     play next file\n");
   printf ("   q                    -     quit gst123\n");
