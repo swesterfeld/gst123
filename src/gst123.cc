@@ -293,13 +293,13 @@ struct Player : public KeyHandler
   void
   display_chapters()
   {
-    for (vector<Chapter>::const_iterator chapter = chapters.begin(); chapter != chapters.end(); chapter++)
-    {
-        guint start_ms = (chapter->start_time % GST_SECOND) / 1000000;
-        guint start_sec = chapter->start_time / GST_SECOND;
+    for (vector<Chapter>::const_iterator chapter_it = chapters.begin(); chapter_it != chapters.end(); chapter_it++)
+      {
+        guint start_ms = (chapter_it->start_time % GST_SECOND) / 1000000;
+        guint start_sec = chapter_it->start_time / GST_SECOND;
         guint start_min = start_sec / 60;
-        Msg::print ("\n%01u:%02u:%02u.%02u %s", start_min / 60, start_min % 60, start_sec % 60, start_ms / 10, chapter->title.c_str());
-    }
+        Msg::print ("\n%01u:%02u:%02u.%02u %s", start_min / 60, start_min % 60, start_sec % 60, start_ms / 10, chapter_it->title.c_str());
+      }
   }
 
   void
@@ -578,29 +578,36 @@ struct Player : public KeyHandler
       g_main_loop_quit (loop);
   }
 
-  guint query_chapter()
+  void update_chapters (GstToc *toc);
+
+  guint
+  query_chapter()
   {
     guint i;
-    vector<Chapter>::const_iterator chapter;
+    vector<Chapter>::const_iterator chapter_it;
     gint64 cur_pos;
     Compat::element_query_position (playbin, GST_FORMAT_TIME, &cur_pos);
 
-    for (i = 0, chapter = chapters.begin(); chapter != chapters.end(); chapter++,i++)
-    {
-        if(cur_pos < chapter->start_time) break;
-    }
-    if (i > 0) return(i-1);
-    else return(0);
+    for (i = 0, chapter_it = chapters.begin(); chapter_it != chapters.end(); chapter_it++, i++)
+      {
+        if (cur_pos < chapter_it->start_time)
+          break;
+      }
+    if (i > 0)
+      return (i-1);
+    else
+      return (0);
   }
 
-  void seek_chapter(guint n)
+  void
+  seek_chapter (guint n)
   {
     Chapter chapter;
 
-    if(n >= chapters.size())
+    if (n >= chapters.size())
       return;
-    chapter = chapters.at(n);
-    seek(chapter.start_time);
+    chapter = chapters[n];
+    seek (chapter.start_time);
   }
 
   void process_input (int key);
@@ -747,6 +754,46 @@ my_sync_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
   return GST_BUS_PASS;
 }
 
+void
+Player::update_chapters (GstToc *toc)
+{
+  chapters.clear();
+
+  GList *entries = gst_toc_get_entries (toc);
+  while (entries && (gst_toc_entry_get_entry_type ((const GstTocEntry *)(entries->data)) != GST_TOC_ENTRY_TYPE_CHAPTER))
+    {
+      if (g_list_length (entries) == 1)
+        entries = gst_toc_entry_get_sub_entries ((const GstTocEntry *) (entries->data));
+    }
+  if (entries)
+    {
+      for (GList *l = entries; l != NULL; l = l->next)
+        {
+          GstTocEntry *entry = (GstTocEntry *)(l->data);
+
+          if (gst_toc_entry_get_entry_type (entry) == GST_TOC_ENTRY_TYPE_CHAPTER)
+            {
+              gint64 start, stop;
+              if (gst_toc_entry_get_start_stop_times (entry, &start, &stop))
+                {
+                  Chapter chapter;
+                  chapter.start_time = start;
+
+                  GstTagList *tag_list = gst_toc_entry_get_tags (entry);
+                  if (tag_list)
+                    {
+                      gchar *title;
+                      gst_tag_list_get_string (tag_list, GST_TAG_TITLE, &title);
+                      chapter.title = title;
+                      g_free (title);
+                    }
+                  chapters.push_back (chapter);
+                }
+            }
+        }
+    }
+}
+
 static gboolean
 my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
 {
@@ -802,54 +849,16 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
       }
       break;
     case GST_MESSAGE_TOC:
-    {
-      GstToc *toc;
-      gst_message_parse_toc (message, &toc, NULL);
-      if (gst_toc_get_scope (toc) == GST_TOC_SCOPE_GLOBAL)
       {
-        GList *entries;
-        if (toc)
+        GstToc *toc;
+        gst_message_parse_toc (message, &toc, NULL);
+        if (toc && gst_toc_get_scope (toc) == GST_TOC_SCOPE_GLOBAL)
         {
-          entries = gst_toc_get_entries (toc);
-          while (entries &&
-            (gst_toc_entry_get_entry_type ((const GstTocEntry *)(entries->data)) != GST_TOC_ENTRY_TYPE_CHAPTER))
-          {
-            if (g_list_length (entries) == 1)
-              entries = gst_toc_entry_get_sub_entries ((const GstTocEntry *) (entries->data));
-          }
-          if (entries)
-          {
-            GList *l; int i;
-            gint64 start, stop;
-            gchar *title;
-            Chapter chapter;
-            GstTagList *tag_list = NULL;
-
-            player.chapters.clear();
-            for (l = entries , i = 0; l != NULL; l = l->next, i++)
-            {
-              GstTocEntry *entry = (GstTocEntry *)(l->data);
-
-              if (gst_toc_entry_get_start_stop_times (entry, &start, &stop))
-              {
-                chapter.start_time = start;
-                tag_list = gst_toc_entry_get_tags (entry);
-                if(tag_list)
-                {
-                  gst_tag_list_get_string(tag_list, GST_TAG_TITLE, &title);
-                  chapter.title = title;
-                  g_free(title);
-                }
-
-                player.chapters.push_back(chapter);
-              }
-            }
-          }
+          player.update_chapters (toc);
+          gst_toc_unref (toc);
         }
-        gst_toc_unref (toc);
       }
       break;
-    }
     default:
       /* unhandled message */
       break;
@@ -1158,14 +1167,14 @@ Player::process_input (int key)
       case '>':
         {
           guint cur_chapter = query_chapter();
-          seek_chapter(cur_chapter + 1);
+          seek_chapter (cur_chapter + 1);
         }
         break;
       case '<':
         {
           guint cur_chapter = query_chapter();
           if (cur_chapter > 0)
-            seek_chapter(cur_chapter - 1);
+            seek_chapter (cur_chapter - 1);
         }
         break;
       case '?':
