@@ -1,6 +1,6 @@
 /* GST123 - GStreamer based command line media player
  * SPDX-FileCopyrightText: 2006-2010 Stefan Westerfeld
- * SPDX-FileCopyrightText: 2010 أحمد المحمودي (Ahmed El-Mahmoudy)
+ * SPDX-FileCopyrightText: 2010,2025 أحمد المحمودي (Ahmed El-Mahmoudy)
  * SPDX-License-Identifier: LGPL-2.0-or-later
  *
  * This library is free software; you can redistribute it and/or
