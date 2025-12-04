@@ -1,5 +1,6 @@
 /* GLib Extra - Tentative GLib code and GLib supplements
- * Copyright (C) 1997-2002 Tim Janik
+ * SPDX-FileCopyrightText: 1997-2002 Tim Janik
+ * SPDX-License-Identifier: LGPL-2.0-or-later
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
