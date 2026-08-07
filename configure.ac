@@ -50,7 +50,7 @@ AC_PROG_CC
 AM_MAINTAINER_MODE
 
 dnl
-dnl We need gstreamer-0.10 or gstreamer-1.0
+dnl We need gstreamer-1.0
 dnl
 AC_DEFUN([AC_GSTREAMER_REQUIREMENTS],
 [
@@ -62,15 +62,7 @@ AC_DEFUN([AC_GSTREAMER_REQUIREMENTS],
 
       PKG_CHECK_MODULES(GSTREAMER, gstreamer-1.0 gstreamer-base-1.0 gstreamer-video-1.0)
     else
-      dnl gstreamer-0.10 development package installed?
-      PKG_CHECK_MODULES(GSTREAMER_0_10, gstreamer-0.10, GST_0_10=1, GST_0_10=0)
-
-      if test x$GST_0_10 = x1; then
-        AC_MSG_NOTICE([Building gst123 using gstreamer version 0.10])
-        PKG_CHECK_MODULES(GSTREAMER, gstreamer-0.10 gstreamer-base-0.10 gstreamer-interfaces-0.10 gstreamer-video-0.10)
-      else
-        AC_MSG_ERROR([Neither gstreamer-0.10 nor gstreamer-1.0 was found using pkg-config.])
-      fi
+      AC_MSG_ERROR([gstreamer-1.0 not found using pkg-config.])
     fi
     AC_SUBST(GSTREAMER_CFLAGS)
     AC_SUBST(GSTREAMER_LIBS)
