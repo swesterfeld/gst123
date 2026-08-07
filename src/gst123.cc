@@ -698,7 +698,7 @@ caps_set_cb (GObject *pad, GParamSpec *pspec, Player* player)
     {
       GstVideoInfo info;
 
-      gst_video_info_init(&info);
+      gst_video_info_init (&info);
       if (gst_video_info_from_caps (&info, caps))
         {
           // resize window to match video size (must run in main thread, so we use an idle handler)
@@ -1303,7 +1303,7 @@ main (gint   argc,
         printf ("%s", options.usage.c_str());
       return -1;
     }
-  player.playbin = gst_element_factory_make("playbin", "play");
+  player.playbin = gst_element_factory_make ("playbin", "play");
   if (options.novideo)
     {
       GstElement *fakesink = gst_element_factory_make ("fakesink", "novid");
