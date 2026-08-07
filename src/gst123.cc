@@ -594,7 +594,7 @@ struct Player : public KeyHandler
     guint i;
     vector<Chapter>::const_iterator chapter_it;
     gint64 cur_pos;
-    Compat::element_query_position (playbin, GST_FORMAT_TIME, &cur_pos);
+    gst_element_query_position (playbin, GST_FORMAT_TIME, &cur_pos);
 
     for (i = 0, chapter_it = chapters.begin(); chapter_it != chapters.end(); chapter_it++, i++)
       {
