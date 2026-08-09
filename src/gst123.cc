@@ -1304,7 +1304,7 @@ main (gint   argc,
       return -1;
     }
   player.playbin = gst_element_factory_make ("playbin", "play");
-  if (options.novideo)
+  if (options.novideo || !gtk_interface.init_ok())
     {
       GstElement *fakesink = gst_element_factory_make ("fakesink", "novid");
       g_object_set (G_OBJECT (player.playbin), "video-sink", fakesink, NULL);
