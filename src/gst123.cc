@@ -54,6 +54,13 @@ using namespace Gst123;
 static Terminal     terminal;
 static GtkInterface gtk_interface;
 
+/* playbin flags */
+enum GstPlayFlags {
+  GST_PLAY_FLAG_VIDEO = (1 << 0),
+  GST_PLAY_FLAG_AUDIO = (1 << 1),
+  GST_PLAY_FLAG_TEXT  = (1 << 2)
+};
+
 struct Tags
 {
   double timestamp;
@@ -563,9 +570,9 @@ struct Player : public KeyHandler
   {
     int flags;
     g_object_get (G_OBJECT (playbin), "flags", &flags, NULL);
-    g_object_set (G_OBJECT (playbin), "flags", flags ^ 0x4, NULL);
+    g_object_set (G_OBJECT (playbin), "flags", flags ^ GST_PLAY_FLAG_TEXT, NULL);
 
-    Msg::update_status ("Subtitles: %s", (flags & 0x4) ? "off" : "on");
+    Msg::update_status ("Subtitles: %s", (flags & GST_PLAY_FLAG_TEXT) ? "off" : "on");
   }
 
   void
@@ -922,13 +929,15 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
         }
       /* show window if necessary (number of video streams > 0 || visualization) */
       int n_video = 0;
+      int flags;
       GstElement *vis_plugin = NULL;
       g_object_get (player.playbin, "n-video", &n_video, NULL);
+      g_object_get (player.playbin, "flags", &flags, NULL);
       g_object_get (player.playbin, "vis-plugin", &vis_plugin, NULL);
 
       if (gtk_interface.init_ok())
         {
-          if (n_video || vis_plugin)
+          if ((flags & GST_PLAY_FLAG_VIDEO) && (n_video || vis_plugin))
             gtk_interface.show();
           else
             gtk_interface.hide();
@@ -1308,6 +1317,11 @@ main (gint   argc,
     {
       GstElement *fakesink = gst_element_factory_make ("fakesink", "novid");
       g_object_set (G_OBJECT (player.playbin), "video-sink", fakesink, NULL);
+
+      /* this is more efficient because it avoids decoding the video stream */
+      int flags;
+      g_object_get (player.playbin, "flags", &flags, NULL);
+      g_object_set (player.playbin, "flags", flags & ~GST_PLAY_FLAG_VIDEO, NULL);
     }
   if (options.visualization)
     {
