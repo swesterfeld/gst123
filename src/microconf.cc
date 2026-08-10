@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.0-or-later
 /* MicroConf - minimal configuration framework
  * Copyright (C) 2010 Stefan Westerfeld
  *

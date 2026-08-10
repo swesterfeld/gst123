@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.0-or-later
 /* GLib Extra - Tentative GLib code and GLib supplements
  * Copyright (C) 1997-2002 Tim Janik
  *

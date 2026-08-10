@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.0-or-later
 /* GST123 - GStreamer based command line media player
  * Copyright (C) 2006-2010 Stefan Westerfeld
  * Copyright (C) 2010 أحمد المحمودي (Ahmed El-Mahmoudy)

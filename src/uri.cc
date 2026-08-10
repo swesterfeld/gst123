@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.0-or-later
 /* GST123 - GStreamer based command line media player
  * Copyright (C) 2010 Siddhesh Poyarekar
  *
