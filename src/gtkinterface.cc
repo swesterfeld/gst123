@@ -420,6 +420,14 @@ GtkInterface::screen_saver (ScreenSaverSetting setting)
   GdkWindow *window = gtk_widget_get_window (gtk_window);
   if (gtk_window != NULL && window)
     {
+      /* use different methods to disable screensaver (communicate directly via
+       * dbus and use xdg-screensaver), hopefully at least one works
+       */
+      if (setting == SUSPEND)
+        idle_inhibitor.inhibit(); // fail silently if something goes wrong here
+      if (setting == RESUME)
+        idle_inhibitor.uninhibit();
+
       guint64 wid = GDK_WINDOW_XID (window);
 
       const char *setting_str = (setting == SUSPEND) ? "suspend" : "resume";

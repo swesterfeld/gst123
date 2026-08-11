@@ -23,8 +23,12 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include "keyhandler.h"
+#include "idleinhibitor.h"
 #include <map>
 #include <string>
+
+namespace Gst123
+{
 
 class GtkInterface
 {
@@ -44,6 +48,8 @@ class GtkInterface
   bool         need_resize_window;
 
   std::map<int,int>   key_map;
+
+  IdleInhibitor idle_inhibitor;
 
   enum ScreenSaverSetting { SUSPEND, RESUME };
   void screen_saver (ScreenSaverSetting setting);
@@ -72,5 +78,7 @@ public:
   void set_opacity (double alpha_change);
   void set_title (const std::string& title);
 };
+
+}
 
 #endif
