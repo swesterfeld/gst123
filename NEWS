@@ -1,3 +1,13 @@
+Overview of changes in gst123-0.5.0:
+
+* Support Wayland (rely on Xwayland) [Bill Nottingham] (PR#30).
+* Add chapters support [Ahmed El-Mahmoudy] (PR#34).
+* Make screensaver suspend/resume more robust.
+* Drop support for gstreamer-0.10 [Bill Nottingham] (PR#28).
+* Remove NET_ACTIVE_WINDOW hack. [Bill Nottingham] (PR#31).
+* Handle terminal resize better [Bill Nottingham] (PR#29).
+* Minor bugfixes.
+
 Overview of changes in gst123-0.4.1:
 
 * Avoid depending using .git / git during build (remove ChangeLog).
