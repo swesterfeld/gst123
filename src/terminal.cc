@@ -37,6 +37,7 @@ using std::map;
 static char term_buffer[4096];
 static char term_buffer2[4096];
 static char *term_p = term_buffer2;
+static struct termios tio_orig;
 static Terminal *terminal_instance;
 
 static GPollFD stdin_poll_fd = { 0, G_IO_IN, 0 };
@@ -56,6 +57,17 @@ stdin_check (GSource *source)
     return TRUE;
   else
     return FALSE;
+}
+
+static void
+reset_terminal ()
+{
+  tcsetattr(0, TCSANOW, &tio_orig);
+  char *ret = tgetstr ("ke", &term_p);
+  // disable keypad xmit
+  if (ret)
+    printf ("%s", ret);
+  fflush (stdout);
 }
 
 gboolean
@@ -85,15 +97,6 @@ Terminal::signal_sig_cont (int)
 }
 
 void
-Terminal::print_term (const char *key)
-{
-  char *ret = tgetstr (const_cast<char *> (key), &term_p);
-
-  if (ret)
-    printf ("%s", ret);
-}
-
-void
 Terminal::init_terminal()
 {
   // configure input params of the terminal
@@ -106,7 +109,10 @@ Terminal::init_terminal()
   tcsetattr (0, TCSANOW, &tio_new);
 
   // enable keypad_xmit
-  print_term ("ks");
+  char *ret = tgetstr ("ks", &term_p);
+  // disable keypad xmit
+  if (ret)
+    printf ("%s", ret);
   fflush (stdout);
 }
 
@@ -135,6 +141,7 @@ Terminal::init (GMainLoop *loop, KeyHandler *key_handler)
 
   // initialize termios & keypad xmit
   init_terminal();
+  atexit(reset_terminal);
 
   // initialize common keyboard escape sequences
   bind_key ("ku", KEY_HANDLER_UP);
@@ -156,9 +163,7 @@ Terminal::init (GMainLoop *loop, KeyHandler *key_handler)
 void
 Terminal::end()
 {
-  tcsetattr(0,TCSANOW,&tio_orig);
-  // disable keypad xmit
-  print_term("ke");
+  reset_terminal();
 }
 
 void

@@ -31,7 +31,6 @@
 
 class Terminal
 {
-  struct termios             tio_orig;
   std::string                terminal_type;
   std::vector<int>           chars;
   std::map<std::string, int> keys;
