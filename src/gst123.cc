@@ -30,6 +30,7 @@
 #include <string.h>
 #include <assert.h>
 #include <math.h>
+#include <locale.h>
 #include "glib-extra.h"
 #include "config.h"
 #include "terminal.h"
@@ -419,7 +420,7 @@ struct Player : public KeyHandler
               {
                 Msg::print ("\nPlaying %s\n", url_decode (uri).c_str());
 
-                gtk_interface.set_title (get_basename (uri));
+                gtk_interface.set_title (get_basename (url_decode (uri)));
 
                 gst_element_set_state (playbin, GST_STATE_NULL);
                 g_object_set (G_OBJECT (playbin), "uri", uri.c_str(), NULL);
@@ -1259,6 +1260,8 @@ main (gint   argc,
       fprintf (stderr, "%s: Failed to initialize Xlib support for concurrent threads (XInitThreads() failed).\n", argv[0]);
       return -1;
     }
+
+  setlocale (LC_ALL, "");
 
   /* Setup options */
   options.parse (argc, argv);
